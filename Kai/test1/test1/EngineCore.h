@@ -8,6 +8,7 @@ NOTE(kai): This file can:
 #pragma once
 
 #include "WindowManager.h"
+#include "InputManager.h"
 
 struct EngineCore
 {

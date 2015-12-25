@@ -14,11 +14,12 @@ NOTE(kai): This file can:
 //Switch between using SDL and GLFW
 #define SDL_MODE 0 
 #define GLFW_MODE 1
-#define MODE_TYPE SDL_MODE
-//#define MODE_TYPE GLFW_MODE
+//#define MODE_TYPE SDL_MODE
+#define MODE_TYPE GLFW_MODE
 
 struct WindowManager
 {
+	friend class InputManager;
 public:
 	WindowManager(){}
 	~WindowManager(){}
@@ -29,9 +30,9 @@ public:
 	void InitWindow(char *title, int width, int height);
 	//Renders our window (this should happen each frame)
 	void RenderWindow();
-
+	
 	//Updates our window (this should happen each frame)
-	void UpdateWindow();
+	void UpdateWindow();	
 
 	//See if the user wants to close the window
 	bool IsCloseRequested();
@@ -57,8 +58,7 @@ private:
 #if MODE_TYPE == GLFW_MODE
 	GLFWwindow *Window; //GLFW window
 #elif MODE_TYPE == SDL_MODE
-	SDL_Window *Window;	//SDL window
-	SDL_Event Events;	//Window events
+	SDL_Window *Window;	//SDL window	
 #endif	
 };
 

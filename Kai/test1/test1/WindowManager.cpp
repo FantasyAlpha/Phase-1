@@ -141,17 +141,9 @@ void WindowManager::UpdateWindow()
 	//Process the events in the event queue
 #if MODE_TYPE == GLFW_MODE
 	glfwPollEvents();	//process the events using GLFW
-#elif MODE_TYPE == SDL_MODE
-	//process the events using SDL
-	while (SDL_PollEvent(&Events))
-	{
-		if (Events.type == SDL_QUIT)
-		{
-			ShouldClose = true;
-		}
-	}
 #endif
 }
+
 
 //See if the user wants to close the window
 bool WindowManager::IsCloseRequested()
