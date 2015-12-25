@@ -501,9 +501,9 @@ public:
 	//Initialize the input manager
 	static void InitInputManager(WindowManager *window);
 	//Get key down state
-	static bool IsKeyDown(unsigned int key);
+	static bool IsKeyDown(int key);
 	//Get key released state
-	static bool IsKeyUp(unsigned int key);
+	static bool IsKeyUp(int key);
 
 	//NOTE(kai): Callback is basically: once an event is fired store it in an event queue 
 	//			,then use a callback function to process these events.
@@ -524,6 +524,8 @@ private:
 	static bool m_KeysDown[512];
 	//Array holding the key released state
 	static bool m_KeysUp[512];
+
+	static bool m_LastKeysDown[512];
 #if MODE_TYPE == SDL_MODE
 	static SDL_Event m_Event;	//Window events
 #endif

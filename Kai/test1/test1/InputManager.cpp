@@ -1,11 +1,12 @@
 #include "InputManager.h"
 
 //Static members declaration
+bool InputManager::m_LastKeysDown[512];
 bool InputManager::m_KeysDown[512];
 bool InputManager::m_KeysUp[512];
 
 #if MODE_TYPE == SDL_MODE
-SDL_Event InputManager::Event;
+SDL_Event InputManager::m_Event;
 #endif
 
 InputManager::InputManager()
@@ -23,6 +24,7 @@ void InputManager::InitInputManager(WindowManager *window)
 	//Reset all the key states to false
 	for (unsigned int KeyIndex = 0; KeyIndex < 512; KeyIndex++)
 	{
+		m_LastKeysDown[KeyIndex] = false;
 		m_KeysDown[KeyIndex] = false;
 		m_KeysUp[KeyIndex] = false;
 	}
@@ -60,6 +62,9 @@ void InputManager::Update(WindowManager *window)
 	//While there are any events in the queue ,process them
 	while (SDL_PollEvent(&m_Event))
 	{
+		//The key code value
+		int value = m_Event.key.keysym.scancode;
+
 		//If the user requested closing the window 
 		//,then the Should close flag in window manager is set to true
 		if (m_Event.type == SDL_QUIT)
@@ -71,19 +76,15 @@ void InputManager::Update(WindowManager *window)
 		//and the key up state to false
 		if (m_Event.type == SDL_KEYDOWN)
 		{
-			int value = m_Event.key.keysym.scancode;
-
-			m_KeysDown[value] = true;
+			m_KeysDown[value] = true;			
 			m_KeysUp[value] = false;
 		}
-
+		
 		//If the event is (key up) set the key down state to false
 		//and the key up state to true
 		if (m_Event.type == SDL_KEYUP)
-		{
-			int value = m_Event.key.keysym.scancode;
-
-			m_KeysDown[value] = false;
+		{			
+			m_KeysDown[value] = false;			
 			m_KeysUp[value] = true;
 		}
 	}
@@ -92,13 +93,13 @@ void InputManager::Update(WindowManager *window)
 #endif
 
 //Get key down state
-bool InputManager::IsKeyDown(unsigned int key)
+bool InputManager::IsKeyDown(int key)
 {	
 	return m_KeysDown[key];
 }
 
 //Get key released state
-bool InputManager::IsKeyUp(unsigned int key)
+bool InputManager::IsKeyUp(int key)
 {
 	//Store the state in a separate variable and reset it in the array
 	bool b = m_KeysUp[key];

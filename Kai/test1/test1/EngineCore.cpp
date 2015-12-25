@@ -60,7 +60,7 @@ void EngineCore::MainLoop()
 		//Testing if A button is pressed
 		if (InputManager::IsKeyDown(KEY::KEY_A))
 		{
-			std::cout << "Key: a is pressed\n";
+			//std::cout << "Key: a is pressed\n";
 		}
 		//Testing if A button is released
 		if (InputManager::IsKeyUp(KEY::KEY_A))
