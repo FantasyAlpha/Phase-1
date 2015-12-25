@@ -19,6 +19,7 @@ NOTE(kai): This file can:
 
 struct WindowManager
 {
+	//By using "friend" we can make the input manager class access all of the window manager members and functions
 	friend class InputManager;
 public:
 	WindowManager(){}

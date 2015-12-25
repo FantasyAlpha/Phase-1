@@ -521,11 +521,11 @@ public:
 
 private:
 	//Array holding the key down state
-	static bool KeysDown[512];
+	static bool m_KeysDown[512];
 	//Array holding the key released state
-	static bool KeysUp[512];
+	static bool m_KeysUp[512];
 #if MODE_TYPE == SDL_MODE
-	static SDL_Event Event;	//Window events
+	static SDL_Event m_Event;	//Window events
 #endif
 
 };
