@@ -1,4 +1,8 @@
-This solution basically opens up a window and prepares it to use opengl
+This project can:
+
+1) opens up a window and prepares it to use opengl
+
+2) handles input
 
 3rd party Libraries used:
 
