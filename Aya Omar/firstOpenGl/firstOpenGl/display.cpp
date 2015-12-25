@@ -72,6 +72,46 @@ void display::update() {
 		{
 			m_closed = true;
 		}
+		//2====> check if the event is window quit or closed 
+		if (e.type == SDL_QUIT)
+		{
+			m_closed = true;
+		}
+
+		// check key boared key preesed event handeled by the SDL library 
+
+		else if (e.type ==SDL_KEYDOWN)
+		{
+			// check the symbol pressed 
+			switch (e.key.keysym.sym) {
+				//all keyboard symbols available in sdlk (key)
+			case SDLK_x:
+				// check the symbol with printing 
+
+				// lazem break after each case -_- -_- 
+
+				std::cout << "the key entered is X" << std::endl;
+				break;
+			case SDLK_y:
+				std::cout << "the key entered is Y" << std::endl;
+				break;
+			case SDLK_z:
+				std::cout << "the key entered is Z" << std::endl;
+				break;
+			case SDLK_SPACE:
+				std::cout << "the key entered is Space " << std::endl;
+				break;
+
+			}
+		
+		}
+		// check mouse pressed 
+		else if (e.type == SDL_MOUSEBUTTONDOWN) {
+			{
+				if (e.button.button == SDL_BUTTON_LEFT)
+				std::cout << "left mouse clicked" << std::endl;
+			}
+		}
 
 	}
 
