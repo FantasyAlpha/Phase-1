@@ -1,2 +1,9 @@
-﻿  InputManager.cpp
-  test1.vcxproj -> G:\work 3\Phase-1\Kai\test1\Debug\test1.exe
+﻿Build started 12/28/2015 3:05:20 PM.
+     1>Project "E:\Final Project\codingTeam\Phase-1\Kai\test1\test1\test1.vcxproj" on node 2 (Build target(s)).
+     1>Link:
+         test1.vcxproj -> E:\Final Project\codingTeam\Phase-1\Kai\test1\Debug\test1.exe
+     1>Done Building Project "E:\Final Project\codingTeam\Phase-1\Kai\test1\test1\test1.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.04
