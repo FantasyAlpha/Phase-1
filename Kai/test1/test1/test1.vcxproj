@@ -78,19 +78,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Math\mat4.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="EngineCore.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Math\vec2.cpp" />
+    <ClCompile Include="Math\vec3.cpp" />
     <ClCompile Include="WindowManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h" />
+    <ClInclude Include="Math\mat4.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="EngineCore.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Math\vec2.h" />
+    <ClInclude Include="Math\vec3.h" />
     <ClInclude Include="Vertex.h" />
     <ClInclude Include="WindowManager.h" />
   </ItemGroup>
