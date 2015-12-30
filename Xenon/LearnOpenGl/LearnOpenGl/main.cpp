@@ -22,7 +22,6 @@ GLuint VBO, VAO, EBO;
 std::string vertexCode;
 std::string fragmentCode;
 
-
 GLfloat vertices[] = {
 	                     0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // Top 
 						 0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // Bottom Right
@@ -250,11 +249,11 @@ void run()
 }
 
 
-
 int main()
 {
 	initDisplay(800, 600, "testing");
 	run();
-	system("PAUSE");
+
+system("PAUSE");
 	return 0;
 }
