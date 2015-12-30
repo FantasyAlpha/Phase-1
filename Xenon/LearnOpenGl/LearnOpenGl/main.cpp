@@ -138,7 +138,7 @@ void initShaderProgram()
 	if (!success)
 	{
 		glGetShaderInfoLog(fragShader, 512, NULL, infolog);
-		std::cout << "vertex shader faild :" << infolog << std::endl;
+		std::cout << "fragment shader faild :" << infolog << std::endl;
 	}
 
 	shaderProgram = glCreateProgram();
@@ -197,11 +197,16 @@ void render()
 
 	glUseProgram(shaderProgram);
 
-	/*GLfloat timeValue = glfwGetTime();
-	GLfloat greenValue = (sin(timeValue) / 2) + 0.5;
-	GLuint uniformLocation = glGetUniformLocation(shaderProgram, "our_color");
-	glUniform4f(uniformLocation, 0.0f, greenValue, 0.0f, 1.0f);
-    */
+	GLfloat timeValue = glfwGetTime();
+	GLfloat Value = (sin(timeValue) / 2) + 0.5;
+
+	GLuint uniformLocation = glGetUniformLocation(shaderProgram, "trans");
+	glUniform3f(uniformLocation, Value, Value, Value);
+
+	GLuint uniformLocation1 = glGetUniformLocation(shaderProgram, "m_color");
+	glUniform3f(uniformLocation1, Value, Value, Value);
+
+
 	glBindVertexArray(VAO);
 	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 	glBindVertexArray(0);
