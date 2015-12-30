@@ -64,11 +64,11 @@ void WindowManager::InitWindow(char *title, int width, int height)
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, SDL_TRUE);
 
 	Window = SDL_CreateWindow(title					//Window title
-		, SDL_WINDOWPOS_CENTERED	//Window X position
-		, SDL_WINDOWPOS_CENTERED	//Window Y position
-		, width					//Window width
-		, height				//Window height
-		, SDL_WINDOW_OPENGL); //Window usable with opengl context
+							, SDL_WINDOWPOS_CENTERED	//Window X position
+							, SDL_WINDOWPOS_CENTERED	//Window Y position
+							, width					//Window width
+							, height				//Window height
+							, SDL_WINDOW_OPENGL); //Window usable with opengl context
 
 	if (!Window)
 	{
@@ -125,8 +125,13 @@ void WindowManager::InitWindow(char *title, int width, int height)
 //Renders our window (this should happen each frame)
 void WindowManager::RenderWindow()
 {
-	//Clears the window with the clear color we specified before (we have to specify which buffers we want to clear)
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//Print any opengl error during rendering
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		std::cout << "OpenGL Error: " << error << std::endl;
+	}	
+	
 	//Swap front and back buffers
 #if MODE_TYPE == GLFW_MODE
 	glfwSwapBuffers(Window); //Swap buffers in glfw
@@ -164,4 +169,11 @@ void WindowManager::DestroyWindow()
 #elif MODE_TYPE == SDL_MODE
 	SDL_Quit();		//Destroy SDL
 #endif
+}
+
+//Clear the window
+void WindowManager::Clear()
+{
+	//Clears the window with the clear color we specified before (we have to specify which buffers we want to clear)
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }

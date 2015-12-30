@@ -9,6 +9,7 @@ NOTE(kai): This file can:
 
 #include "WindowManager.h"
 #include "InputManager.h"
+#include "Game.h"
 
 struct EngineCore
 {
@@ -33,11 +34,19 @@ private:
 	//Our main loop which should continue running as long as we don't quite the game
 	void MainLoop();
 
+	//Render all of the subsystems in the engine
+	void Render();
+	//Update all of the subsystems in the engine
+	void Update();
+
 private:
 	// As long as it is true the main loop will keep running, if it is false the window should exit
 	bool Running = false;
 
 	//Instance of the window manager
 	WindowManager *Window;
+
+	//Instance of the game
+	Game *game;
 };
 

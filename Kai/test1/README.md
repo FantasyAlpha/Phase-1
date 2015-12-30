@@ -4,6 +4,8 @@ This project can:
 
 2) handles input
 
+3) Draw shapes 
+
 3rd party Libraries used:
 
 1) GLFW

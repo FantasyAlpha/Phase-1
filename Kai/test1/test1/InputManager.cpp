@@ -43,6 +43,7 @@ void InputManager::KeyCallBack(GLFWwindow* window, int key, int scancode, int ac
 	//and the key up state to false
 	if (action == GLFW_PRESS)
 	{
+		
 		m_KeysDown[key] = true;
 		m_KeysUp[key] = false;
 	}
@@ -76,6 +77,7 @@ void InputManager::Update(WindowManager *window)
 		//and the key up state to false
 		if (m_Event.type == SDL_KEYDOWN)
 		{
+			// std::cout << "B pressed\n"; 
 			m_KeysDown[value] = true;			
 			m_KeysUp[value] = false;
 		}

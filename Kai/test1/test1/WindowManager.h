@@ -14,8 +14,8 @@ NOTE(kai): This file can:
 //Switch between using SDL and GLFW
 #define SDL_MODE 0 
 #define GLFW_MODE 1
-#define MODE_TYPE SDL_MODE
-//#define MODE_TYPE GLFW_MODE
+//#define MODE_TYPE SDL_MODE
+#define MODE_TYPE GLFW_MODE
 
 struct WindowManager
 {
@@ -41,6 +41,9 @@ public:
 	//Destroy the library (which results in destroying the window)
 	void DestroyWindow();
 
+	//Clear the window
+	void Clear();
+
 private:
 	//Print out the opengl version supported by our driver
 	void PrintOpenglVersion()
@@ -49,7 +52,7 @@ private:
 	}
 
 	//Sets some options for opengl
-	void SetOpenglOptions();		
+	void SetOpenglOptions();	
 
 private:
 	//Turns to true if the user tries to close the window
