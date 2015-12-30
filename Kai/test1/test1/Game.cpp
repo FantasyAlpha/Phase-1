@@ -40,7 +40,7 @@ void Game::Init()
 		3,
 	};
 
-	m_Shader = new Shader("shaders\\vertex shader 120.vert", "shaders\\fragment shader 120.frag");
+	m_Shader = new Shader("resources\\shaders\\vertex shader 120.vert", "resources\\shaders\\fragment shader 120.frag");
 	m_Mesh = new Mesh(vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
 	
 }
