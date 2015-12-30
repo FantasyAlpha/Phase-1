@@ -1,10 +1,17 @@
+/*=======================================================================================================================
+NOTE(kai): This file can:
+
+1) creates and compile vertex and fragment shader
+2) Activate the shader for drawing
+=======================================================================================================================*/
+
 #pragma once
 
 #include <GL\glew.h>
 #include <iostream>
 #include <stdio.h>
 
-struct Shader{
+class Shader{
 private:
 	enum ShaderType
 	{
@@ -29,6 +36,16 @@ public:
 	void AddAttribute(char *name){}
 
 private:
+	//NOTE(kai): We create a shader by:
+	//					1) Generating a handle for the shader
+	//					2) Storing the shader code into the shader
+	//					3) Compiling the shader
+	//					4) Check for compilation errors
+	//					5) Create a program handle
+	//					6) Attach the shader to the program
+	//					7) Link all the shaders in the program
+	//					8) Check for link errors
+
 	//Create a shader  
 	void CreateShader(char *vertexPath, char *fragmentPath);
 
@@ -53,9 +70,4 @@ private:
 private:
 	//Handle for the program (after we compile the shaders we link them in one program)
 	unsigned int m_ProgramHandle;
-
-	//A counter for the attributes in the shader
-	//unsigned int m_AttributeCounter;
-
-	//
 };

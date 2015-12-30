@@ -1,3 +1,11 @@
+/*=======================================================================================================================
+NOTE(kai): This file can:
+
+1) Save mesh data in a GPU buffer (using VBO, EBO, VAO)
+2) Draw the mesh
+=======================================================================================================================*/
+
+
 #pragma once
 
 #include <GL\glew.h>
@@ -20,8 +28,20 @@ private:
 	//Create the buffers and store the mesh data in them
 	void LoadMesh(Vertex *vertices, unsigned int *indices);
 
+	//NOTE(kai): We create the vertex buffer by:
+	//					1) Create a handle for the buffer
+	//					2) Bind the buffer
+	//					3) Store the data in the buffer
+	//					4) Specify the vertex layout by enabling the attributes in the shader
+	//						,set the attribute pointer
+
 	//Create a Vertex buffer and stores the vertices in it 
 	void InitVBO(Vertex *vertices);
+
+	//NOTE(kai): We create the element buffer by:
+	//					1) Create a handle for the buffer
+	//					2) Bind the buffer
+	//					3) Store the data in the buffer
 
 	//Create an Element buffer and stores the indices in it 
 	void InitEBO(unsigned int *indices);

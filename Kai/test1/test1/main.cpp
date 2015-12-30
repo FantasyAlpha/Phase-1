@@ -11,7 +11,7 @@ NOTE(kai): This file can:
 int main()
 {
 	//Instance of the engine's core 
-	EngineCore *engine = new EngineCore("Kai engine", 1280, 720);
+	EngineCore *engine = new EngineCore("Kai engine", 1280, 720, new Game());
 	
 	//Start the engine
 	engine->Run();

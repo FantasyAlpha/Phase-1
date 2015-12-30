@@ -1,8 +1,9 @@
 #include "EngineCore.h"
 
 
-EngineCore::EngineCore(char *title, int width, int height)
+EngineCore::EngineCore(char *title, int width, int height, Game *game)
 {
+	this->game = game;
 	InitEngine(title, width, height);
 }
 
@@ -27,7 +28,10 @@ void EngineCore::InitEngine(char *title, int width, int height)
 	Window->InitWindow(title, width, height);
 	InputManager::InitInputManager(Window);
 
-	game = new Game();
+	if (!game)
+	{
+		game = new Game();
+	}
 	game->Init();
 }
 

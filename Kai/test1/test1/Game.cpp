@@ -8,14 +8,14 @@ Game::Game()
 
 Game::~Game()
 {
-	if (mesh)
+	if (m_Mesh)
 	{
-		delete mesh;
+		delete m_Mesh;
 	}
 
-	if (shader)
+	if (m_Shader)
 	{
-		delete shader;
+		delete m_Shader;
 	}
 }
 
@@ -40,16 +40,16 @@ void Game::Init()
 		3,
 	};
 
-	shader = new Shader("shaders\\vertex shader 120.vert", "shaders\\fragment shader 120.frag");
-	mesh = new Mesh(vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
+	m_Shader = new Shader("shaders\\vertex shader 120.vert", "shaders\\fragment shader 120.frag");
+	m_Mesh = new Mesh(vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
 	
 }
 
 //Render the game
 void Game::Render()
 {
-	shader->Activate();
-	mesh->Draw();
+	m_Shader->Activate();
+	m_Mesh->Draw();
 }
 
 //Update the game

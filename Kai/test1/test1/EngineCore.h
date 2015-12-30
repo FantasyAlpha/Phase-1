@@ -1,5 +1,6 @@
 /*=======================================================================================================================
 NOTE(kai): This file can:
+
 1) Intialize the window
 2) Initialize any engine subsystem (if there is any)
 3) run the engine
@@ -14,7 +15,7 @@ NOTE(kai): This file can:
 struct EngineCore
 {
 public:
-	EngineCore(char *title = "Test Engine", int width = 640, int height = 480);
+	EngineCore(char *title = "Test Engine", int width = 640, int height = 480, Game *game = new Game());
 	~EngineCore();
 
 public:

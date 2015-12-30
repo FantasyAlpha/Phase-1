@@ -78,8 +78,6 @@ void Shader::LinkShaders()
 
 	//Check for link errors
 	GetLinkError();
-
-	//m_AttributeCounter = 0;
 }
 
 //Print out the errors in compiling the vertex and fragment shader
