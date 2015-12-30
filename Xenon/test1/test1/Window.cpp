@@ -30,8 +30,8 @@ void Window::createWindow()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);
 
 	//creating window 
-	window = glfwCreateWindow(width, height, name, NULL, NULL);
-	if (window == NULL)
+	window = glfwCreateWindow(width, height, name, nullptr, nullptr);
+	if (window == nullptr)
 	{
 		std::cout << "Faild to create window \n";
 		glfwTerminate();
