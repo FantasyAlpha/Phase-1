@@ -24,8 +24,8 @@ mesh::mesh(vertex *vertices, unsigned int numVertices)
 	glBindVertexArray(m_vertexArrayObject);
 
 	// generate buffer space where we we store data in GPU
-
 	glGenBuffers(num_buffers, m_ArrayBuffers);
+
 
 	// start use it =====> bind
 
@@ -50,9 +50,6 @@ mesh::mesh(vertex *vertices, unsigned int numVertices)
 
 
 
-
-
-
 	//unbind 
 	glBindVertexArray(0);
 }
@@ -69,6 +66,5 @@ void mesh::draw(){
 	glDrawArrays(GL_TRIANGLES,0,m_drawCount);
 
 	glBindVertexArray(0);
-
 
 }

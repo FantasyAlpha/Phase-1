@@ -9,9 +9,9 @@
 
 int main() {
 	vertex vertices[] = {
-		vertex(glm::vec3(-.5,-.5 ,0)),
-		vertex(glm::vec3(0, .5, 0)),
-		vertex(glm::vec3(.5, -.5, 0)),
+		vertex(glm::vec3(-0.5f,-0.5f ,0)),
+		vertex(glm::vec3(0, 0.5f, 0)),
+		vertex(glm::vec3(0.5f, -0.5f, 0)),
 	};
 	
 	display d(800, 600, "hello world");
@@ -22,14 +22,14 @@ shader shader("res\\basicShader\\basicshader.vs", "res\\basicShader\\basicshader
 
 	// caling the update while not closed 
 	while (!d.isclosed()){
-		glClear(GL_COLOR_BUFFER_BIT);
-		d.clear(1,1,0,0);
+		
+		d.clear(0,0,0,0);
 	    shader.bind();
 		triangle.draw();
 		d.update();
 	}
 
-		//system("pause");
+		system("pause");
 
 	return 0;
 

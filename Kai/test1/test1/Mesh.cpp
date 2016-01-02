@@ -12,9 +12,12 @@ Mesh::Mesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indices, 
 //Create the buffers and store the mesh data in them
 void Mesh::LoadMesh(Vertex *vertices, unsigned int *indices)
 {
+	//Use only with newer GLSL versions
+#if GLSL_VERSION == MODERN_VERSION
 	//Generate a handle to a vertex array object
 	glGenVertexArrays(1, &m_VAO);
-	
+#endif
+
 	//Generate a handle to a vertex buffer object
 	glGenBuffers(1, &m_VBO);
 	
@@ -44,6 +47,7 @@ void Mesh::InitVBO(Vertex *vertices)
 	glBufferData(GL_ARRAY_BUFFER, m_VerticesCount * sizeof(Vertex), vertices, GL_STATIC_DRAW);
 
 	//Enable the attribute with the given index in the shader to be used in rendering
+	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 
 	//Defines where the attribute with the given index should look in buffer
@@ -53,7 +57,6 @@ void Mesh::InitVBO(Vertex *vertices)
 						, GL_FALSE		//Normalized or not
 						, sizeof(Vertex)//Size of the stride (the next location that the pointer will go to)
 						, 0);			//The pointer offset
-	glEnableVertexAttribArray(0);
 
 	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) sizeof(Position));
 }
@@ -61,7 +64,7 @@ void Mesh::InitVBO(Vertex *vertices)
 //Create an Element buffer and stores the indices in it 
 void Mesh::InitEBO(unsigned int *indices)
 {
-	//Bind the vertex buffer
+	//Bind the element buffer
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
 
 	//Store the data in the buffer
@@ -71,16 +74,41 @@ void Mesh::InitEBO(unsigned int *indices)
 //Bind the buffers
 void Mesh::Bind()
 {
+	//Use only with newer GLSL versions
+#if GLSL_VERSION == MODERN_VERSION
 	//Bind the element buffer
-	glBindVertexArray(m_VAO);	
+	glBindVertexArray(m_VAO);
+#elif GLSL_VERSION == ANCIENT_VERSION	//Use with older GLSL versions
+	//Bind the vertex buffer
+	glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
+
+	//Enable the attribute with the given index in the shader to be used in rendering
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+
+	//Defines where the attribute with the given index should look in buffer
+	glVertexAttribPointer(0				//The attribute index
+		, 3				//Number of elements
+		, GL_FLOAT		//Type of elements
+		, GL_FALSE		//Normalized or not
+		, sizeof(Vertex)//Size of the stride (the next location that the pointer will go to)
+		, 0);			//The pointer offset
+
+	glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) sizeof(Position));
+
+	//Bind the vertex buffer
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_EBO);
+#endif
 }
 
 //Unbind the buffers
 void Mesh::Unbind()
 {
+	//Use only with newer GLSL versions
+#if GLSL_VERSION == MODERN_VERSION
 	//Unbind the vertex array object
-	glBindVertexArray(0);
-	
+	glBindVertexArray(m_VAO);
+#endif
 	//Unbind the vertex buffer
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	

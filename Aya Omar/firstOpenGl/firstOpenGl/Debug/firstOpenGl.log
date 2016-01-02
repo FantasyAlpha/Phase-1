@@ -1,20 +1,2 @@
-<<<<<<< HEAD
-﻿Build started 12/30/2015 2:41:00 PM.
-     1>Project "E:\Phase-1\Aya Omar\firstOpenGl\firstOpenGl\firstOpenGl.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I.\include /ZI /nologo /W3 /WX- /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt shader.cpp
-         shader.cpp
-       Link:
-         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.exe" /INCREMENTAL /NOLOGO /LIBPATH:.\lib glew32.lib glew32s.lib SDL2.lib SDL2main.lib SDL2test.lib OpenGL32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.lib" /MACHINE:X86 Debug\display.obj
-         Debug\main.obj
-         Debug\mesh.obj
-         Debug\shader.obj
-         firstOpenGl.vcxproj -> E:\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.exe
-     1>Done Building Project "E:\Phase-1\Aya Omar\firstOpenGl\firstOpenGl\firstOpenGl.vcxproj" (Build target(s)).
-
-Build succeeded.
-
-Time Elapsed 00:00:00.89
-=======
-﻿  firstOpenGl.vcxproj -> G:\work 3\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.exe
->>>>>>> origin/master
+﻿  mesh.cpp
+  firstOpenGl.vcxproj -> G:\work 3\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.exe

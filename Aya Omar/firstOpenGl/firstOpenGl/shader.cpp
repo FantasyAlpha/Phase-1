@@ -42,10 +42,10 @@ shader::shader(char*path1, char*path2)
 {
 	// creating the handel for the program ( memory space in GPU )
 	m_program = glCreateProgram();
-	readShader(path1, path2);
+	//readShader(path1, path2);
 	// storing the handels for each shader in the array 
-	m_shaders[0] = createShader(vertexCode,GL_VERTEX_SHADER);
-	m_shaders[1] = createShader(fragmentCode, GL_FRAGMENT_SHADER);
+	m_shaders[0] = createShader(LoadShader(path1),GL_VERTEX_SHADER);
+	m_shaders[1] = createShader(LoadShader(path2), GL_FRAGMENT_SHADER);
 
 	for (int i = 0; i < num_shaders; i++)   { 
 		// open gl function to attach shaders to the program ===> must be done before linking

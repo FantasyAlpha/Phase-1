@@ -12,6 +12,14 @@ NOTE(kai): This file can:
 #include <iostream>
 #include "Vertex.h"
 
+//Specify which GLSL version will be used (if it is old then we can't use some stuff like VAO)
+#define ANCIENT_VERSION 120
+#define MODERN_VERSION 330
+
+#define GLSL_VERSION ANCIENT_VERSION
+//#define GLSL_VERSION MODERN_VERSION
+
+
 class Mesh
 {
 public:
