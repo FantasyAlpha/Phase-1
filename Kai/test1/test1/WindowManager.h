@@ -12,12 +12,6 @@ NOTE(kai): This file can:
 #include <SDL\SDL.h>
 #include <iostream>
 
-//Switch between using SDL and GLFW
-#define SDL_MODE 0 
-#define GLFW_MODE 1
-//#define MODE_TYPE SDL_MODE
-#define MODE_TYPE GLFW_MODE
-
 struct WindowManager
 {
 	//By using "friend" we can make the input manager class access all of the window manager members and functions

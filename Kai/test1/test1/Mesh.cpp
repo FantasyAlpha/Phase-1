@@ -107,7 +107,7 @@ void Mesh::Unbind()
 	//Use only with newer GLSL versions
 #if GLSL_VERSION == MODERN_VERSION
 	//Unbind the vertex array object
-	glBindVertexArray(m_VAO);
+	glBindVertexArray(0);
 #endif
 	//Unbind the vertex buffer
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
