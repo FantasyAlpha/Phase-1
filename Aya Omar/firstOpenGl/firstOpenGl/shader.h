@@ -3,20 +3,26 @@
 // to use open gl functions 
 #include<GL/glew.h>
 #include<stdio.h>
+
+// call transform header file  
+
+#include "transform.h"
+
 class shader
 {
 public:
 	// constructor parameter is the file  which will hold the shader program 
-	shader(char* path1,char*path2);
+	shader(char* path1, char*path2);
 	// binding functon to start/stop using the shaders 
 	void bind();
 
 	virtual ~shader();
 
+	// set or update the uniform value in the vertex shader with the model value of the transform class 
+	void updateTransform(const transform & transform);
 
 
-
-private :
+private:
 	void operator=(const shader& shader) {}
 	shader(const shader& shader) {}
 	// gl unsigned int to hold the address of the program (Handel) _ keep track of the program 
@@ -40,6 +46,21 @@ private :
 	GLuint createShader(const std::string& text, unsigned int type);
 
 
+	// ==============================================  Transformation work   ===================================
+
+
+	enum {
+
+		// we will put here a handle for the array of uniforms in the vertex shader and num of the uniforms 
+
+		transform_uniform , 
+		num_uniforms 
+
+	};
+	// create array of uniforms handels 
+
+	GLuint m_uniforms[num_uniforms];
+
 
 
 
@@ -47,4 +68,3 @@ private :
 
 
 };
-

@@ -15,7 +15,6 @@ private:
 	glm::vec3 position;
 
 
-
 };
 
 
@@ -36,7 +35,7 @@ private :
 		pos_vB , num_buffers
 	};
 	GLuint m_ArrayBuffers[num_buffers];
-	// array of buffers handels in case we want   more than one data buffer for more than one triangle or mesh 
+	// array of buffers handels in case we want  more than one data buffer for more than one triangle or mesh 
 
 	// count how many data we want to draw 
 	unsigned int m_drawCount;

@@ -3,7 +3,8 @@
 // for files handling (read , write ,open ,....)
 #include <fstream>
 #include<sstream>
-
+#include <glm/glm.hpp>
+#include "transform.h"
 std::string vertexCode;
 std::string fragmentCode;
 
@@ -44,13 +45,13 @@ shader::shader(char*path1, char*path2)
 	m_program = glCreateProgram();
 	//readShader(path1, path2);
 	// storing the handels for each shader in the array 
-	m_shaders[0] = createShader(LoadShader(path1),GL_VERTEX_SHADER);
+	m_shaders[0] = createShader(LoadShader(path1), GL_VERTEX_SHADER);
 	m_shaders[1] = createShader(LoadShader(path2), GL_FRAGMENT_SHADER);
 
-	for (int i = 0; i < num_shaders; i++)   { 
+	for (int i = 0; i < num_shaders; i++)   {
 		// open gl function to attach shaders to the program ===> must be done before linking
 		//https://www.khronos.org/opengles/sdk/docs/man/xhtml/glAttachShader.xml
-		glAttachShader(m_program,m_shaders[i]) ; 
+		glAttachShader(m_program, m_shaders[i]);
 	}
 
 
@@ -65,8 +66,18 @@ shader::shader(char*path1, char*path2)
 	// checking errors parameters 1-handel of the checked object (shader , program,..) 2- flag   3- bool is program 4- message
 	CheckShaderError(m_program, GL_LINK_STATUS, true, "ERROR: linking program failed ");
 	glValidateProgram(m_program);
-	CheckShaderError(m_program, GL_VALIDATE_STATUS, true , "ERROR: validating program failed ");
+	CheckShaderError(m_program, GL_VALIDATE_STATUS, true, "ERROR: validating program failed ");
 
+
+
+	// ==============================================  Transformation work   ===================================
+
+	// get the uniform  location from the vertex shader 
+	//glGetUniformLocation  (name of the program we work with , name of uniform in vertex shader)
+
+	m_uniforms[transform_uniform] = glGetUniformLocation(m_program,"transform");
+
+	// then we will use updatetransform function to get the value of the transformation matrix 
 }
 
 
@@ -99,7 +110,7 @@ GLuint shader::createShader(const std::string &text, unsigned int type) {
 
 	if (shader == 0) std::cerr << "Error : creating shader of type" << type << std::endl;
 
-	
+
 	// create array for the text (shader source strings ) to read and another for this text lengths (size of the shader) 
 
 	const GLchar* shaderSourceStrings[1];
@@ -109,16 +120,16 @@ GLuint shader::createShader(const std::string &text, unsigned int type) {
 	shaderSourcelengths[0] = text.length();
 
 	// load gl shader source code in the shader created  then compile it 
-	glShaderSource(shader,1,shaderSourceStrings,shaderSourcelengths);
+	glShaderSource(shader, 1, shaderSourceStrings, shaderSourcelengths);
 	glCompileShader(shader);
 
-	CheckShaderError(shader, GL_COMPILE_STATUS, false, " Error : compiling shader failed "+type );
+	CheckShaderError(shader, GL_COMPILE_STATUS, false, " Error : compiling shader failed " + type);
 	return shader;
 }
 // to read the shader file into the program as a   <<< string >>>
 
 char *shader::LoadShader(char* path)
-{     
+{
 	FILE *file = fopen(path, "rt");
 	if (!file){
 
@@ -149,10 +160,23 @@ char *shader::LoadShader(char* path)
 
 	return data;
 
-	
-	
-}
 
+
+}
+void shader :: updateTransform(const transform & transform){
+	// get the  transformation model from the class 
+
+	glm::mat4 model = transform.getmodel();
+
+	// gl function according to the data type here : uniform matrix 4*4 float values 
+	// parameters 1 - handel 2- num of tarnsformation 3- true / flase to matrix transpose 4- handel of first element in the matrix 
+	glUniformMatrix4fv(m_uniforms[transform_uniform], 1, GL_FALSE,& model[0] [0]);
+
+
+
+
+
+}
 
 //check errors while linking the shader file and compiling 
 void shader::CheckShaderError(GLuint shader, GLuint flag, bool isProgram, const std::string& errorMessage)
