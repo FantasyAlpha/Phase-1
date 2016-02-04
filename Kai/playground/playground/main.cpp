@@ -83,34 +83,43 @@ int StringLength(char *str)
 	return count;
 }
 
-// Initialize the engine and all systems associated with it(if there is any)
-void InitSystem(char *title, int width, int height)
+void LoadFileDirectory(State *state)
 {
-	char DLLFilePath[MAX_PATH];
-	char *onePastLastSlash;
+	DWORD pathSize = GetModuleFileNameA(NULL, state->DLLFilePath, sizeof(state->DLLFilePath));
+	state->OnePastLastSlash = state->DLLFilePath;
 
-	DWORD pathSize = GetModuleFileNameA(NULL, DLLFilePath, sizeof(DLLFilePath));
-	onePastLastSlash = DLLFilePath;
-
-	for (char *scan = DLLFilePath; *scan; scan++)
+	for (char *scan = state->DLLFilePath; *scan; scan++)
 	{
 		if (*scan == '\\')
 		{
-			onePastLastSlash = scan + 1;
+			state->OnePastLastSlash = scan + 1;
 		}
 	}
+}
+
+void BuildFileFullPath(State *state, char *fileName, char *dest, int destSize)
+{
+	CatStrings(state->DLLFilePath, state->OnePastLastSlash - state->DLLFilePath, fileName, StringLength(fileName), dest, destSize);
+}
+
+// Initialize the engine and all systems associated with it(if there is any)
+void InitSystem(char *title, int width, int height)
+{
+	state = {};
+
+	LoadFileDirectory(&state);
+	
 	char DLLFullPath[MAX_PATH];
-	CatStrings(DLLFilePath, onePastLastSlash - DLLFilePath, "playground game.dll", StringLength("playground game.dll"), DLLFullPath, sizeof(DLLFilePath));
+	BuildFileFullPath(&state, "playground game.dll", DLLFullPath, sizeof(DLLFullPath));
 
 	char tempDLLFullPath[MAX_PATH];
-	CatStrings(DLLFilePath, onePastLastSlash - DLLFilePath, "playground game_temp.dll", StringLength("playground game_temp.dll"), tempDLLFullPath, sizeof(tempDLLFullPath));
+	BuildFileFullPath(&state, "playground game_temp.dll", tempDLLFullPath, sizeof(tempDLLFullPath));
 
 	char PDBFullPath[MAX_PATH];
-	CatStrings(DLLFilePath, onePastLastSlash - DLLFilePath, "playground game.pdb", StringLength("playground game.pdb"), PDBFullPath, sizeof(PDBFullPath));
+	BuildFileFullPath(&state, "playground game.pdb", PDBFullPath, sizeof(PDBFullPath));
 
 	char tempPDBFullPath[MAX_PATH];
-	CatStrings(DLLFilePath, onePastLastSlash - DLLFilePath, "playground game_temp.pdb", StringLength("playground game_temp.pdb"), tempPDBFullPath, sizeof(tempPDBFullPath));
-
+	BuildFileFullPath(&state, "playground game_temp.pdb", tempPDBFullPath, sizeof(tempPDBFullPath));
 
 	Window = WindowManager();
 	Window.InitWindow(title, width, height);
@@ -160,16 +169,16 @@ void MainLoop()
 		}
 	}
 	char DLLFullPath[MAX_PATH];
-	CatStrings(DLLFilePath, onePastLastSlash - DLLFilePath, "playground game.dll", StringLength("playground game.dll"), DLLFullPath, sizeof(DLLFilePath));
+	BuildFileFullPath(&state, "playground game.dll", DLLFullPath, sizeof(DLLFullPath));
 
 	char tempDLLFullPath[MAX_PATH];
-	CatStrings(DLLFilePath, onePastLastSlash - DLLFilePath, "playground game_temp.dll", StringLength("playground game_temp.dll"), tempDLLFullPath, sizeof(tempDLLFullPath));
+	BuildFileFullPath(&state, "playground game_temp.dll", tempDLLFullPath, sizeof(tempDLLFullPath));
 
 	char PDBFullPath[MAX_PATH];
-	CatStrings(DLLFilePath, onePastLastSlash - DLLFilePath, "playground game.pdb", StringLength("playground game.pdb"), PDBFullPath, sizeof(PDBFullPath));
+	BuildFileFullPath(&state, "playground game.pdb", PDBFullPath, sizeof(PDBFullPath));
 
 	char tempPDBFullPath[MAX_PATH];
-	CatStrings(DLLFilePath, onePastLastSlash - DLLFilePath, "playground game_temp.pdb", StringLength("playground game_temp.pdb"), tempPDBFullPath, sizeof(tempPDBFullPath));
+	BuildFileFullPath(&state, "playground game_temp.pdb", tempPDBFullPath, sizeof(tempPDBFullPath));
 
 	while (Running)
 	{

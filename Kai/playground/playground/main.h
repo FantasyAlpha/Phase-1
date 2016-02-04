@@ -18,9 +18,18 @@ struct Game_Code
 	FILETIME LastWriteTimePDB;
 };
 
+struct State
+{
+	char DLLFilePath[MAX_PATH];
+	char *OnePastLastSlash;
+};
+
 //Instance of the window manager
 WindowManager Window;
+//
 Game_Code Game;
+State state;
+
 
 //Instance of the game
 //Game *GlobalGame;
