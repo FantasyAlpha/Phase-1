@@ -58,12 +58,12 @@ void UnloadGameCode(Game_Code *gameCode)
 
 void CatStrings(char *str1, int str1Size, char *str2, int str2Size, char *dest, int destSize)
 {
-	for (size_t i = 0; i < str1Size; i++)
+	for (int i = 0; i < str1Size; i++)
 	{
 		*dest++ = *str1++;
 	}
 
-	for (size_t i = 0; i < str2Size; i++)
+	for (int i = 0; i < str2Size; i++)
 	{
 		*dest++ = *str2++;
 	}

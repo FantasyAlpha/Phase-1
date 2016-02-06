@@ -38,14 +38,28 @@ struct Color
 	float alpha;
 };
 
+struct TexCoords
+{
+	TexCoords(float S = 0, float T = 0)
+	{
+		this->S = S;
+		this->T = T;
+	}
+
+	float S;
+	float T;
+};
+
 struct Vertex
 {
-	Vertex(Position pos = Position(0.0f, 0.0f, 0.0f), Color color = Color(0, 0, 0, 0))
+	Vertex(Position pos = Position(0.0f, 0.0f, 0.0f), Color color = Color(0, 0, 0, 0), TexCoords texCoords = (0, 0))
 	{
 		this->pos = pos;
 		this->color = color;
+		this->texCoords = texCoords;
 	}
 
 	Position pos;
 	Color color;
+	TexCoords texCoords;
 };

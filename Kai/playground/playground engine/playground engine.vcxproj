@@ -109,11 +109,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Utilities\ImageLoader.cpp" />
     <ClCompile Include="Math\mat4.cpp" />
     <ClCompile Include="Math\vec2.cpp" />
     <ClCompile Include="Math\vec3.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Utilities\FileLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Math\mat4.h" />
@@ -121,6 +124,9 @@
     <ClInclude Include="Math\vec3.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Shader.h" />
+    <ClInclude Include="Transform.h" />
+    <ClInclude Include="UsefulDefines.h" />
+    <ClInclude Include="Utilities.h" />
     <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

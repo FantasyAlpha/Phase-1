@@ -1,8 +1,12 @@
 #version 120
 
 varying vec4 outputColor;
+varying vec2 outputTexCoords;
+
+uniform sampler2D myTexture;
 
 void main()
 {
-	gl_FragColor = outputColor;
+	vec4 tex = texture2D(myTexture, outputTexCoords);
+	gl_FragColor = tex * outputColor;
 }

@@ -8,8 +8,7 @@ NOTE(kai): This file can:
 #pragma once
 
 #include <GL\glew.h>
-#include <iostream>
-#include <stdio.h>
+#include "Utilities.h"
 
 class Shader{
 private:
@@ -63,9 +62,6 @@ private:
 
 	//Print out the errors in linking the vertex and fragment shader into a program
 	void GetLinkError();
-
-	//Return the contents of a text file
-	char* LoadFromFile(char *path);
 
 private:
 	//Handle for the program (after we compile the shaders we link them in one program)

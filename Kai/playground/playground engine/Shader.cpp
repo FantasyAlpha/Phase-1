@@ -37,7 +37,10 @@ void Shader::AddShader(char *path, ShaderType type)
 	unsigned int shader;
 
 	//Load the shader code from a file
-	char *shaderCode = LoadFromFile(path);
+	DataFile shaderCode = {};
+	LoadFile(path, &shaderCode);
+	char *code = (char*)shaderCode.Data;
+	
 
 	//Create a handle for the shader (according to the shader type
 	if (type == VERTEX_SHADER)
@@ -53,7 +56,7 @@ void Shader::AddShader(char *path, ShaderType type)
 	//			the length of each string	
 	glShaderSource(shader			//The shader handle
 				 , 1				//The number of strings in the array 
-				 , &shaderCode		//The array of strings containing shader code
+				 , &code			//The array of strings containing shader code
 				 , NULL);			//The length of each string ,null means that the strings will be NULL terminated (default size)
 
 	//Compile the shader and check for errors
@@ -64,6 +67,8 @@ void Shader::AddShader(char *path, ShaderType type)
 
 	//Delete the shader handle
 	glDeleteShader(shader);
+
+	UnloadFile(&shaderCode);
 }
 
 //Compile the shader we created
@@ -132,43 +137,6 @@ void Shader::GetLinkError()
 		std::cout << "Failed to link program:\n" << log << std::endl;
 		system("PAUSE");
 	}
-}
-
-//Return the contents of a text file
-char* Shader::LoadFromFile(char *path)
-{
-	//Open the file in the given path
-	FILE *file = fopen(path, "rt");
-
-	//If file is NULL then the path is wrong
-	if (!file)
-	{
-		std::cout << "Failed to open the file\n";
-		system("PAUSE");
-	}
-
-	//Set the cursor to the end of the file
-	fseek(file, 0, SEEK_END);
-
-	//Get the position of the cursor
-	unsigned long length = ftell(file);
-
-	//The data we from the file
-	char *data = new char[length + 1];
-
-	//fill the array with 0
-	memset(data, 0, length + 1);
-
-	//Set the cursor to the begining of the file
-	fseek(file, 0, SEEK_SET);
-
-	//Store the data in the array
-	fread(data, 1, length + 1, file);
-
-	//Close the file
-	fclose(file);
-
-	return data;
 }
 
 //Activate the shader (We need to do this before we begin drawing)

@@ -19,11 +19,17 @@ NOTE(kai): This is a test game
 #include <Mesh.h>
 #include <Shader.h>
 
+//
+struct Game_Memory
+{
+	void *ScratchPad;
+};
+
 //Mesh instance
-Mesh *m_Mesh;
+Mesh mesh;
 
 //Shader instance
-Shader *m_Shader;
+Shader *shader;
 
 //Initialize the game
 #define GAME_INIT(name) void name(void)
