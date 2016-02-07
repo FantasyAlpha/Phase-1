@@ -67,8 +67,8 @@ void DrawMesh(Mesh *mesh);
 
 ////
 void SetTexture(Mesh *mesh, char *imagePath);
-void BindTexture(Mesh *mesh);
-void UnbindTexture(Mesh *mesh);
+file_internal void BindTexture(Mesh *mesh);
+file_internal void UnbindTexture(Mesh *mesh);
 
 ////
 Mesh* CreateSprite(int width, int height, int pos, char *imagePath, Color color);

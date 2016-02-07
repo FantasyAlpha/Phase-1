@@ -160,7 +160,7 @@ void SetTexture(Mesh *mesh, char *imagePath)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-void BindTexture(Mesh *mesh)
+file_internal void BindTexture(Mesh *mesh)
 {
 	if (mesh->TextureHandle)
 	{
@@ -169,7 +169,7 @@ void BindTexture(Mesh *mesh)
 	}
 }
 
-void UnbindTexture(Mesh *mesh)
+file_internal void UnbindTexture(Mesh *mesh)
 {
 	if (mesh->TextureHandle)
 	{		

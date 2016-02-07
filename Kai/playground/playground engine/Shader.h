@@ -34,6 +34,8 @@ public:
 	//Add a new attribute in the shader
 	void AddAttribute(char *name){}
 
+	unsigned int GetProgram(){ return m_ProgramHandle; }
+
 private:
 	//NOTE(kai): We create a shader by:
 	//					1) Generating a handle for the shader

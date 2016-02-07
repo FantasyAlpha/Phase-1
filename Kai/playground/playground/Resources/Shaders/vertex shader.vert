@@ -9,10 +9,12 @@ layout (location = 2) in vec2 inputTexCoords;
 out vec4 outputColor;
 out vec2 outputTexCoords;
 
+uniform mat4 modelMatrix;
+
 void main()
 {
 	//Set vertex position
-	gl_Position = vec4(position, 1.0f);
+	gl_Position = modelMatrix * vec4(position, 1.0f);
 	//Vertex color
 	outputColor = inputColor;
 	outputTexCoords = inputTexCoords;

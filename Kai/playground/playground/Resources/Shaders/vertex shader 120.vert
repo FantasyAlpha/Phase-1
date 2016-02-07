@@ -9,9 +9,11 @@ attribute vec2 inputTexCoords;
 varying vec4 outputColor;
 varying vec2 outputTexCoords;
 
+uniform mat4 modelMatrix;
+
 void main()
 {
-	gl_Position = vec4(position, 1.0f);
+	gl_Position = modelMatrix * vec4(position, 1.0f);
 	outputColor = inputColor;
 	outputTexCoords = inputTexCoords;
 }

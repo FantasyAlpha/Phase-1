@@ -1,38 +1,54 @@
 #pragma once
 
 #include "vec3.h"
+#include "MathFunctions.h"
 
 struct mat4
 {
 public:
-	mat4();
 	//Sets either the whole matrix or only the diagonal by the desired value
-	mat4(float value, bool diagonalOnly);
-	~mat4();
+	mat4(float value = 1, bool diagonalOnly = true)
+	{
+		if (diagonalOnly)
+		{
+			elements[0 ] = value;		elements[1 ] = 0;			elements[2 ] = 0;			elements[3 ] = 0;
+			elements[4 ] = 0;			elements[5 ] = value;		elements[6 ] = 0;			elements[7 ] = 0;
+			elements[8 ] = 0;			elements[9 ] = 0;			elements[10] = value;		elements[11] = 0;
+			elements[12] = 0;			elements[13] = 0;			elements[14] = 0;			elements[15] = value;
+		}
+		else
+		{
+			elements[0] = value;		elements[1] = value;		elements[2] = value;		elements[3] = value;
+			elements[4] = value;		elements[5] = value;		elements[6] = value;		elements[7] = value;
+			elements[8] = value;		elements[9] = value;		elements[10] = value;		elements[11] = value;
+			elements[12] = value;		elements[13] = value;		elements[14] = value;		elements[15] = value;
+		
+		}
+	}
 
 public:
 	//Get the identity matrix
-	static mat4 identity();
-
-	//Multiply 2 matrices
-	mat4& mul(const mat4& other);
+	static mat4 Identity();
+	
 	//Multiply 2 matrices using the '*' operator
-	friend mat4 operator*(mat4 left, const mat4& right);
+	friend mat4 operator*(mat4 &left, const mat4& right);
 	//Multiply 2 matrices using the '*=' operator
-	mat4& operator*=(const mat4& other);
+	mat4 operator*=(const mat4& other);
 
 	//NOTE(kai): this function calculate the wanted directions (forward, up, right)
 	//			,then calls the overloaded rotation function to rotate the object to the desired position
 	
 	//Rotate the object to the wanted directions 
-	static mat4 rotation(const vec3 &forward, const vec3 &up);
+	//static mat4 rotate(const vec3 &forward, const vec3 &up);
+
+	float *GetElemets(){ return elements; };
 
 	//Translate the object by the desired amount in the desired directions (X, Y, Z)
-	static mat4 translation(const vec3& amount);
+	static mat4 Translate(const vec3& amount);
 	//Rotate the object by the desired angle in the desired directions (X, Y, Z)
-	static mat4 rotation(const vec3 &angle);
+	static mat4 Rotate(const vec3 &angle);
 	//Scale the object by the desired amount in the desired directions (X, Y, Z)
-	static mat4 scale(const vec3& amount);
+	static mat4 Scale(const vec3& amount);
 
 private:
 	//Rotate the object to the wanted (forward, up, right) directions 

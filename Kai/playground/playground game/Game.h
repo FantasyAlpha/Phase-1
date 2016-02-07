@@ -18,7 +18,7 @@ NOTE(kai): This is a test game
 
 #include <Mesh.h>
 #include <Shader.h>
-
+#include <Transform.h>
 //
 struct Game_Memory
 {
@@ -30,6 +30,8 @@ Mesh mesh;
 
 //Shader instance
 Shader *shader;
+
+Transform transform;
 
 //Initialize the game
 #define GAME_INIT(name) void name(void)

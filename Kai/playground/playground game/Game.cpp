@@ -33,6 +33,8 @@ GAME_DLL GAME_INIT(Game_Init)
 	//the mesh i will use
 	LoadMesh(&mesh, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
 	SetTexture(&mesh, "resources\\textures\\test.png");
+
+	transform.Position = vec3(0, 0, 0);
 }
 
 //Render the game
@@ -40,6 +42,9 @@ GAME_DLL GAME_RENDER(Game_Render)
 {
 	//Activate the shader
 	shader->Activate();
+	CalculateModelMatrix(&transform);
+	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "modelMatrix"), 1, false, transform.ModelMatrix.GetElemets());
+
 	//Draw the mesh
 	DrawMesh(&mesh);
 }
