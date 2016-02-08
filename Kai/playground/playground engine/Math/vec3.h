@@ -20,7 +20,7 @@ public:
 	float LengthSquare();
 
 	//Normalize the vector
-	void Normalize();
+	vec3 Normalize();
 
 	vec3 Cross(vec3 &other);
 	float Dot(vec3 &other);
@@ -37,14 +37,14 @@ public:
 	//Multiply 2 vectors using the '*' operator
 	friend vec3 operator*(vec3 &left, vec3 &right);
 	//Multiply vector with a constant value using the '*' operator
-	friend vec3 operator*(vec3 &left, float &right);
-	friend vec3 operator*(float &left, vec3 &right);
+	friend vec3 operator*(vec3 left, float right);
+	friend vec3 operator*(float left, vec3 right);
 	   		
 	//Divide 2 vectors using the '/' operator
 	friend vec3 operator/(vec3 &left, vec3 &right);
 	//Divide vector by a constant value using the '/' operator
-	friend vec3 operator/(vec3 &left, float &right);
-	friend vec3 operator/(float &left, vec3 &right);
+	friend vec3 operator/(vec3 left, float right);
+	friend vec3 operator/(float left, vec3 right);
 	   
 	//Check if 2 vectors are equal
 	bool operator==(vec3 &other);

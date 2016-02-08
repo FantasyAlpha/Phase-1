@@ -8,3 +8,23 @@ void CalculateModelMatrix(Transform *transform)
 
 	transform->ModelMatrix = pos * rot * scale;
 }
+
+void CalculateLookAtViewMatrix(Camera *cam, vec3 &target, vec3 &up)
+{
+	cam->ViewMatrix = mat4::LookAtMatrix(cam->Eye, target, up) * mat4::Scale(cam->Scale);
+}
+
+void CalculateFPSViewMatrix(Camera *cam, float pitch, float yaw)
+{
+	cam->ViewMatrix = mat4::FPSMatrix(cam->Eye, pitch, yaw) * mat4::Scale(cam->Scale);
+}
+
+void CalculateProjectionMatrix(ProjectionFrustum *projection)
+{
+
+}
+
+mat4 CalculateMVP(Transform *transform, Camera *cam, ProjectionFrustum *projection)
+{
+	return projection->ProjectionMatrix * cam->ViewMatrix * transform->ModelMatrix;
+}

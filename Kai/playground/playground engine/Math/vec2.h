@@ -20,7 +20,7 @@ public:
 	float LengthSquare();
 
 	//Normalize the vector
-	void Normalize();	
+	vec2 Normalize();	
 
 	//NOTE(kai): if i'm doing an operation on an instance of this class
 	//			,and the instance exist on the right hand side, then i must 

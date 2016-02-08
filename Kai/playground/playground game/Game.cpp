@@ -43,7 +43,8 @@ GAME_DLL GAME_RENDER(Game_Render)
 	//Activate the shader
 	shader->Activate();
 	CalculateModelMatrix(&transform);
-	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "modelMatrix"), 1, false, transform.ModelMatrix.GetElemets());
+	CalculateLookAtViewMatrix(&Cam, vec3(0, 0, 10), vec3(0, 1, 0));
+	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "modelMatrix"), 1, false, CalculateMVP(&transform, &Cam, &ProjectionFrustum()).GetElemets());
 
 	//Draw the mesh
 	DrawMesh(&mesh);

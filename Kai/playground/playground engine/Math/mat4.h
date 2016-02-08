@@ -44,15 +44,18 @@ public:
 	float *GetElemets(){ return elements; };
 
 	//Translate the object by the desired amount in the desired directions (X, Y, Z)
-	static mat4 Translate(const vec3& amount);
+	static mat4 Translate(vec3& amount);
 	//Rotate the object by the desired angle in the desired directions (X, Y, Z)
-	static mat4 Rotate(const vec3 &angle);
+	static mat4 Rotate(vec3 &angle);
 	//Scale the object by the desired amount in the desired directions (X, Y, Z)
-	static mat4 Scale(const vec3& amount);
+	static mat4 Scale(vec3& amount);
+
+	static mat4 LookAtMatrix(vec3 &eye, vec3 &target, vec3 &up);
+	static mat4 FPSMatrix(vec3 &eye, float pitch, float yaw);
 
 private:
 	//Rotate the object to the wanted (forward, up, right) directions 
-	static mat4 rotation(const vec3 &forward, const vec3 &up, const vec3 &right);
+	//static mat4 rotation(const vec3 &forward, const vec3 &up, const vec3 &right);
 
 private:
 	//Matrix elements

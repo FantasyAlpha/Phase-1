@@ -13,7 +13,7 @@ mat4 mat4::Identity()
 }
 
 //Translate the object by the desired amount in the desired directions (X, Y, Z)
-mat4 mat4::Translate(const vec3& amount)
+mat4 mat4::Translate(vec3& amount)
 {
 	mat4 result;
 
@@ -26,7 +26,7 @@ mat4 mat4::Translate(const vec3& amount)
 }
 
 //Rotate the object by the desired angle in the desired directions (X, Y, Z)
-mat4 mat4::Rotate(const vec3 &angle)
+mat4 mat4::Rotate(vec3 &angle)
 {
 	mat4 rotX;
 	mat4 rotY;
@@ -59,7 +59,7 @@ mat4 mat4::Rotate(const vec3 &angle)
 }
 
 //Scale the object by the desired amount in the desired directions (X, Y, Z)
-mat4 mat4::Scale(const vec3& amount)
+mat4 mat4::Scale(vec3& amount)
 {
 	mat4 result;
 
@@ -115,4 +115,25 @@ mat4 mat4::operator*=(const mat4& other)
 	}
 
 	return result;
+}
+
+mat4 mat4::LookAtMatrix(vec3 &eye, vec3 &target, vec3 &up)
+{
+	vec3 forward = (eye - target).Normalize();
+	vec3 right = (up.Cross(forward)).Normalize();
+	up = (forward.Cross(right)).Normalize();
+
+	mat4 result;
+
+	result.elements[0] = right.x;				result.elements[1] = right.y;					result.elements[2] = right.z;				result.elements[3] = 0;
+	result.elements[4] = up.x;					result.elements[5] = up.y;						result.elements[6] = up.z;					result.elements[7] = 0;
+	result.elements[8] = forward.x;				result.elements[9] = forward.y;					result.elements[10] = forward.z;			result.elements[11] = 0;
+	result.elements[12] = 0;					result.elements[13] = 0;						result.elements[14] = 0;					result.elements[15] = 1;
+
+	return mat4::Translate((-1.0f * eye)) * result;
+}
+
+mat4 mat4::FPSMatrix(vec3 &eye, float pitch, float yaw)
+{
+	return mat4();
 }

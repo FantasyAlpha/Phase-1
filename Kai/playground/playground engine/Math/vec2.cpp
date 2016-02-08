@@ -10,12 +10,22 @@ float vec2::LengthSquare()
 	return ((x * x) + (y * y));
 }
 
-void vec2::Normalize()
+vec2 vec2::Normalize()
 {
 	float length = this->Length();
+	vec2 result;
 
-	this->x /= length;
-	this->y /= length;
+	if (length == 0.0f)
+	{
+		return *this;
+	}
+	else
+	{
+		result.x = x / length;
+		result.y = y / length;
+
+		return result;
+	}
 }
 
 //Add 2 vectors using the '+' operator

@@ -32,6 +32,7 @@ Mesh mesh;
 Shader *shader;
 
 Transform transform;
+Camera Cam;
 
 //Initialize the game
 #define GAME_INIT(name) void name(void)

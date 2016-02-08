@@ -10,13 +10,23 @@ float vec3::LengthSquare()
 	return ((x * x) + (y * y) + (z * z));
 }
 
-void vec3::Normalize()
+vec3 vec3::Normalize()
 {
 	float length = this->Length();
+	vec3 result;
 
-	this->x /= length;
-	this->y /= length;
-	this->z /= length;
+	if (length == 0.0f)
+	{
+		return *this;
+	} 
+	else
+	{
+		result.x = x / length;
+		result.y = y / length;
+		result.z = z / length;
+		
+		return result;
+	}
 }
 
 //Add 2 vectors using the '+' operator
@@ -56,7 +66,7 @@ vec3 operator*(vec3 &left, vec3 &right)
 }
 
 //Multiply vector with a constant value using the '*' operator
-vec3 operator*(vec3 &left, float &right)
+vec3 operator*(vec3 left, float right)
 {
 	vec3 result;
 
@@ -68,7 +78,7 @@ vec3 operator*(vec3 &left, float &right)
 }
 
 //Multiply vector with a constant value using the '*' operator
-vec3 operator*(float &left, vec3 &right)
+vec3 operator*(float left, vec3 right)
 {
 	vec3 result;
 
@@ -92,7 +102,7 @@ vec3 operator/(vec3 &left, vec3 &right)
 }
 
 //Divide 2 vectors using the '/' operator
-vec3 operator/(vec3 &left, float &right)
+vec3 operator/(vec3 left, float right)
 {
 	vec3 result;
 
@@ -104,7 +114,7 @@ vec3 operator/(vec3 &left, float &right)
 }
 
 //Divide vector by a constant value using the '/' operator
-vec3 operator/(float &left, vec3 &right)
+vec3 operator/(float left, vec3 right)
 {
 	vec3 result;
 
@@ -206,9 +216,11 @@ float vec3::Dot(vec3 &other)
 
 vec3 vec3::Cross(vec3 &other)
 {
-	float newX = (this->y * other.z) - (this->z * other.y);
-	float newY = (this->x * other.z) - (this->z * other.x);
-	float newZ = (this->x * other.y) - (this->y * other.x);
+	vec3 result;
 
-	return vec3(newX, newY, newZ);
+	result.x = (this->y * other.z) - (this->z * other.y);
+	result.y = (this->x * other.z) - (this->z * other.x);
+	result.z = (this->x * other.y) - (this->y * other.x);
+
+	return result;
 }
