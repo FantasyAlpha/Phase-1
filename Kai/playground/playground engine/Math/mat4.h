@@ -56,6 +56,7 @@ public:
 	static mat4 OrthographicMatrix(float left, float right, float top, float bottom, float near, float far);
 	static mat4 OrthographicMatrix(float width, float height, float near, float far);
 
+	static mat4 PerspectiveMatrix(float fieldOfView, float width, float height, float near, float far);
 private:
 	//Rotate the object to the wanted (forward, up, right) directions 
 	//static mat4 rotation(const vec3 &forward, const vec3 &up, const vec3 &right);

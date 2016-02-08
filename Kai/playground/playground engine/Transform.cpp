@@ -29,6 +29,11 @@ void CalculateOrthoProjectionMatrix(Camera *cam, float left, float right, float 
 	cam->ProjectionMatrix = mat4::OrthographicMatrix(left, right, top, bottom, near, far);
 }
 
+void CalculatePerspectiveProjection(Camera *cam, float fov, float width, float height, float near, float far)
+{
+	cam->ProjectionMatrix = mat4::PerspectiveMatrix(fov, width, height, near, far);
+}
+
 mat4 CalculateMVP(Transform *transform, Camera *cam)
 {
 	return cam->ProjectionMatrix * cam->ViewMatrix * transform->ModelMatrix;

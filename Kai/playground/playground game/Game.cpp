@@ -34,8 +34,9 @@ GAME_DLL GAME_INIT(Game_Init)
 	LoadMesh(&mesh, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
 	SetTexture(&mesh, "resources\\textures\\test.png");
 
-	transform.Position = vec3(0, 0, 0);
-	CalculateOrthoProjectionMatrix(&Cam, 500.0f, 500.0f, 0.1f, 500.0f);
+	transform.Position = vec3(0, 0, 100);
+	CalculatePerspectiveProjection(&Cam, 80.0f, 1280.0f, 720.0f, 0.1f, 500.0f);
+	CalculateOrthoProjectionMatrix(&Cam, 1280.0f, 720.0f, 0.1f, 500.0f);
 }
 
 //Render the game
@@ -44,7 +45,7 @@ GAME_DLL GAME_RENDER(Game_Render)
 	//Activate the shader
 	shader->Activate();
 	CalculateModelMatrix(&transform);
-	CalculateLookAtViewMatrix(&Cam, vec3(0, 1, 1), vec3(0, 1, 0));
+	CalculateLookAtViewMatrix(&Cam, vec3(0, 0, 10), vec3(0, 1, 0));
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "modelMatrix"), 1, false, CalculateMVP(&transform, &Cam).GetElemets());
 
 	//Draw the mesh

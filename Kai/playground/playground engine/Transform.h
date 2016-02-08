@@ -49,4 +49,6 @@ void CalculateFPSViewMatrix(Camera *cam, float pitch, float yaw);
 void CalculateOrthoProjectionMatrix(Camera *cam, float width, float height, float near, float far);
 void CalculateOrthoProjectionMatrix(Camera *cam, float left, float right, float top, float bottom, float near, float far);
 
+void CalculatePerspectiveProjection(Camera *cam, float fov, float width, float height, float near, float far);
+
 mat4 CalculateMVP(Transform *transform, Camera *cam);
