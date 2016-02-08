@@ -178,7 +178,62 @@ file_internal void UnbindTexture(Mesh *mesh)
 }
 
 ////
-Mesh* CreateSprite(int width, int height, int pos, char *imagePath, Color color)
+Mesh CreateSprite(vec2 size, vec3 pos, char *imagePath, Color color)
 {
-	return NULL;
+	Mesh result;
+
+	//Square vertices (cordinates are from -1 to 1 in both x and y and the origin is at the center)
+	Vertex vertices[] =
+	{
+		Vertex(Position(pos.x		  , pos.y		  , pos.z), color, TexCoords(1, 1)),		//TOP RIGHT
+		Vertex(Position(pos.x		  , pos.y + size.y, pos.z), color, TexCoords(1, 0)),		//BOTTOM RIGHT
+		Vertex(Position(pos.x + size.x, pos.y + size.y, pos.z), color, TexCoords(0, 0)),		//BOTTOM LEFT
+		Vertex(Position(pos.x + size.x, pos.y		  , pos.z), color, TexCoords(0, 1)),		//TOP LEFT
+	};
+
+	//Order of vertices that will be drawn
+	unsigned int indices[] =
+	{
+		0,
+		1,
+		3,
+		1,
+		2,
+		3,
+	};
+
+	LoadMesh(&result, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
+	SetTexture(&result, imagePath);
+
+	return result;
+}
+
+Mesh CreateSprite(vec2 size, vec3 pos, char *imagePath, Color *color)
+{
+	Mesh result;
+
+	//Square vertices (cordinates are from -1 to 1 in both x and y and the origin is at the center)
+	Vertex vertices[] =
+	{
+		Vertex(Position(pos.x, pos.y, pos.z), color[0], TexCoords(1, 1)),		//TOP RIGHT
+		Vertex(Position(pos.x, pos.y + size.y, pos.z), color[1], TexCoords(1, 0)),		//BOTTOM RIGHT
+		Vertex(Position(pos.x + size.x, pos.y + size.y, pos.z), color[2], TexCoords(0, 0)),		//BOTTOM LEFT
+		Vertex(Position(pos.x + size.x, pos.y, pos.z), color[3], TexCoords(0, 1)),		//TOP LEFT
+	};
+
+	//Order of vertices that will be drawn
+	unsigned int indices[] =
+	{
+		0,
+		1,
+		3,
+		1,
+		2,
+		3,
+	};
+
+	LoadMesh(&result, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
+	SetTexture(&result, imagePath);
+
+	return result;
 }
