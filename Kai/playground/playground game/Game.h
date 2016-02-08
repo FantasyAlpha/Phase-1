@@ -19,7 +19,6 @@ NOTE(kai): This is a test game
 #include <Mesh.h>
 #include <Shader.h>
 #include <Transform.h>
-#include "TileMap.h"
 //
 struct Game_Memory
 {
@@ -28,8 +27,6 @@ struct Game_Memory
 
 //Mesh instance
 Mesh mesh;
-
-TileMap map;
 
 //Shader instance
 Shader *shader;

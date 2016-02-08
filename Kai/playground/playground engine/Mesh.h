@@ -12,8 +12,6 @@ NOTE(kai): This file can:
 #include "Vertex.h"
 #include "UsefulDefines.h"
 #include "Utilities.h"
-#include "Math\vec3.h"
-#include "Math\vec2.h"
 
 struct Mesh
 {
@@ -73,5 +71,4 @@ file_internal void BindTexture(Mesh *mesh);
 file_internal void UnbindTexture(Mesh *mesh);
 
 ////
-Mesh CreateSprite(vec2 size, vec3 pos, char *imagePath, Color color); 
-Mesh CreateSprite(vec2 size, vec3 pos, char *imagePath, Color *color);
+Mesh* CreateSprite(int width, int height, int pos, char *imagePath, Color color);

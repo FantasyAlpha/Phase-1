@@ -34,14 +34,9 @@ GAME_DLL GAME_INIT(Game_Init)
 	LoadMesh(&mesh, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
 	SetTexture(&mesh, "resources\\textures\\test.png");
 
-	transform.Position = vec3((-80.0f * 10.0f) / 2.0f , (80.0f * 7.0f) / 2.0f, 300);
-	transform.Scale = vec3(1, -1, 1);
+	transform.Position = vec3(0, 0, 100);
 	CalculatePerspectiveProjection(&Cam, 80.0f, 1280.0f, 720.0f, 0.1f, 500.0f);
 	CalculateOrthoProjectionMatrix(&Cam, 1280.0f, 720.0f, 0.1f, 500.0f);
-
-	map = {};
-	LoadLevel(&map, "resources\\tilemaps\\map1.txt");
-	ConstructMap(&map, vec2(10, 7), vec2(80, 80));
 }
 
 //Render the game
@@ -54,10 +49,7 @@ GAME_DLL GAME_RENDER(Game_Render)
 	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "modelMatrix"), 1, false, CalculateMVP(&transform, &Cam).GetElemets());
 
 	//Draw the mesh
-	for (int i = 0; i < map.MapSize; i++)
-	{
-		DrawMesh(&map.Tiles[i]);
-	}
+	DrawMesh(&mesh);
 }
 
 //Update the game
