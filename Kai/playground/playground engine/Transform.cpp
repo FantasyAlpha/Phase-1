@@ -19,12 +19,17 @@ void CalculateFPSViewMatrix(Camera *cam, float pitch, float yaw)
 	cam->ViewMatrix = mat4::FPSMatrix(cam->Eye, pitch, yaw) * mat4::Scale(cam->Scale);
 }
 
-void CalculateProjectionMatrix(ProjectionFrustum *projection)
+void CalculateOrthoProjectionMatrix(Camera *cam, float width, float height, float near, float far)
 {
-
+	cam->ProjectionMatrix = mat4::OrthographicMatrix(width, height, near, far);
 }
 
-mat4 CalculateMVP(Transform *transform, Camera *cam, ProjectionFrustum *projection)
+void CalculateOrthoProjectionMatrix(Camera *cam, float left, float right, float top, float bottom, float near, float far)
 {
-	return projection->ProjectionMatrix * cam->ViewMatrix * transform->ModelMatrix;
+	cam->ProjectionMatrix = mat4::OrthographicMatrix(left, right, top, bottom, near, far);
+}
+
+mat4 CalculateMVP(Transform *transform, Camera *cam)
+{
+	return cam->ProjectionMatrix * cam->ViewMatrix * transform->ModelMatrix;
 }

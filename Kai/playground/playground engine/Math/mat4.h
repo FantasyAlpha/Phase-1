@@ -52,6 +52,9 @@ public:
 
 	static mat4 LookAtMatrix(vec3 &eye, vec3 &target, vec3 &up);
 	static mat4 FPSMatrix(vec3 &eye, float pitch, float yaw);
+	
+	static mat4 OrthographicMatrix(float left, float right, float top, float bottom, float near, float far);
+	static mat4 OrthographicMatrix(float width, float height, float near, float far);
 
 private:
 	//Rotate the object to the wanted (forward, up, right) directions 

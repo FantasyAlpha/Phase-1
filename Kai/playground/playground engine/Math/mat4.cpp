@@ -137,3 +137,27 @@ mat4 mat4::FPSMatrix(vec3 &eye, float pitch, float yaw)
 {
 	return mat4();
 }
+
+mat4 mat4::OrthographicMatrix(float left, float right, float top, float bottom, float near, float far)
+{
+	mat4 result;
+
+	result.elements[0] = (2.0f / (right - left));		result.elements[1] = 0;								result.elements[2] = 0;							result.elements[3] = -((right + left) / (right - left));
+	result.elements[4] = 0;								result.elements[5] = (2.0f / (top - bottom));		result.elements[6] = 0;							result.elements[7] = -((top + bottom) / (top - bottom));
+	result.elements[8] = 0;								result.elements[9] = 0;								result.elements[10] = (1.0f / (far - near));		result.elements[11] = (near / (far - near));
+	result.elements[12] = 0;							result.elements[13] = 0;							result.elements[14] = 0;						result.elements[15] = 1;
+
+	return result;
+}
+
+mat4 mat4::OrthographicMatrix(float width, float height, float near, float far)
+{
+	mat4 result;
+
+	result.elements[0] = (2.0f / (width));		result.elements[1] = 0;						result.elements[2] = 0;							result.elements[3] = 0;
+	result.elements[4] = 0;						result.elements[5] = (2.0f / height);		result.elements[6] = 0;							result.elements[7] = 0;
+	result.elements[8] = 0;						result.elements[9] = 0;						result.elements[10] = (1.0f / (far - near));		result.elements[11] = (near / (far - near));
+	result.elements[12] = 0;					result.elements[13] = 0;					result.elements[14] = 0;						result.elements[15] = 1;
+
+	return result;
+}

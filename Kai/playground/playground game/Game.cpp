@@ -6,10 +6,10 @@ GAME_DLL GAME_INIT(Game_Init)
 	//Square vertices (cordinates are from -1 to 1 in both x and y and the origin is at the center)
 	Vertex vertices[] = 
 	{ 
-		Vertex(Position(0.5f, 0.5f, 0), Color(0, 0, 1, 1), TexCoords(1, 1)),		//TOP RIGHT
-		Vertex(Position(0.5f, -0.5f, 0), Color(0, 1, 0, 1), TexCoords(1, 0)),		//BOTTOM RIGHT
-		Vertex(Position(-0.5f, -0.5f, 0), Color(0, 0, 1, 1), TexCoords(0, 0)),		//BOTTOM LEFT
-		Vertex(Position(-0.5f, 0.5f, 0), Color(1, 0, 1, 1), TexCoords(0, 1)),		//TOP LEFT
+		Vertex(Position(50.0f, 50.0f, 0), Color(0, 0, 1, 1), TexCoords(1, 1)),		//TOP RIGHT
+		Vertex(Position(50.0f, -50.0f, 0), Color(0, 1, 0, 1), TexCoords(1, 0)),		//BOTTOM RIGHT
+		Vertex(Position(-50.0f, -50.0f, 0), Color(0, 0, 1, 1), TexCoords(0, 0)),		//BOTTOM LEFT
+		Vertex(Position(-50.0f, 50.0f, 0), Color(1, 0, 1, 1), TexCoords(0, 1)),		//TOP LEFT
 	};
 
 	//Order of vertices that will be drawn
@@ -35,6 +35,7 @@ GAME_DLL GAME_INIT(Game_Init)
 	SetTexture(&mesh, "resources\\textures\\test.png");
 
 	transform.Position = vec3(0, 0, 0);
+	CalculateOrthoProjectionMatrix(&Cam, 500.0f, 500.0f, 0.1f, 500.0f);
 }
 
 //Render the game
@@ -43,8 +44,8 @@ GAME_DLL GAME_RENDER(Game_Render)
 	//Activate the shader
 	shader->Activate();
 	CalculateModelMatrix(&transform);
-	CalculateLookAtViewMatrix(&Cam, vec3(0, 0, 10), vec3(0, 1, 0));
-	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "modelMatrix"), 1, false, CalculateMVP(&transform, &Cam, &ProjectionFrustum()).GetElemets());
+	CalculateLookAtViewMatrix(&Cam, vec3(0, 1, 1), vec3(0, 1, 0));
+	glUniformMatrix4fv(glGetUniformLocation(shader->GetProgram(), "modelMatrix"), 1, false, CalculateMVP(&transform, &Cam).GetElemets());
 
 	//Draw the mesh
 	DrawMesh(&mesh);
