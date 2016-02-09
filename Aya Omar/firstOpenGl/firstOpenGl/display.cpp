@@ -67,11 +67,7 @@ void display::update() {
 	SDL_Event e;
 	// searching for sdl events 
 	while (SDL_PollEvent(&e)) {
-		//2====> check if the event is window quit or closed 
-		if (e.type == SDL_QUIT)
-		{
-			m_closed = true;
-		}
+		
 		//2====> check if the event is window quit or closed 
 		if (e.type == SDL_QUIT)
 		{
@@ -100,6 +96,9 @@ void display::update() {
 				break;
 			case SDLK_SPACE:
 				std::cout << "the key entered is Space " << std::endl;
+				break;
+			case SDLK_ESCAPE :
+				SDL_Quit();
 				break;
 
 			}

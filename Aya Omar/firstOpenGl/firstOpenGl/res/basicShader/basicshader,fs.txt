@@ -1,6 +1,23 @@
 #version 120
-void main () {
 
-gl_FragColor=vec4(1,0,0,0);
+
+
+uniform sampler2D sampler;
+varying vec2 textcoord0 ;
+
+void main () 
+{
+
+
+
+
+
+gl_FragColor=texture2D(sampler,textcoord0 );
+
+
+
+
+
+
 
 }
