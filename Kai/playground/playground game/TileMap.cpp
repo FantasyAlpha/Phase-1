@@ -33,11 +33,11 @@ void LoadLevel(TileMap *tileMap, char *levelPath)
 		tileMap->MapSize++;
 	}
 
-	tileMap->Tiles = new Mesh[tileMap->MapSize];
+	tileMap->Tiles = new Tile[tileMap->MapSize];
 	//UnloadFile(&file);
 }
 
-void ConstructMap(TileMap *tileMap, vec2 mapDimensions, vec2 tileSize)
+void ConstructMap(TileMap *tileMap, Game_Resources *resources, vec3 position, vec2 mapDimensions, vec2 tileSize)
 {
 	if (tileMap->MapSize != (int)(mapDimensions.x * mapDimensions.y))
 	{
@@ -45,11 +45,16 @@ void ConstructMap(TileMap *tileMap, vec2 mapDimensions, vec2 tileSize)
 		system("PAUSE");
 	}
 
-	for (int i = 0; i < mapDimensions.y; i++)
+	for (float i = 0; i < mapDimensions.y; i++)
 	{
-		for (int j = 0; j < mapDimensions.x + 2; j++)
+		for (float j = 0; j < mapDimensions.x; j++)
 		{
-			if (tileMap->Map[j + (i * (int)mapDimensions.x)] == '0')
+			int index = (int)(j + (i * (int)mapDimensions.x));
+
+			tileMap->Tiles[index].TileSprite.Position = vec3(position.x + (j * tileSize.x)
+															, position.y + (i * tileSize.y)
+															, position.z);
+			if (tileMap->Map[index] == '0')
 			{		
 				Color colors[4] = 
 				{
@@ -59,10 +64,16 @@ void ConstructMap(TileMap *tileMap, vec2 mapDimensions, vec2 tileSize)
 					Color(0, 0, 1, 1)
 				};
 
-				tileMap->Tiles[j + (i * (int)mapDimensions.x)] = CreateSprite(tileSize, vec3(j * tileSize.x, i * tileSize.y, 0), "resources\\textures\\tile1.png", colors);
+				Tile t;
+				CreateSprite(&t.TileSprite, vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.Position, GetTexture(resources, "Wall"), colors, 4);
+				t.Type = 0;
+				tileMap->tiles.push_back(t);
+				CreateSprite(&tileMap->Tiles[index].TileSprite, vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.Position, GetTexture(resources, "Wall"), colors, 4);
+				
+				tileMap->Tiles[index].Type = 0;
 			}
 
-			if (tileMap->Map[j + (i * (int)mapDimensions.x)] == '1')
+			if (tileMap->Map[index] == '1')
 			{
 				Color colors[4] =
 				{
@@ -70,10 +81,54 @@ void ConstructMap(TileMap *tileMap, vec2 mapDimensions, vec2 tileSize)
 					Color(0, 1, 1, 1),
 					Color(0, 0, 1, 1),
 					Color(0, 1, 0, 1),
+				};				
+				
+				Tile t;
+				CreateSprite(&t.TileSprite, vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.Position, GetTexture(resources, "Floor"), colors, 4);
+				t.Type = 1;
+				tileMap->tiles.push_back(t);
+				CreateSprite(&tileMap->Tiles[index].TileSprite, vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.Position, GetTexture(resources, "Floor"), colors, 4);
+
+				tileMap->Tiles[index].Type = 1;
+			}		
+
+			if (tileMap->Map[index] == '2')
+			{
+				Color colors[4] =
+				{
+					Color(0, 0, 1, 1),
+					Color(0.0f, 0.2f, 0.8f, 1),
+					Color(1, 0, 1, 1),
+					Color(0, 0, 1, 1),
 				};
 
-				tileMap->Tiles[j + (i * (int)mapDimensions.x)] = CreateSprite(tileSize, vec3(j * tileSize.x, i * tileSize.y, 0), "resources\\textures\\tile3.png", colors);
-			}			
+				Tile t;
+				CreateSprite(&t.TileSprite, vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.Position, GetTexture(resources, "Floor"), colors, 4);
+				t.Type = 2;
+				tileMap->tiles.push_back(t);
+				CreateSprite(&tileMap->Tiles[index].TileSprite, vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.Position, GetTexture(resources, "Floor"), colors, 4);
+
+				tileMap->Tiles[index].Type = 2;
+			}
+
+			if (tileMap->Map[index] == '3')
+			{
+				Color colors[4] =
+				{
+					Color(1, 0, 0, 1),
+					Color(1, 0, 0, 1),
+					Color(1, 0, 1, 1),
+					Color(0, 0, 1, 1),
+				};
+
+				Tile t;
+				CreateSprite(&t.TileSprite, vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.Position, GetTexture(resources, "Wall"), colors, 4);
+				t.Type = 3;
+				tileMap->tiles.push_back(t);
+				CreateSprite(&tileMap->Tiles[index].TileSprite, vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.Position, GetTexture(resources, "Wall"), colors, 4);
+
+				tileMap->Tiles[index].Type = 3;
+			}
 
 		}
 	}

@@ -107,10 +107,10 @@ mat4 mat4::operator*=(const mat4& other)
 
 			for (int j = 0; j < 4; j++)
 			{
-				sum += this->elements[j + (i * 4)] * other.elements[j + (k * 4)];
+				sum += this->elements[j + (i * 4)] * other.elements[k + (j * 4)];
 			}
 
-			result.elements[i + (k * 4)] = sum;
+			result.elements[k + (i * 4)] = sum;
 		}
 	}
 
@@ -121,16 +121,16 @@ mat4 mat4::LookAtMatrix(vec3 &eye, vec3 &target, vec3 &up)
 {
 	vec3 forward = (eye - target).Normalize();
 	vec3 right = (up.Cross(forward)).Normalize();
-	up = (forward.Cross(right)).Normalize();
+	up = (right.Cross(forward)).Normalize();
 
 	mat4 result;
 
-	result.elements[0] = right.x;				result.elements[1] = right.y;					result.elements[2] = right.z;				result.elements[3] = 0;
-	result.elements[4] = up.x;					result.elements[5] = up.y;						result.elements[6] = up.z;					result.elements[7] = 0;
-	result.elements[8] = forward.x;				result.elements[9] = forward.y;					result.elements[10] = forward.z;			result.elements[11] = 0;
-	result.elements[12] = 0;					result.elements[13] = 0;						result.elements[14] = 0;					result.elements[15] = 1;
+	result.elements[0] = right.x;				result.elements[1] = up.x;				result.elements[2] = forward.x;				result.elements[3] = 0;
+	result.elements[4] = right.y;				result.elements[5] = up.y;				result.elements[6] = forward.y;				result.elements[7] = 0;
+	result.elements[8] = right.z;				result.elements[9] = up.z;				result.elements[10] = forward.z;			result.elements[11] =0;
+	result.elements[12] = -(eye.Dot(right));		result.elements[13] = -(eye.Dot(up));	result.elements[14] = -(eye.Dot(forward));	result.elements[15] = 1;
 
-	return mat4::Translate((-1.0f * eye)) * result;
+	return result;
 }
 
 mat4 mat4::FPSMatrix(vec3 &eye, float pitch, float yaw)
@@ -138,41 +138,45 @@ mat4 mat4::FPSMatrix(vec3 &eye, float pitch, float yaw)
 	return mat4();
 }
 
-mat4 mat4::OrthographicMatrix(float left, float right, float top, float bottom, float near, float far)
+mat4 mat4::OrthographicMatrix(float right, float left, float top, float bottom, float near, float far)
 {
 	mat4 result;
 
-	result.elements[0] = (2.0f / (right - left));		result.elements[1] = 0;								result.elements[2] = 0;							result.elements[3] = -((right + left) / (right - left));
-	result.elements[4] = 0;								result.elements[5] = (2.0f / (top - bottom));		result.elements[6] = 0;							result.elements[7] = -((top + bottom) / (top - bottom));
-	result.elements[8] = 0;								result.elements[9] = 0;								result.elements[10] = (1.0f / (far - near));		result.elements[11] = -(near / (far - near));
-	result.elements[12] = 0;							result.elements[13] = 0;							result.elements[14] = 0;						result.elements[15] = 1;
+	result.elements[0] = (2.0f / (right - left));				result.elements[1] = 0;										result.elements[2] = 0;									result.elements[3] = 0;
+	result.elements[4] = 0;										result.elements[5] = (2.0f / (top - bottom));				result.elements[6] = 0;									result.elements[7] = 0;
+	result.elements[8] = 0;										result.elements[9] = 0;										result.elements[10] = -(2.0f / (far - near));			result.elements[11] = 0;
+	result.elements[12] = -((right + left) / (right - left));	result.elements[13] = -((top + bottom) / (top - bottom));	result.elements[14] = -((far + near) / (far - near));	result.elements[15] = 1;
 
 	return result;
 }
 
 mat4 mat4::OrthographicMatrix(float width, float height, float near, float far)
 {
-	mat4 result;
+	float aspectRatio = width / height;
+	
+	float top = height;
+	float bottom = -top;
 
-	result.elements[0] = (2.0f / (width));		result.elements[1] = 0;						result.elements[2] = 0;							result.elements[3] = 0;
-	result.elements[4] = 0;						result.elements[5] = (2.0f / height);		result.elements[6] = 0;							result.elements[7] = 0;
-	result.elements[8] = 0;						result.elements[9] = 0;						result.elements[10] = (1.0f / (far - near));		result.elements[11] = -(near / (far - near));
-	result.elements[12] = 0;					result.elements[13] = 0;					result.elements[14] = 0;						result.elements[15] = 1;
+	float right = width;
+	float left = -right;
 
-	return result;
+	return mat4::OrthographicMatrix(right, left, top, bottom, near, far);
 }
 
 mat4 mat4::PerspectiveMatrix(float fieldOfView, float width, float height, float near, float far)
 {
-	float cot_HalfAngle = 1.0 / tanf(ToRadians(fieldOfView / 2.0f));
 	float aspectRatio = width / height;
+	float top = near * tanf(ToRadians(fieldOfView / 2.0f));
+	float bottom = -top;
+	float right = top * aspectRatio;
+	float left = -right;
 
 	mat4 result;
 
-	result.elements[0] = (cot_HalfAngle / (aspectRatio));		result.elements[1] = 0;					result.elements[2] = 0;									result.elements[3] = 0;
-	result.elements[4] = 0;										result.elements[5] = cot_HalfAngle;		result.elements[6] = 0;									result.elements[7] = 0;
-	result.elements[8] = 0;										result.elements[9] = 0;					result.elements[10] = (far / (far - near));				result.elements[11] = 1;
-	result.elements[12] = 0;									result.elements[13] = 0;				result.elements[14] = -((near * far) / (far - near));	result.elements[15] = 0;
+	result.elements[0] = ((2.0f * near) / (right - left));		result.elements[1] = 0;										result.elements[2] = 0;											result.elements[3] = 0;
+	result.elements[4] = 0;										result.elements[5] = ((2.0f * near) / (top - bottom));		result.elements[6] = 0;											result.elements[7] = 0;
+	result.elements[8] = ((right + left) / (right - left));		result.elements[9] = ((top + bottom) / (top - bottom));		result.elements[10] = -((far + near) / (far - near));			result.elements[11] = -1;
+	result.elements[12] = 0;									result.elements[13] = 0;									result.elements[14] = -((2.0f * far * near) / (far - near));		result.elements[15] = 0;
 
 	return result;
 }

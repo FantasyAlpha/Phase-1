@@ -5,6 +5,8 @@ void WindowManager::SetOpenglOptions()
 {
 	//The color that we will use to clear the screen (painting it with this color)
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 //NOTE(kai): a context is basically all data within the window ,including attributes, buffers, ...etc

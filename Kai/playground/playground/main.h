@@ -29,6 +29,7 @@ WindowManager Window;
 //
 Game_Code Game;
 State state;
+Game_Input Input;
 
 
 //Instance of the game
@@ -50,6 +51,8 @@ void Release();
 void Render();
 //Update all of the subsystems in the engine
 void Update();
+
+void ProcessInput(Game_Input *input);
 
 //Our main loop which should continue running as long as we don't quite the game
 void MainLoop();

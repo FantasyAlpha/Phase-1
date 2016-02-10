@@ -132,6 +132,21 @@ void InitSystem(char *title, int width, int height)
 	Game.Game_Init();
 }
 
+void ProcessInput(Game_Input *input)
+{
+	input->UP.KeyDown = InputManager::IsKeyDown(input->UP.Button);
+	input->UP.KeyUp = InputManager::IsKeyUp(input->UP.Button);
+
+	input->DOWN.KeyDown = InputManager::IsKeyDown(input->DOWN.Button);
+	input->DOWN.KeyUp = InputManager::IsKeyUp(input->DOWN.Button);
+
+	input->RIGHT.KeyDown = InputManager::IsKeyDown(input->RIGHT.Button);
+	input->RIGHT.KeyUp = InputManager::IsKeyUp(input->RIGHT.Button);
+
+	input->LEFT.KeyDown = InputManager::IsKeyDown(input->LEFT.Button);
+	input->LEFT.KeyUp = InputManager::IsKeyUp(input->LEFT.Button);
+}
+
 //Begin running the engine
 void Run()
 {
@@ -180,8 +195,16 @@ void MainLoop()
 	char tempPDBFullPath[MAX_PATH];
 	BuildFileFullPath(&state, "playground game_temp.pdb", tempPDBFullPath, sizeof(tempPDBFullPath));
 
+	Input = {};
+	Input.UP.Button = KEY::KEY_UP;
+	Input.DOWN.Button = KEY::KEY_DOWN;
+	Input.RIGHT.Button = KEY::KEY_RIGHT;
+	Input.LEFT.Button = KEY::KEY_LEFT;
+
 	while (Running)
 	{
+		ProcessInput(&Input);
+
 		//Update everything
 		Update();
 
@@ -240,7 +263,7 @@ void Update()
 	Window.UpdateWindow();
 
 	//Update the game
-	Game.Game_Update();
+	Game.Game_Update(&Input);
 }
 
 int main()
