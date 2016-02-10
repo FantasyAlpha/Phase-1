@@ -76,4 +76,8 @@ typedef GAME_UPDATE(game_update);
 typedef GAME_RENDER(game_render);
 
 bool DetectCollision(TileMap *map, Sprite *player);
-bool CheckCollisionAABB(Sprite *sprite1, Sprite *sprite2);
+bool CheckCollisionAABB(Sprite sprite1, Sprite sprite2);
+
+void CreateLevel1();
+void CreateLevel2();
+void InitializeResources();

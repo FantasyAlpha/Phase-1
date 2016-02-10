@@ -159,7 +159,6 @@ void DrawSprite(Sprite *sprite)
 ////
 void CreateSprite(Sprite *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount)
 {
-	sprite->Position = pos;
 	sprite->Size = size;
 
 	//Square vertices 

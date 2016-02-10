@@ -39,14 +39,13 @@ struct MeshData
 
 struct Sprite
 {
-	vec3 Position;
 	vec2 Size;
 
 	MeshData Data;
 	MeshBuffers Buffers;
 
 	Texture SpriteTexture;
-	Transform LocalTransform;
+	Transform GlobalTransform;
 };
 
 struct Mesh
@@ -55,7 +54,7 @@ struct Mesh
 	MeshBuffers Buffers;
 
 	Texture MeshTexture;
-	Transform LocalTransform;
+	Transform GlobalTransform;
 };
 
 //Create the buffers and store the mesh data in them
