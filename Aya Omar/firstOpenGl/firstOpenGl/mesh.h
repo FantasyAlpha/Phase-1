@@ -7,12 +7,19 @@
 class vertex {
 
 public :
-	vertex(const glm::vec3& position){
+	vertex(const glm::vec3& position, const glm::vec2& textCoord){
 
 		this->position = position;
+		this->textCoord = textCoord;
 	}
+	 glm :: vec3 *getpos() { return &position; }
+	 glm::vec2 *gettextCoord() { return &textCoord; }
+
+
+
 private: 
 	glm::vec3 position;
+	glm::vec2 textCoord;
 
 
 };
@@ -32,7 +39,9 @@ private :
 	// point to the buffer in the GPU  hold the vertex array which form the triangle we wnat to draw 
 	enum {
 		// handel of the buffer and num
-		pos_vB , num_buffers
+		pos_vB ,
+		texCoord_vB,
+		num_buffers
 	};
 	GLuint m_ArrayBuffers[num_buffers];
 	// array of buffers handels in case we want  more than one data buffer for more than one triangle or mesh 

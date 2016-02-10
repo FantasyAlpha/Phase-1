@@ -56,6 +56,7 @@ shader::shader(char*path1, char*path2)
 
 
 	glBindAttribLocation(m_program, 0, "position");
+	glBindAttribLocation(m_program, 1, "texCoord");
 
 
 	// now the program has the 2 shaders attached to it  (all form the program now ) ,then we link the program
