@@ -8,18 +8,14 @@ NOTE(kai): This file can:
 #pragma once
 
 #include <GL\glew.h>
-#include <iostream>
 #include "Vertex.h"
-#include "UsefulDefines.h"
-#include "Utilities.h"
+#include "Texture.h"
 #include "Math\vec3.h"
 #include "Math\vec2.h"
+#include "Transform.h"
 
-struct Mesh
+struct MeshBuffers
 {
-	//NOTE(kai): vertices are the positions of the each vertex in the mesh
-	//			,indices are the order of the vertices that i want to draw in
-
 	//Handle to a special type object that stores a reference to the vertex buffer ,index buffer
 	//	and the layout specification to the vertex itself 
 	unsigned int VAO;		//Vertex array object
@@ -27,16 +23,42 @@ struct Mesh
 	//The Buffers' handles i will use to store the mesh data in
 	unsigned int VBO;		//Vertex buffer 
 	unsigned int EBO;		//Element buffer
+};
+
+struct MeshData
+{
+	//NOTE(kai): vertices are the positions of the each vertex in the mesh
+	//			,indices are the order of the vertices that i want to draw in
+
+	Vertex *Vertices;
+	unsigned int *Indices;
 
 	//The number of the vertices and indices in the mesh
 	unsigned int VerticesCount, IndicesCount;
+};
 
-	unsigned int TextureHandle;
-	unsigned long TextureWidth, TextureHeight;
+struct Sprite
+{
+	vec2 Size;
+
+	MeshData Data;
+	MeshBuffers Buffers;
+
+	Texture SpriteTexture;
+	Transform GlobalTransform;
+};
+
+struct Mesh
+{
+	MeshData Data;
+	MeshBuffers Buffers;
+
+	Texture MeshTexture;
+	Transform GlobalTransform;
 };
 
 //Create the buffers and store the mesh data in them
-void LoadMesh(Mesh *mesh, Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount);
+void LoadMesh(MeshBuffers *buffers, MeshData *data, Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount);
 
 //NOTE(kai): We create the vertex buffer by:
 //					1) Create a handle for the buffer
@@ -46,7 +68,7 @@ void LoadMesh(Mesh *mesh, Vertex *vertices, unsigned int verticesCount, unsigned
 //						,set the attribute pointer
 
 //Create a Vertex buffer and stores the vertices in it 
-file_internal void InitVBO(Mesh *mesh, Vertex *vertices);
+file_internal void InitVBO(MeshBuffers *buffers, MeshData *data);
 
 //NOTE(kai): We create the element buffer by:
 //					1) Create a handle for the buffer
@@ -54,24 +76,19 @@ file_internal void InitVBO(Mesh *mesh, Vertex *vertices);
 //					3) Store the data in the buffer
 
 //Create an Element buffer and stores the indices in it 
-file_internal void InitEBO(Mesh *mesh, unsigned int *indices);
+file_internal void InitEBO(MeshBuffers *buffers, MeshData *data);
 
 //NOTE(kai): only one buffer of the same type can be bound at a certain time
 
 //Bind the buffers
-file_internal void BindMesh(Mesh *mesh);
+file_internal void BindMesh(MeshBuffers *buffers);
 
 //Unbind the buffers
-file_internal void UnbindMesh(Mesh *mesh);
+file_internal void UnbindMesh();
 
 //Draw the mesh
 void DrawMesh(Mesh *mesh);
 
 ////
-void SetTexture(Mesh *mesh, char *imagePath);
-file_internal void BindTexture(Mesh *mesh);
-file_internal void UnbindTexture(Mesh *mesh);
-
-////
-Mesh CreateSprite(vec2 size, vec3 pos, char *imagePath, Color color); 
-Mesh CreateSprite(vec2 size, vec3 pos, char *imagePath, Color *color);
+void DrawSprite(Sprite *sprite);
+void CreateSprite(Sprite *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount);

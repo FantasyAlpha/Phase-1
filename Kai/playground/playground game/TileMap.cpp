@@ -33,11 +33,11 @@ void LoadLevel(TileMap *tileMap, char *levelPath)
 		tileMap->MapSize++;
 	}
 
-	tileMap->Tiles = new Mesh[tileMap->MapSize];
+	tileMap->Tiles = new Tile[tileMap->MapSize];
 	//UnloadFile(&file);
 }
 
-void ConstructMap(TileMap *tileMap, vec2 mapDimensions, vec2 tileSize)
+void ConstructMap(TileMap *tileMap, Game_Resources *resources, TileCase *cases, int caseCount, vec3 position, vec2 mapDimensions, vec2 tileSize)
 {
 	if (tileMap->MapSize != (int)(mapDimensions.x * mapDimensions.y))
 	{
@@ -45,36 +45,26 @@ void ConstructMap(TileMap *tileMap, vec2 mapDimensions, vec2 tileSize)
 		system("PAUSE");
 	}
 
-	for (int i = 0; i < mapDimensions.y; i++)
+	for (float i = 0; i < mapDimensions.y; i++)
 	{
-		for (int j = 0; j < mapDimensions.x + 2; j++)
+		for (float j = 0; j < mapDimensions.x; j++)
 		{
-			if (tileMap->Map[j + (i * (int)mapDimensions.x)] == '0')
-			{		
-				Color colors[4] = 
-				{
-					Color(1, 0, 0.5f, 1),
-					Color(0, 0, 0.5f, 1),
-					Color(1, 0, 0.5f, 1),
-					Color(0, 0, 1, 1)
-				};
+			
+			int index = (int)(j + (i * (int)mapDimensions.x));
 
-				tileMap->Tiles[j + (i * (int)mapDimensions.x)] = CreateSprite(tileSize, vec3(j * tileSize.x, i * tileSize.y, 0), "resources\\textures\\tile1.png", colors);
-			}
+			tileMap->Tiles[index].TileSprite.GlobalTransform.Position = vec3(position.x + (j * tileSize.x)
+																			, position.y + (i * tileSize.y)
+																			, position.z);
 
-			if (tileMap->Map[j + (i * (int)mapDimensions.x)] == '1')
+			for (int k = 0; k < caseCount; k++)
 			{
-				Color colors[4] =
+				if (tileMap->Map[index] == cases[k].Case)
 				{
-					Color(0, 0, 1, 1),
-					Color(0, 1, 1, 1),
-					Color(0, 0, 1, 1),
-					Color(0, 1, 0, 1),
-				};
+					CreateSprite(&tileMap->Tiles[index].TileSprite, vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.GlobalTransform.Position, &cases[k].CaseTexture, cases[k].Colors, 4);
 
-				tileMap->Tiles[j + (i * (int)mapDimensions.x)] = CreateSprite(tileSize, vec3(j * tileSize.x, i * tileSize.y, 0), "resources\\textures\\tile3.png", colors);
-			}			
-
+					tileMap->Tiles[index].Type = k;
+				}
+			}
 		}
 	}
 }

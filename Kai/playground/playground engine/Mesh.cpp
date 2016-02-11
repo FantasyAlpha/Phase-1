@@ -1,44 +1,47 @@
 #include "Mesh.h"
 
 //Create the buffers and store the mesh data in them
-void LoadMesh(Mesh *mesh, Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount)
+void LoadMesh(MeshBuffers *buffers, MeshData *data, Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount)
 {
-	mesh->VerticesCount = verticesCount;
-	mesh->IndicesCount = indicesCount;
+	data->VerticesCount = verticesCount;
+	data->IndicesCount = indicesCount;
+
+	data->Vertices = vertices;
+	data->Indices = indices;
 
 	//Use only with newer GLSL versions
 #if GLSL_VERSION == MODERN_VERSION
 	//Generate a handle to a vertex array object
-	glGenVertexArrays(1, &mesh->VAO);
+	glGenVertexArrays(1, &buffers->VAO);
 #endif
 
 	//Generate a handle to a vertex buffer object
-	glGenBuffers(1, &mesh->VBO);
+	glGenBuffers(1, &buffers->VBO);
 	
 	//Generate a handle to a element buffer object
-	glGenBuffers(1, &mesh->EBO);
+	glGenBuffers(1, &buffers->EBO);
 
 	//Bind the vertex array object (it will begin storing what is happening below
-	BindMesh(mesh);
+	BindMesh(buffers);
 
 	//Create a Vertex buffer
-	InitVBO(mesh, vertices);
+	InitVBO(buffers, data);
 
 	//Create an Element buffer
-	InitEBO(mesh, indices);
+	InitEBO(buffers, data);
 
 	//Unbind everything
-	UnbindMesh(mesh);
+	UnbindMesh();
 }
 
 //Create a Vertex buffer and stores the vertices in it 
-file_internal void InitVBO(Mesh *mesh, Vertex *vertices)
+file_internal void InitVBO(MeshBuffers *buffers, MeshData *data)
 {
 	//Bind the vertex buffer
-	glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, buffers->VBO);
 
 	//Store the data in the buffer
-	glBufferData(GL_ARRAY_BUFFER, mesh->VerticesCount * sizeof(Vertex), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, data->VerticesCount * sizeof(Vertex), data->Vertices, GL_STATIC_DRAW);
 
 	//Enable the attribute with the given index in the shader to be used in rendering
 	glEnableVertexAttribArray(0);
@@ -58,26 +61,26 @@ file_internal void InitVBO(Mesh *mesh, Vertex *vertices)
 }
 
 //Create an Element buffer and stores the indices in it 
-file_internal void InitEBO(Mesh *mesh, unsigned int *indices)
+file_internal void InitEBO(MeshBuffers *buffers, MeshData *data)
 {
 	//Bind the element buffer
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers->EBO);
 
 	//Store the data in the buffer
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->IndicesCount * sizeof(unsigned int), indices, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, data->IndicesCount * sizeof(unsigned int), data->Indices, GL_STATIC_DRAW);
 }
 
 //Bind the buffers
-file_internal void BindMesh(Mesh *mesh)
+file_internal void BindMesh(MeshBuffers *buffers)
 {
 	//Use only with newer GLSL versions
 #if GLSL_VERSION == MODERN_VERSION
 	//Bind the element buffer
-	glBindVertexArray(mesh->VAO);
+	glBindVertexArray(buffers->VAO);
 
 #elif GLSL_VERSION == ANCIENT_VERSION	//Use with older GLSL versions
 	//Bind the vertex buffer
-	glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, buffers->VBO);
 
 	//Enable the attribute with the given index in the shader to be used in rendering
 	glEnableVertexAttribArray(0);
@@ -96,12 +99,12 @@ file_internal void BindMesh(Mesh *mesh)
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(sizeof(Position) + sizeof(Color)));
 
 	//Bind the vertex buffer
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers->EBO);
 #endif
 }
 
 //Unbind the buffers
-file_internal void UnbindMesh(Mesh *mesh)
+file_internal void UnbindMesh()
 {
 	//Use only with newer GLSL versions
 #if GLSL_VERSION == MODERN_VERSION
@@ -119,77 +122,54 @@ file_internal void UnbindMesh(Mesh *mesh)
 void DrawMesh(Mesh *mesh)
 {
 	//Bind the buffers
-	BindMesh(mesh);
+	BindMesh(&mesh->Buffers);
 
-	BindTexture(mesh);
+	BindTexture(&mesh->MeshTexture);
 
 	//Draw the mesh
 	glDrawElements(GL_TRIANGLES		//Drawing type
-				 , mesh->IndicesCount	//Number of indices
+				 , mesh->Data.IndicesCount	//Number of indices
 				 , GL_UNSIGNED_INT	//Indices type
 				 , 0);				//The location of the indices (NULL means to look for them in the buffer) 
 
 	//Unbind the buffers
-	UnbindMesh(mesh);
-	UnbindTexture(mesh);
+	UnbindMesh();
+	UnbindTexture();
+}
+
+//Draw the mesh
+void DrawSprite(Sprite *sprite)
+{
+	//Bind the buffers
+	BindMesh(&sprite->Buffers);
+
+	BindTexture(&sprite->SpriteTexture);
+
+	//Draw the mesh
+	glDrawElements(GL_TRIANGLES		//Drawing type
+		, sprite->Data.IndicesCount	//Number of indices
+		, GL_UNSIGNED_INT	//Indices type
+		, 0);				//The location of the indices (NULL means to look for them in the buffer) 
+
+	//Unbind the buffers
+	UnbindMesh();
+	UnbindTexture();
 }
 
 ////
-void SetTexture(Mesh *mesh, char *imagePath)
+void CreateSprite(Sprite *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount)
 {
-	std::vector<unsigned char> image;
-	DataFile file;
-	LoadFile(imagePath, &file);
-	unsigned char *data = (unsigned char*)file.Data;
-	decodePNG(image, mesh->TextureWidth, mesh->TextureHeight, (unsigned char*)file.Data, file.Length);
+	sprite->Size = size;
 
-	glGenTextures(1, &mesh->TextureHandle);
-
-	glBindTexture(GL_TEXTURE_2D, mesh->TextureHandle);
-	
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, mesh->TextureWidth, mesh->TextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	glBindTexture(GL_TEXTURE_2D, 0);
-}
-
-file_internal void BindTexture(Mesh *mesh)
-{
-	if (mesh->TextureHandle)
-	{
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, mesh->TextureHandle);
-	}
-}
-
-file_internal void UnbindTexture(Mesh *mesh)
-{
-	if (mesh->TextureHandle)
-	{		
-		glBindTexture(GL_TEXTURE_2D, 0);
-	}
-}
-
-////
-Mesh CreateSprite(vec2 size, vec3 pos, char *imagePath, Color color)
-{
-	Mesh result;
-
-	//Square vertices (cordinates are from -1 to 1 in both x and y and the origin is at the center)
+	//Square vertices 
 	Vertex vertices[] =
 	{
-		Vertex(Position(pos.x		  , pos.y		  , pos.z), color, TexCoords(1, 1)),		//TOP RIGHT
-		Vertex(Position(pos.x		  , pos.y + size.y, pos.z), color, TexCoords(1, 0)),		//BOTTOM RIGHT
-		Vertex(Position(pos.x + size.x, pos.y + size.y, pos.z), color, TexCoords(0, 0)),		//BOTTOM LEFT
-		Vertex(Position(pos.x + size.x, pos.y		  , pos.z), color, TexCoords(0, 1)),		//TOP LEFT
+		Vertex(Position(pos.x			, pos.y			  , pos.z), colorCount == 1 ? *colors : colors[0], TexCoords(1, 1)),		//TOP RIGHT
+		Vertex(Position(pos.x			, pos.y + (size.y), pos.z), colorCount == 1 ? *colors : colors[1], TexCoords(1, 0)),		//BOTTOM RIGHT
+		Vertex(Position(pos.x + (size.x), pos.y + (size.y), pos.z), colorCount == 1 ? *colors : colors[2], TexCoords(0, 0)),		//BOTTOM LEFT
+		Vertex(Position(pos.x + (size.x), pos.y			  , pos.z), colorCount == 1 ? *colors : colors[3], TexCoords(0, 1)),		//TOP LEFT
 	};
+
 
 	//Order of vertices that will be drawn
 	unsigned int indices[] =
@@ -202,38 +182,6 @@ Mesh CreateSprite(vec2 size, vec3 pos, char *imagePath, Color color)
 		3,
 	};
 
-	LoadMesh(&result, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
-	SetTexture(&result, imagePath);
-
-	return result;
-}
-
-Mesh CreateSprite(vec2 size, vec3 pos, char *imagePath, Color *color)
-{
-	Mesh result;
-
-	//Square vertices (cordinates are from -1 to 1 in both x and y and the origin is at the center)
-	Vertex vertices[] =
-	{
-		Vertex(Position(pos.x, pos.y, pos.z), color[0], TexCoords(1, 1)),		//TOP RIGHT
-		Vertex(Position(pos.x, pos.y + size.y, pos.z), color[1], TexCoords(1, 0)),		//BOTTOM RIGHT
-		Vertex(Position(pos.x + size.x, pos.y + size.y, pos.z), color[2], TexCoords(0, 0)),		//BOTTOM LEFT
-		Vertex(Position(pos.x + size.x, pos.y, pos.z), color[3], TexCoords(0, 1)),		//TOP LEFT
-	};
-
-	//Order of vertices that will be drawn
-	unsigned int indices[] =
-	{
-		0,
-		1,
-		3,
-		1,
-		2,
-		3,
-	};
-
-	LoadMesh(&result, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
-	SetTexture(&result, imagePath);
-
-	return result;
+	LoadMesh(&sprite->Buffers, &sprite->Data, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
+	sprite->SpriteTexture = *texture;
 }
