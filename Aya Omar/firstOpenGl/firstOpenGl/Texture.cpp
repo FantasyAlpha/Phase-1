@@ -38,12 +38,12 @@ Texture::~Texture()
 	glDeleteTextures(1, &m_texture);
 }
 
-void Texture::Bind(unsigned int  unit)
+void Texture::Bind(/*unsigned int  unit*/)
 {
 	// to ensure that it is one of 32 textures only 
-	assert(unit >= 0 && unit <= 31);
+	//assert(unit >= 0 && unit <= 31);
 	// determine which to activate 
-	glActiveTexture(GL_TEXTURE0 + unit);
+	glActiveTexture(GL_TEXTURE0 );
 
 	glBindTexture(GL_TEXTURE_2D, m_texture);
 }

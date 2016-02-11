@@ -1,30 +1,33 @@
 #pragma once
-#include<string>
+
 // to use open gl functions 
 #include<GL/glew.h>
 #include<stdio.h>
-
+#include <string>
 // call transform header file  
 
 #include "transform.h"
 
-class shader
+ class shader
 {
 public:
+	//Default constructor
+	//shader() = default;
 	// constructor parameter is the file  which will hold the shader program 
 	shader(char* path1, char*path2);
+	
 	// binding functon to start/stop using the shaders 
 	void bind();
 
-	virtual ~shader();
+	 ~shader();
 
 	// set or update the uniform value in the vertex shader with the model value of the transform class 
 	void updateTransform(const transform & transform);
-
+	shader()=default;
 
 private:
 	void operator=(const shader& shader) {}
-	shader(const shader& shader) {}
+	//shader( shader& shader) {}
 	// gl unsigned int to hold the address of the program (Handel) _ keep track of the program 
 
 	// using GL data types instead of primitive types for handling multi  platforms  sizes 
@@ -61,7 +64,7 @@ private:
 
 	GLuint m_uniforms[num_uniforms];
 
-
+	GLuint m_projection;
 
 
 

@@ -9,7 +9,7 @@ class Texture
 public:
 	Texture(const std::string& fileName);
 	// unit is number of textures to load from 0===31 
-	void Bind(unsigned int  unit );
+	void Bind(/*unsigned int  unit*/ );
 
 	virtual ~Texture();
 protected:

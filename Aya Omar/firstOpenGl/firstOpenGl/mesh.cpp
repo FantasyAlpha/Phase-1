@@ -3,8 +3,9 @@
 #include<GL/glew.h>
 #include<vector>
 
-mesh::mesh(vertex *vertices, unsigned int numVertices)
+mesh::mesh(vertex *vertices, unsigned int numVertices) 
 {
+	
 	m_drawCount = numVertices;
 
 	std::vector <glm::vec3> positions;
@@ -18,15 +19,7 @@ mesh::mesh(vertex *vertices, unsigned int numVertices)
 
 	}
 	// say num of triangles i want to draw (each triangle is array of vertices )
-	glewExperimental = GL_TRUE;
-	glewInit();
-	GLenum status = glewInit();
-	// check that intializing is okay
-
-	if (status != GLEW_OK){
-		//cerr awl mara ashofha :D :D
-		std::cerr << " error intializing glew " << std::endl;
-	}
+	
 	glGenVertexArrays(1, & m_vertexArrayObject);
 	//Now we created space for the vertex array 
 

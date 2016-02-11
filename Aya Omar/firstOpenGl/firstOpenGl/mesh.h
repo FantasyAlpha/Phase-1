@@ -28,14 +28,18 @@ private:
 class mesh
 {
 public:
+	mesh()=default;
 	// constructor must take a pointer of data or vertices start position 
-	mesh(vertex *vertices ,unsigned int numVertices);
+	mesh(vertex *vertices, unsigned int numVertices);
 	virtual ~mesh();
+
 	void draw();
+
 
 private :
 	// the vertices are data in the gpu so open gl will help to get it with the handel as follow
 	GLuint m_vertexArrayObject;
+	
 	// point to the buffer in the GPU  hold the vertex array which form the triangle we wnat to draw 
 	enum {
 		// handel of the buffer and num

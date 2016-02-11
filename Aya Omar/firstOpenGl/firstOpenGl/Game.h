@@ -6,6 +6,10 @@
 
 #include <GL/glew.h>
 #include<SDL2/SDL.h>
+#include "shader.h"
+
+#include "Texture.h"
+#include "SpriteRenderer.h"
 
 
 // Represents the current state of the game to decide to render and / or to process different data 
@@ -21,15 +25,17 @@ enum GameState {
 class Game
 {
 public:
-	// Game state
+	
+	// Gamestate
 	GameState              State;
 
 	// array of inputs 
 	GLboolean              Keys[1024];
 
-	//GLuint                 Width, Height;
+	
+	GLuint                 Width, Height;
 	// Constructor/Destructor
-	Game();
+	Game(GLuint width , GLuint height);
 	~Game();
 
 	// Initialize game state (load all shaders/textures/levels)
@@ -39,5 +45,6 @@ public:
 	void ProcessInput(/*GLfloat dt*/);
 	void Update(/*GLfloat dt*/);
 	void Render();
+	
 };
 

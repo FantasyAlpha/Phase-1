@@ -4,6 +4,7 @@
 #include <fstream>
 #include<sstream>
 #include <glm/glm.hpp>
+
 #include "transform.h"
 std::string vertexCode;
 std::string fragmentCode;
@@ -77,7 +78,7 @@ shader::shader(char*path1, char*path2)
 	//glGetUniformLocation  (name of the program we work with , name of uniform in vertex shader)
 
 	m_uniforms[transform_uniform] = glGetUniformLocation(m_program,"transform");
-
+	m_projection = glGetUniformLocation(m_program, "projection");
 	// then we will use updatetransform function to get the value of the transformation matrix 
 }
 
@@ -168,10 +169,12 @@ void shader :: updateTransform(const transform & transform){
 	// get the  transformation model from the class 
 
 	glm::mat4 model = transform.getmodel();
-
+	glm::mat4 projection = glm::ortho(0.0f, 800.0f,
+		600.0f, 0.0f, -1.0f, 1.0f);
 	// gl function according to the data type here : uniform matrix 4*4 float values 
 	// parameters 1 - handel 2- num of tarnsformation 3- true / flase to matrix transpose 4- handel of first element in the matrix 
 	glUniformMatrix4fv(m_uniforms[transform_uniform], 1, GL_FALSE,& model[0] [0]);
+	glUniformMatrix4fv(m_projection, 1, GL_FALSE, &projection[0][0]);
 
 
 
