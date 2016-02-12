@@ -28,13 +28,13 @@ private:
 class mesh
 {
 public:
-	mesh()=default;
+	mesh(){}
 	// constructor must take a pointer of data or vertices start position 
 	mesh(vertex *vertices, unsigned int numVertices);
-	virtual ~mesh();
+	~mesh();
 
 	void draw();
-
+	void InitMesh(vertex *vertices, unsigned int numVertices);
 
 private :
 	// the vertices are data in the gpu so open gl will help to get it with the handel as follow

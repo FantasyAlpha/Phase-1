@@ -1,11 +1,6 @@
 #include "shader.h"
-#include <iostream>
-// for files handling (read , write ,open ,....)
-#include <fstream>
-#include<sstream>
-#include <glm/glm.hpp>
 
-#include "transform.h"
+
 std::string vertexCode;
 std::string fragmentCode;
 

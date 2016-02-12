@@ -5,14 +5,18 @@
 #include<stdio.h>
 #include <string>
 // call transform header file  
-
+#include <iostream>
+// for files handling (read , write ,open ,....)
+#include <fstream>
+#include<sstream>
+#include <glm/glm.hpp>
 #include "transform.h"
 
- class shader
+class shader
 {
 public:
 	//Default constructor
-	//shader() = default;
+	shader() = default;
 	// constructor parameter is the file  which will hold the shader program 
 	shader(char* path1, char*path2);
 	
@@ -23,10 +27,9 @@ public:
 
 	// set or update the uniform value in the vertex shader with the model value of the transform class 
 	void updateTransform(const transform & transform);
-	shader()=default;
 
 private:
-	void operator=(const shader& shader) {}
+	//void operator=(const shader& shader) {}
 	//shader( shader& shader) {}
 	// gl unsigned int to hold the address of the program (Handel) _ keep track of the program 
 

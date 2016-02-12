@@ -1,5 +1,4 @@
 #include "SpriteRenderer.h"
-#include<iostream>
 
 
 //SpriteRenderer::SpriteRenderer(shader & m_shader){
@@ -9,7 +8,7 @@
 
 SpriteRenderer::SpriteRenderer(shader &shader) {
 
-	this->shader =shader;
+	this->m_shader = shader;
 	this->initRenderMesh();
 }
 
@@ -31,8 +30,8 @@ void SpriteRenderer::initRenderMesh()
 		vertex(glm::vec3(1.0, 1.0f, 0), glm::vec2(1.0, 1.0)),
 		vertex(glm::vec3(1.0f, 0.0f, 0), glm::vec2(1, 0)),
 	};
-	
-	sprite =* new mesh(&vertices[0], sizeof vertices / sizeof vertices[0]);
+
+	sprite =  mesh(&vertices[0], sizeof vertices / sizeof vertices[0]);
 
 	
 }

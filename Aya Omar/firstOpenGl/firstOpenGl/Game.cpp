@@ -24,7 +24,7 @@ void Game::Init()
  
   texture= new Texture ("res\\basicShader\\bricks .jpg");
   //renderer = new SpriteRenderer(/*ResourceManager::GetShader("sprite")*/);
-  renderer->initRenderMesh();
+  renderer = new SpriteRenderer(*m_shader);
   m_shader->updateTransform(renderer->gettransform(glm::vec2(200, 200), glm::vec2(300, 400)));
 
 }

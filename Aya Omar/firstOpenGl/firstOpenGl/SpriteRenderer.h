@@ -16,7 +16,7 @@ public:
 	//  (inits shaders/shapes)
 	SpriteRenderer() {}
 
-	SpriteRenderer(shader& shader);
+	SpriteRenderer(shader &shader);
 
 	// Destructor
 	~ SpriteRenderer();
@@ -31,10 +31,7 @@ private:
 	// Render state
 
 
-	shader shader;
-
-	
-
+	shader m_shader;
 	
 	mesh sprite;
 
