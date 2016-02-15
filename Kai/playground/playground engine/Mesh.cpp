@@ -137,30 +137,9 @@ void DrawMesh(Mesh *mesh)
 	UnbindTexture();
 }
 
-//Draw the mesh
-void DrawSprite(Sprite *sprite)
-{
-	//Bind the buffers
-	BindMesh(&sprite->Buffers);
-
-	BindTexture(&sprite->SpriteTexture);
-
-	//Draw the mesh
-	glDrawElements(GL_TRIANGLES		//Drawing type
-		, sprite->Data.IndicesCount	//Number of indices
-		, GL_UNSIGNED_INT	//Indices type
-		, 0);				//The location of the indices (NULL means to look for them in the buffer) 
-
-	//Unbind the buffers
-	UnbindMesh();
-	UnbindTexture();
-}
-
 ////
-void CreateSprite(Sprite *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount)
+void CreateSprite(Mesh *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount)
 {
-	sprite->Size = size;
-
 	//Square vertices 
 	Vertex vertices[] =
 	{
@@ -183,5 +162,5 @@ void CreateSprite(Sprite *sprite, vec2 size, vec3 pos, Texture *texture, Color *
 	};
 
 	LoadMesh(&sprite->Buffers, &sprite->Data, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
-	sprite->SpriteTexture = *texture;
+	sprite->MeshTexture = *texture;
 }

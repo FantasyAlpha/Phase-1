@@ -6,7 +6,7 @@
 
 struct Tile
 {
-	Sprite TileSprite;
+	Mesh TileSprite;
 	int Type;
 };
 

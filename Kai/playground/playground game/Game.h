@@ -20,6 +20,7 @@ NOTE(kai): This is a test game
 #include <Shader.h>
 #include <Transform.h>
 #include "TileMap.h"
+#include <Entity.h>
 //
 struct Game_Memory
 {
@@ -42,27 +43,6 @@ struct Game_Input
 	Game_Button LEFT;	
 };
 
-struct Game_Textures
-{
-	Texture Wall;
-	Texture Floor;
-	Texture Chess;
-
-	Texture PlayerUp;
-	Texture PlayerDown;
-	Texture PlayerLeft;
-	Texture PlayerRight;
-};
-
-Sprite Player;
-TileMap map;
-
-Transform transform;
-Camera Cam;
-
-Game_Resources Resources;
-Game_Textures textures;
-
 //Initialize the game
 #define GAME_INIT(name) void name(void)
 typedef GAME_INIT(game_init);
@@ -74,10 +54,3 @@ typedef GAME_UPDATE(game_update);
 //Render the game
 #define GAME_RENDER(name) void name(void)
 typedef GAME_RENDER(game_render);
-
-bool DetectCollision(TileMap *map, Sprite *player);
-bool CheckCollisionAABB(Sprite sprite1, Sprite sprite2);
-
-void CreateLevel1();
-void CreateLevel2();
-void InitializeResources();

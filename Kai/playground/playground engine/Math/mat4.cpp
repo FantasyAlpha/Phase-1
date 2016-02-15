@@ -151,13 +151,11 @@ mat4 mat4::OrthographicMatrix(float right, float left, float top, float bottom, 
 }
 
 mat4 mat4::OrthographicMatrix(float width, float height, float near, float far)
-{
-	float aspectRatio = width / height;
-	
-	float top = height;
+{	
+	float top = height / 2.0f;
 	float bottom = -top;
 
-	float right = width;
+	float right = width / 2.0f;
 	float left = -right;
 
 	return mat4::OrthographicMatrix(right, left, top, bottom, near, far);

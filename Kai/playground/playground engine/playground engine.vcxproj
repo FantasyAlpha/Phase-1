@@ -109,6 +109,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Utilities\ImageLoader.cpp" />
@@ -120,6 +121,7 @@
     <ClCompile Include="Utilities\FileLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Entity.h" />
     <ClInclude Include="Math\mat4.h" />
     <ClInclude Include="Math\MathFunctions.h" />
     <ClInclude Include="Math\vec2.h" />

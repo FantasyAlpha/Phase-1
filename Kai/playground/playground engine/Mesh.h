@@ -37,17 +37,6 @@ struct MeshData
 	unsigned int VerticesCount, IndicesCount;
 };
 
-struct Sprite
-{
-	vec2 Size;
-
-	MeshData Data;
-	MeshBuffers Buffers;
-
-	Texture SpriteTexture;
-	Transform GlobalTransform;
-};
-
 struct Mesh
 {
 	MeshData Data;
@@ -56,6 +45,8 @@ struct Mesh
 	Texture MeshTexture;
 	Transform GlobalTransform;
 };
+
+
 
 //Create the buffers and store the mesh data in them
 void LoadMesh(MeshBuffers *buffers, MeshData *data, Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount);
@@ -90,5 +81,4 @@ file_internal void UnbindMesh();
 void DrawMesh(Mesh *mesh);
 
 ////
-void DrawSprite(Sprite *sprite);
-void CreateSprite(Sprite *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount);
+void CreateSprite(Mesh *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount);
