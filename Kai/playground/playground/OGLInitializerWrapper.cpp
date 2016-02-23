@@ -200,9 +200,9 @@ bool InitOpengl(HINSTANCE hInstance, WindowManager *window, int versionMajor, in
 
 		HGLRC openglRC = {};
 		openglRC = wglCreateContextAttribsARB(windowDC, openglRC, contextAttributes);
-		DWORD e = GetLastError();
+
 		bool err = wglMakeCurrent(windowDC, openglRC);
-	//	bool err = wglMakeContextCurrentARB(windowDC, windowDC, openglRC);
+
 		if (!openglRC)
 		{
 			OutputDebugString("Failed to create opengl context\n");

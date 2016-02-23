@@ -44,7 +44,8 @@ void ProcessPendingMessages(Input_Keys *keys)
 					keys->KeysUp[key] = true;
 				}
 
-				if ((key == VK_F4) && (msg.lParam & (1 << 29)))
+				bool altWasDown = (msg.lParam & (1 << 29));
+				if ((key == VK_F4) && altWasDown)
 				{				
 					keys->AltF4 = true;
 				}

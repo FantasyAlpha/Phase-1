@@ -111,7 +111,7 @@ LRESULT CALLBACK WindowCallBack(HWND window, UINT message, WPARAM wParam, LPARAM
 	{
 	case WM_DESTROY:
 	{
-		IsRunning = false;
+		Stop();
 
 		OutputDebugString("HERE\n");
 	}
@@ -119,7 +119,7 @@ LRESULT CALLBACK WindowCallBack(HWND window, UINT message, WPARAM wParam, LPARAM
 
 	case WM_QUIT:
 	{
-		IsRunning = false;
+		Stop();
 
 		OutputDebugString("HERE\n");
 	}
@@ -240,6 +240,11 @@ static void MainLoop()
 	while (IsRunning)
 	{
 		ProcessPendingMessages(&Keys);
+
+		if (Keys.AltF4)
+		{
+			Stop();
+		}
 
 		ProcessInput(&Input);
 		//Update everything
