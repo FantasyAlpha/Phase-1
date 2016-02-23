@@ -1,14 +1,20 @@
 #include "Texture.h"
 
+static bool Glew_Initialized = false;
+
 ////
 void SetTexture(Texture *texture, char *imagePath)
 {
+	if (!Glew_Initialized){
+		bool res = ReloadGlew();
+		Glew_Initialized = true;
+	}
+
 	std::vector<unsigned char> image;
 	DataFile file;
 	LoadFile(imagePath, &file);
 	unsigned char *data = (unsigned char*)file.Data;
 	decodePNG(image, texture->TextureWidth, texture->TextureHeight, (unsigned char*)file.Data, file.Length);
-
 	glGenTextures(1, &texture->TextureHandle);
 
 	glBindTexture(GL_TEXTURE_2D, texture->TextureHandle);
@@ -22,6 +28,7 @@ void SetTexture(Texture *texture, char *imagePath)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
+	GLenum error = glGetError();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 }

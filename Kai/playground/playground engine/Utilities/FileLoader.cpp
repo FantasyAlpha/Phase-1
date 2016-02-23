@@ -1,5 +1,17 @@
 #include "..\Utilities.h"
 
+bool ReloadGlew()
+{
+	glewExperimental = true;
+	if (glewInit() != GLEW_OK)
+	{
+		OutputDebugString("Couldn't initialize glew\n");
+		return false;
+	}
+
+	return true;
+}
+
 //Return the contents of a text file
 void LoadFile(char *path, DataFile *dataFile)
 {	

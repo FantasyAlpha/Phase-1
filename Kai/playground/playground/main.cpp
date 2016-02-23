@@ -5,8 +5,9 @@ NOTE(kai): This file can:
 =======================================================================================================================*/
 
 #include "main.h"
-
-#undef main //To be able to use SDL because it defines it's own main
+#include <io.h>
+#include <stdio.h>
+#include <fcntl.h>
 
 //
 FILETIME GetLastWriteTime(char *path)
@@ -102,8 +103,41 @@ void BuildFileFullPath(State *state, char *fileName, char *dest, int destSize)
 	CatStrings(state->DLLFilePath, state->OnePastLastSlash - state->DLLFilePath, fileName, StringLength(fileName), dest, destSize);
 }
 
+LRESULT CALLBACK WindowCallBack(HWND window, UINT message, WPARAM wParam, LPARAM lParam)
+{
+	LRESULT result = 0;
+
+	switch (message)
+	{
+	case WM_DESTROY:
+	{
+		IsRunning = false;
+
+		OutputDebugString("HERE\n");
+	}
+	break;
+
+	case WM_QUIT:
+	{
+		IsRunning = false;
+
+		OutputDebugString("HERE\n");
+	}
+	break;
+
+	default:
+	{
+		result = DefWindowProc(window, message, wParam, lParam);
+	}
+	break;
+	}
+
+
+	return result;
+}
+
 // Initialize the engine and all systems associated with it(if there is any)
-void InitSystem(char *title, int width, int height)
+void InitSystem(HINSTANCE hInstance, char *title, int width, int height)
 {
 	state = {};
 
@@ -121,54 +155,56 @@ void InitSystem(char *title, int width, int height)
 	char tempPDBFullPath[MAX_PATH];
 	BuildFileFullPath(&state, "playground game_temp.pdb", tempPDBFullPath, sizeof(tempPDBFullPath));
 
-	Window = WindowManager();
-	Window.InitWindow(title, width, height);
-	InputManager::InitInputManager(&Window);
+	Window = {};
+	Window.WindowCallback = WindowCallBack;
+	InitWindow(hInstance, &Window, title, width, height);
+	InitInputManager(&Keys);
 	Game = {};
 
 	Game = LoadGameCode(DLLFullPath, tempDLLFullPath);
 	CopyFile(PDBFullPath, tempPDBFullPath, FALSE);
-
 	Game.Game_Init();
 }
 
 void ProcessInput(Game_Input *input)
 {
-	input->UP.KeyDown = InputManager::IsKeyDown(input->UP.Button);
-	input->UP.KeyUp = InputManager::IsKeyUp(input->UP.Button);
+	input->UP.KeyDown = IsKeyDown(&Keys, input->UP.Button);
+	input->UP.KeyUp = IsKeyUp(&Keys, input->UP.Button);
 
-	input->DOWN.KeyDown = InputManager::IsKeyDown(input->DOWN.Button);
-	input->DOWN.KeyUp = InputManager::IsKeyUp(input->DOWN.Button);
+	input->DOWN.KeyDown = IsKeyDown(&Keys, input->DOWN.Button);
+	input->DOWN.KeyUp = IsKeyUp(&Keys, input->DOWN.Button);
 
-	input->RIGHT.KeyDown = InputManager::IsKeyDown(input->RIGHT.Button);
-	input->RIGHT.KeyUp = InputManager::IsKeyUp(input->RIGHT.Button);
+	input->RIGHT.KeyDown = IsKeyDown(&Keys, input->RIGHT.Button);
+	input->RIGHT.KeyUp = IsKeyUp(&Keys, input->RIGHT.Button);
 
-	input->LEFT.KeyDown = InputManager::IsKeyDown(input->LEFT.Button);
-	input->LEFT.KeyUp = InputManager::IsKeyUp(input->LEFT.Button);
+	input->LEFT.KeyDown = IsKeyDown(&Keys, input->LEFT.Button);
+	input->LEFT.KeyUp = IsKeyUp(&Keys, input->LEFT.Button);
 }
 
 //Begin running the engine
 void Run()
 {
-	Running = true;
+	IsRunning = true;
 	MainLoop();
 }
 
 //stop the engine
 void Stop()
 {
-	Running = false;
+	IsRunning = false;
 }
 
 //Release resources (if there is any) and destory  the window
 void Release()
 {
+	wglMakeCurrent(NULL, NULL);
+	ReleaseDC(Window.Window, GetDC(Window.Window));
 	//Destroy the window
-	Window.DestroyWindow();
+	DestroyWindow(Window.Window);
 }
 
 //Our main loop which should continue running as long as we don't quite the game
-void MainLoop()
+static void MainLoop()
 {
 	char DLLFilePath[MAX_PATH];
 	char *onePastLastSlash;
@@ -196,22 +232,18 @@ void MainLoop()
 	BuildFileFullPath(&state, "playground game_temp.pdb", tempPDBFullPath, sizeof(tempPDBFullPath));
 
 	Input = {};
-	Input.UP.Button = KEY::KEY_UP;
-	Input.DOWN.Button = KEY::KEY_DOWN;
-	Input.RIGHT.Button = KEY::KEY_RIGHT;
-	Input.LEFT.Button = KEY::KEY_LEFT;
+	Input.UP.Button = VK_UP;
+	Input.DOWN.Button = VK_DOWN;
+	Input.RIGHT.Button = VK_RIGHT;
+	Input.LEFT.Button = VK_LEFT;
 
-	while (Running)
+	while (IsRunning)
 	{
-		ProcessInput(&Input);
+		ProcessPendingMessages(&Keys);
 
+		ProcessInput(&Input);
 		//Update everything
 		Update();
-
-		if (Window.IsCloseRequested())
-		{
-			Stop();
-		}
 
 		FILETIME newWriteTimeDLL = GetLastWriteTime(DLLFullPath);
 		FILETIME newWriteTimePDB = GetLastWriteTime(PDBFullPath);
@@ -225,16 +257,16 @@ void MainLoop()
 
 		/*NOTE(kai): TEST ONLY*/
 		//Testing if A button is pressed
-		if (InputManager::IsKeyDown(KEY::KEY_A))
+		if (IsKeyDown(&Keys, 'A'))
 		{
-			std::cout << "Key: a is pressed\n";
+			OutputDebugString("Key: a is pressed\n");
 		}
 		//Testing if A button is released
-		if (InputManager::IsKeyUp(KEY::KEY_A))
+		if (IsKeyUp(&Keys, 'A'))
 		{
-			std::cout << "Key: a is released\n";
+			OutputDebugString("Key: a is released\n");
 		}
-
+		
 		//Render everything
 		Render();
 	}
@@ -247,32 +279,47 @@ void MainLoop()
 void Render()
 {
 	//Clear the window
-	Window.Clear();
-
+	ClearWindow();	
 	//Render the game
 	Game.Game_Render();
-
 	//Render the window
-	Window.RenderWindow();
+	RenderWindow(Window.Window);
 }
 
 //Update all of the subsystems in the engine
 void Update()
 {
-	//Update the window
-	Window.UpdateWindow();
-
 	//Update the game
 	Game.Game_Update(&Input);
 }
 
-int main()
+void CreateConsole()
 {
+	AllocConsole();
+
+	HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);	
+		
+	int hCrt = _open_osfhandle((long)handle_out, _O_TEXT);
+	FILE* hf_out = _fdopen(hCrt, "w");
+	setvbuf(hf_out, NULL, _IONBF, 1);
+	*stdout = *hf_out;
+
+	HANDLE handle_in = GetStdHandle(STD_INPUT_HANDLE);
+	hCrt = _open_osfhandle((long)handle_in, _O_TEXT);
+	FILE* hf_in = _fdopen(hCrt, "r");
+	setvbuf(hf_in, NULL, _IONBF, 128);
+	*stdin = *hf_in;
+
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPSTR cmdLine, int cmdShow)
+{
+	CreateConsole();
 	//Instance of the engine's core 
-	InitSystem("Kai engine", 1280, 720);
+	InitSystem(hInstance, "Kai engine", 1280, 720);
 	
 	//Start the engine
 	Run();
-
+	
 	return 0;
 }

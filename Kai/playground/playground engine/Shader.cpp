@@ -4,12 +4,7 @@
 //Pass the shader path to create the shader automatically
 Shader::Shader(char *vertexPath, char *fragmentPath)
 {
-	//Initialize GLEW library and check if the initialization fails
-	if (glewInit() != GLEW_OK)
-	{
-		std::cout << "Failed to initialize GLEW \n";
-		system("PAUSE");
-	}
+	bool res = ReloadGlew();
 	//Create the shaders
 	CreateShader(vertexPath, fragmentPath);
 }

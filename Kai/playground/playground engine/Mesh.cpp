@@ -1,8 +1,14 @@
 #include "Mesh.h"
 
+static bool Glew_Initialized = false;
+
 //Create the buffers and store the mesh data in them
 void LoadMesh(MeshBuffers *buffers, MeshData *data, Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount)
 {
+	if (!Glew_Initialized){
+		bool res = ReloadGlew();
+		Glew_Initialized = true;
+	}
 	data->VerticesCount = verticesCount;
 	data->IndicesCount = indicesCount;
 
