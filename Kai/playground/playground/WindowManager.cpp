@@ -35,7 +35,7 @@ void InitWindow(HINSTANCE hInstance, WindowManager *window, char* title, int wid
 
 		if (window)
 		{
-			if (InitOpengl(hInstance, window, 2, 1))
+			if (InitOpengl(hInstance, window))
 			{
 				//Print out the opengl version supported by our driver
 				PrintOpenglVersion();

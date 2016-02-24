@@ -6,6 +6,18 @@ LRESULT CALLBACK FakeCallback(HWND window, UINT message, WPARAM wParam, LPARAM l
 	return DefWindowProc(window, message, wParam, lParam);
 }
 
+void GetOpenglVersion(char *version, int *major, int *minor)
+{
+	char maj = *version;
+	char min = *(version + 2);	
+	
+	*major = maj - '0'; 
+	*minor = min - '0';
+}
+
+int major;
+int minor;
+
 bool InitGlew(HINSTANCE hInstance)
 {
 	if (!RegisterWindowClass(hInstance, "Fake window class", FakeCallback))
@@ -66,6 +78,13 @@ bool InitGlew(HINSTANCE hInstance)
 		return false;
 	}
 
+	major = 0;
+	minor = 0;
+
+	char *version = (char *)glGetString(GL_VERSION);
+
+	GetOpenglVersion(version, &major, &minor);
+
 	wglMakeCurrent(NULL, NULL);
 	wglDeleteContext(openglContext);
 	DestroyWindow(fakeWindow);
@@ -75,57 +94,17 @@ bool InitGlew(HINSTANCE hInstance)
 	return true;
 }
 
-void CorrectOpenglVersion(int *versionMajor, int *versionMinor)
-{
-	if (*versionMajor > 4)
-	{
-		*versionMajor = 4;
-	}
-
-	if (*versionMajor < 1)
-	{
-		*versionMajor = 1;
-	}
-
-	if (*versionMinor < 0)
-	{
-		versionMinor = 0;
-	}
-
-	if (*versionMinor > 5 && *versionMajor == 4)
-	{
-		*versionMinor = 5;
-	}
-
-	if (*versionMinor > 3 && *versionMajor == 3)
-	{
-		*versionMinor = 3;
-	}
-
-	if (*versionMinor > 1 && *versionMajor == 2)
-	{
-		*versionMinor = 1;
-	}
-
-	if (*versionMinor > 5 && *versionMajor == 1)
-	{
-		*versionMinor = 5;
-	}
-}
-
-bool InitOpengl(HINSTANCE hInstance, WindowManager *window, int versionMajor, int versionMinor)
+bool InitOpengl(HINSTANCE hInstance, WindowManager *window)
 {
 	if (!InitGlew(hInstance))
 	{
 		OutputDebugString("Couldn't initialize glew\n");
 		return false;
 	}
-	HDC windowDC = GetDC(window->Window);
-
-	CorrectOpenglVersion(&versionMajor, &versionMinor);
+	HDC windowDC = GetDC(window->Window);	
 
 	PIXELFORMATDESCRIPTOR pfd;
-	if (versionMajor <= 2)
+	if (major <= 2)
 	{
 		pfd =
 		{
@@ -139,7 +118,7 @@ bool InitOpengl(HINSTANCE hInstance, WindowManager *window, int versionMajor, in
 			0,
 			0,
 			0, 0, 0, 0,
-			32,                        //Number of bits for the depthbuffer
+			24,                        //Number of bits for the depthbuffer
 			8,                        //Number of bits for the stencilbuffer
 			0,                        //Number of Aux buffers in the framebuffer.
 			PFD_MAIN_PLANE,
@@ -180,8 +159,8 @@ bool InitOpengl(HINSTANCE hInstance, WindowManager *window, int versionMajor, in
 
 		int contextAttributes[] =
 		{
-			WGL_CONTEXT_MAJOR_VERSION_ARB, versionMajor,
-			WGL_CONTEXT_MINOR_VERSION_ARB, versionMinor,
+			WGL_CONTEXT_MAJOR_VERSION_ARB, major,
+			WGL_CONTEXT_MINOR_VERSION_ARB, minor,
 			WGL_CONTEXT_FLAGS_ARB, 0,
 			WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB,
 			0 // End of attributes list

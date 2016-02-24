@@ -22,7 +22,7 @@ BOOL RegisterWindowClass(HINSTANCE hInstance, char* name, WNDPROC callback);
 
 bool InitGlew(HINSTANCE hInstance);
 
-bool InitOpengl(HINSTANCE hIsntance, WindowManager *window, int versionMajor, int versionMinor);
+bool InitOpengl(HINSTANCE hIsntance, WindowManager *window);
 
 void InitWindow(HINSTANCE hInstance, WindowManager *window, char* title, int width, int height);
 
