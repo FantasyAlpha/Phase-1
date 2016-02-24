@@ -1,4 +1,5 @@
 #include "WindowManager.h"
+#include <iostream>
 
 BOOL RegisterWindowClass(HINSTANCE hInstance, char* name, WNDPROC callback)
 {
@@ -34,7 +35,7 @@ void InitWindow(HINSTANCE hInstance, WindowManager *window, char* title, int wid
 
 		if (window)
 		{
-			if (InitOpengl(hInstance, window, 4, 5))
+			if (InitOpengl(hInstance, window, 2, 1))
 			{
 				//Print out the opengl version supported by our driver
 				PrintOpenglVersion();
@@ -83,6 +84,7 @@ void RenderWindow(HWND window)
 //Print out the opengl version supported by our driver
 void PrintOpenglVersion()
 {
+	std::cout << glGetString(GL_VENDOR) << ", Opengl version: " << glGetString(GL_VERSION) << "\n";
 	OutputDebugString((LPSTR)glGetString(GL_VENDOR));
 	OutputDebugString(", Opengl version: ");
 	OutputDebugString((LPSTR)glGetString(GL_VERSION));
