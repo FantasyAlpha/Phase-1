@@ -1,17 +1,2 @@
-﻿Build started 1/31/2016 2:34:50 PM.
-     1>Project "C:\Users\ayaom\Desktop\Phase-1\Aya Omar\firstOpenGl\firstOpenGl\firstOpenGl.vcxproj" on node 2 (Build target(s)).
-     1>ClCompile:
-         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I.\include /ZI /nologo /W3 /WX- /Od /Oy- /D _CRT_SECURE_NO_WARNINGS /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
-         main.cpp
-     1>c:\users\ayaom\desktop\phase-1\aya omar\firstopengl\firstopengl\main.cpp(44): warning C4305: '+=' : truncation from 'double' to 'float'
-       Link:
-         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\ayaom\Desktop\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.exe" /INCREMENTAL /NOLOGO /LIBPATH:.\lib glew32.lib glew32s.lib SDL2.lib SDL2main.lib SDL2test.lib OpenGL32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\ayaom\Desktop\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\ayaom\Desktop\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.lib" /MACHINE:X86 Debug\display.obj
-         Debug\main.obj
-         Debug\mesh.obj
-         Debug\shader.obj
-         firstOpenGl.vcxproj -> C:\Users\ayaom\Desktop\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.exe
-     1>Done Building Project "C:\Users\ayaom\Desktop\Phase-1\Aya Omar\firstOpenGl\firstOpenGl\firstOpenGl.vcxproj" (Build target(s)).
-
-Build succeeded.
-
-Time Elapsed 00:00:05.14
+﻿  SpriteRenderer.cpp
+  firstOpenGl.vcxproj -> G:\work 3\Phase-1\Aya Omar\firstOpenGl\Debug\firstOpenGl.exe

@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test1", "test1\test1.vcxproj", "{87D69A32-6DA3-4728-882E-E08740EB0476}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		GLFW Debug|Win32 = GLFW Debug|Win32
+		GLSL 120 Debug GLFW|Win32 = GLSL 120 Debug GLFW|Win32
+		GLSL 120 Debug SDL|Win32 = GLSL 120 Debug SDL|Win32
+		Release|Win32 = Release|Win32
+		SDL Debug|Win32 = SDL Debug|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.Debug|Win32.ActiveCfg = Debug|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.Debug|Win32.Build.0 = Debug|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.GLFW Debug|Win32.ActiveCfg = GLFW Debug|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.GLFW Debug|Win32.Build.0 = GLFW Debug|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.GLSL 120 Debug GLFW|Win32.ActiveCfg = GLSL 120 Debug GLFW|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.GLSL 120 Debug GLFW|Win32.Build.0 = GLSL 120 Debug GLFW|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.GLSL 120 Debug SDL|Win32.ActiveCfg = GLSL 120 Debug SDL|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.GLSL 120 Debug SDL|Win32.Build.0 = GLSL 120 Debug SDL|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.Release|Win32.ActiveCfg = Release|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.Release|Win32.Build.0 = Release|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.SDL Debug|Win32.ActiveCfg = SDL Debug|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.SDL Debug|Win32.Build.0 = SDL Debug|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

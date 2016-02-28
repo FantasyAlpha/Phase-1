@@ -1,0 +1,34 @@
+﻿Build started 2/25/2016 12:44:17 PM.
+     1>Project "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\playground engine\playground engine.vcxproj" on node 2 (Rebuild target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D GLEW_STATIC /D _CRT_SECURE_NO_WARNINGS /D ANCIENT_VERSION=120 /D MODERN_VERSION=330 /D GLSL_VERSION=ANCIENT_VERSION /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\\" /Fd"C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Entity.cpp Texture.cpp Transform.cpp Utilities\ImageLoader.cpp Math\mat4.cpp Math\vec2.cpp Math\vec3.cpp Mesh.cpp Shader.cpp Utilities\FileLoader.cpp
+         FileLoader.cpp
+         Shader.cpp
+         Mesh.cpp
+     1>c:\users\ayaom\desktop\phase-1-90423ad25c665701373da71bddc2fafba3051846\kai\playground\playground engine\vertex.h(55): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+         vec3.cpp
+         vec2.cpp
+         mat4.cpp
+         ImageLoader.cpp
+         Transform.cpp
+         Texture.cpp
+         Entity.cpp
+     1>c:\users\ayaom\desktop\phase-1-90423ad25c665701373da71bddc2fafba3051846\kai\playground\playground engine\vertex.h(55): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+         Generating Code...
+       Lib:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\bin\playground engine\GLSL 120 Debug\playground engine.lib" /NOLOGO "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Entity.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Texture.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Transform.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\ImageLoader.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\mat4.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\vec2.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\vec3.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Mesh.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Shader.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\intermediates\playground engine\GLSL 120 Debug\FileLoader.obj"
+         playground engine.vcxproj -> C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\bin\playground engine\GLSL 120 Debug\playground engine.lib
+     1>Done Building Project "C:\Users\ayaom\Desktop\Phase-1-90423ad25c665701373da71bddc2fafba3051846\Kai\playground\playground engine\playground engine.vcxproj" (Rebuild target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:06.58
