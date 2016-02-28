@@ -30,15 +30,14 @@ GAME_DLL GAME_INIT(Game_Init)
 	SetTexture(&t, "resources\\textures\\tile2.png");
 	//CalculatePerspectiveProjection(&Cam, 80.0f, screenWidth, screenHeight, -0.1f, 500.0f);
 	
-	InitSpriteBatch(&Batch, 0);
-	//BeginStoringInSpriteBatch(&Batch);
-	for (int i = 0; i < 10000; i++)
+	InitSpriteBatch(&Batch, 100000, MESH_TYPE::DYNAMIC_SPRITE_BATCH);
+	BeginStoringInSpriteBatch(&Batch);
+	for (int i = 0; i < 100000; i++)
 	{
 		//CreateSprite(&testMesh[i], vec2(50, 50), vec3(50 * i, 0, 0), &t, &Color(1, 1, 1, 1), 1);
 		AddSpriteToBatch(&Batch, 1, &vec3((50 * i) , 0, 0), 1, &vec2(50, 50), 1, &t, 1, &Color(1, 1, 1, 1), 1);
 	}
-
-	//EndStoringInSpriteBatch();
+	EndStoringInSpriteBatch(&Batch);
 
 //#define BATCH_SIZE 1000
 //	vec3 pos[BATCH_SIZE];

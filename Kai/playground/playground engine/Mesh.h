@@ -81,11 +81,11 @@ void CreateSprite(Mesh *sprite, vec2 size, vec3 pos, Texture *texture, Color *co
 
 void AddSpriteToBatch(SpriteBatch *batch, int spriteCount, vec3 *pos, int posCount, vec2 *size, int sizeCount, Texture *texture, int textureCount, Color *colors, int colorCount);
 
-void InitSpriteBatch(SpriteBatch *batch, unsigned int maxSize);
+void InitSpriteBatch(SpriteBatch *batch, unsigned int maxSize, MESH_TYPE type);
 
 void BeginStoringInSpriteBatch(SpriteBatch *batch);
 void AllocateStaticSpriteBatch(SpriteBatch *batch, int size);
-void EndStoringInSpriteBatch();
+void EndStoringInSpriteBatch(SpriteBatch *batch);
 
 void AllocateDynamicSpriteBatch(SpriteBatch *batch, int size);
 

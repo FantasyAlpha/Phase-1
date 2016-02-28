@@ -93,10 +93,12 @@ void LoadMesh(MeshBuffers *buffers, Vertex *vertices, unsigned int verticesCount
 	//Bind the element buffer
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers->EBO);
 
+	GLenum err = glGetError();
 	//Store the data in the buffer
 	if (buffers->MeshType == MESH_TYPE::STATIC_SPRITE_BATCH)
 	{
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffers->MAX_SIZE * 6 * sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);	
+		err = glGetError();
 	}
 	else
 	{
@@ -206,17 +208,31 @@ void CreateSprite(Mesh *sprite, vec2 size, vec3 pos, Texture *texture, Color *co
 	sprite->MeshTexture = *texture;
 }
 
-void InitSpriteBatch(SpriteBatch *batch, unsigned int maxSize)
+void InitSpriteBatch(SpriteBatch *batch, unsigned int maxSize, MESH_TYPE type)
 {
-	if (maxSize == 0)
+	batch->Buffers.MAX_SIZE = maxSize;	
+	batch->Buffers.MeshType = type;
+
+	if (maxSize > 0 && type == MESH_TYPE::DYNAMIC_SPRITE_BATCH)
 	{
-		batch->Buffers.MAX_SIZE = 0;
-		batch->Buffers.MeshType = MESH_TYPE::DYNAMIC_SPRITE_BATCH;
+		unsigned int newSize = (batch->UsedSize + maxSize) * 2;
+		int newBufferSize = ((sizeof(Vertex) * 4) + (sizeof(unsigned int) * 6)) * newSize;
+
+		void *newDataBuffer = malloc(newBufferSize);
+
+		Vertex *newVertices = (Vertex *)newDataBuffer;
+		unsigned int *newIndices = (unsigned int *)(newVertices + (newSize * 4));
+		batch->UsedSize = 0;
+		
+		free(batch->DataBuffer);
+
+		batch->DataBuffer = newDataBuffer;
+		batch->IndicesBuffer = newIndices;
+		batch->VerticesBuffer = newVertices;
+		batch->BatchSize = newSize;
 	}
-	else
+	else if (type == MESH_TYPE::STATIC_SPRITE_BATCH)
 	{
-		batch->Buffers.MAX_SIZE = maxSize;
-		batch->Buffers.MeshType = MESH_TYPE::STATIC_SPRITE_BATCH;
 		LoadMesh(&batch->Buffers, batch->VerticesBuffer, batch->UsedSize * 4, batch->IndicesBuffer, batch->UsedSize * 6);
 	}
 }
@@ -227,6 +243,12 @@ void AddSpriteToBatch(SpriteBatch *batch, int spriteCount, vec3 *pos, int posCou
 	{
 		int verticesIndex = 0;
 		int indicesIndex = 0;
+
+		if (batch->Buffers.MeshType == MESH_TYPE::STATIC_SPRITE_BATCH && batch->UsedSize + spriteCount > batch->Buffers.MAX_SIZE)
+		{
+			spriteCount = 0;
+		}
+
 		if (batch->Buffers.MeshType == MESH_TYPE::STATIC_SPRITE_BATCH)
 		{
 			AllocateStaticSpriteBatch(batch, spriteCount);
@@ -236,7 +258,7 @@ void AddSpriteToBatch(SpriteBatch *batch, int spriteCount, vec3 *pos, int posCou
 			AllocateDynamicSpriteBatch(batch, spriteCount);
 			verticesIndex = (batch->UsedSize - spriteCount) * 4;
 			indicesIndex = (batch->UsedSize - spriteCount) * 6;
-		}
+		}		
 
 		int offset = (batch->UsedSize - spriteCount);
 		int posIndex = 0;
@@ -271,16 +293,12 @@ void AddSpriteToBatch(SpriteBatch *batch, int spriteCount, vec3 *pos, int posCou
 			*(batch->IndicesBuffer + indicesIndex++) = 2 + (offset * 4);
 			*(batch->IndicesBuffer + indicesIndex++) = 3 + (offset * 4);
 			offset++;
-		}
+		}	
 
 		if (batch->Buffers.MeshType == MESH_TYPE::STATIC_SPRITE_BATCH)
 		{
 			glUnmapBuffer(GL_ARRAY_BUFFER);
 			glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER);
-		}
-		else
-		{
-			LoadMesh(&batch->Buffers, batch->VerticesBuffer, batch->UsedSize * 4, batch->IndicesBuffer, batch->UsedSize * 6);
 		}
 
 		batch->MeshTexture = texture;
@@ -311,8 +329,14 @@ void BeginStoringInSpriteBatch(SpriteBatch *batch)
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, batch->Buffers.EBO);
 }
 
-void EndStoringInSpriteBatch()
+void EndStoringInSpriteBatch(SpriteBatch *batch)
 {
+	if (batch->Buffers.MeshType == MESH_TYPE::DYNAMIC_SPRITE_BATCH)
+	{
+		LoadMesh(&batch->Buffers, batch->VerticesBuffer, batch->UsedSize * 4, batch->IndicesBuffer, batch->UsedSize * 6);
+	}
+	
+
 	//Unbind the vertex buffer
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -322,12 +346,15 @@ void EndStoringInSpriteBatch()
 
 void AllocateStaticSpriteBatch(SpriteBatch *batch, int size)
 {	
-	batch->VerticesBuffer = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY) + (batch->UsedSize * 4);
-
-	batch->IndicesBuffer = (unsigned int *)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY) + (batch->UsedSize * 6);
-
-	batch->BatchSize += size;
-	batch->UsedSize += size;
+	if (size > 0)
+	{
+		batch->VerticesBuffer = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+		batch->VerticesBuffer += (batch->UsedSize * 4);
+		batch->IndicesBuffer = (unsigned int *)glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_READ_WRITE);
+		batch->IndicesBuffer += (batch->UsedSize * 6);
+		batch->BatchSize += size;
+		batch->UsedSize += size;
+	}
 }
 
 void AllocateDynamicSpriteBatch(SpriteBatch *batch, int size)
