@@ -94,6 +94,29 @@ mat4 operator*(mat4 &left, const mat4& right)
 	return result;
 }
 
+vec3 operator*(vec3 left, const mat4& right)
+{
+	float res[4] = { 0, 0, 0, 1.0f };
+	float newLeft[4] = { 0, 0, 0, 1.0f };
+	newLeft[0] = left.x;
+	newLeft[1] = left.y;
+	newLeft[2] = left.z;
+	newLeft[3] = 1.0f;
+
+	for (int k = 0; k < 4; k++)
+	{
+		float sum = 0;
+		for (int j = 0; j < 4; j++)
+		{
+			sum += newLeft[j] * right.elements[k + (j * 4)];
+		}
+
+		res[k] = sum;
+	}
+
+	return vec3(res[0], res[1], res[2]);
+}
+
 //Multiply 2 matrices using the '*=' operator
 mat4 mat4::operator*=(const mat4& other)
 {

@@ -13,63 +13,59 @@ NOTE(kai): This file can:
 #include "Math\vec3.h"
 #include "Math\vec2.h"
 #include "Transform.h"
+#include <stdint.h>
+
+enum MESH_TYPE
+{
+	NORMAL_MESH = 0,
+	DYNAMIC_SPRITE_BATCH = 1,
+	STATIC_SPRITE_BATCH = 2
+};
 
 struct MeshBuffers
 {
+	//Use only with newer GLSL versions
+#if GLSL_VERSION == MODERN_VERSION
 	//Handle to a special type object that stores a reference to the vertex buffer ,index buffer
 	//	and the layout specification to the vertex itself 
 	unsigned int VAO;		//Vertex array object
+#endif
 
 	//The Buffers' handles i will use to store the mesh data in
 	unsigned int VBO;		//Vertex buffer 
-	unsigned int EBO;		//Element buffer
-};
+	unsigned int EBO;		//Element buffer	
 
-struct MeshData
-{
-	//NOTE(kai): vertices are the positions of the each vertex in the mesh
-	//			,indices are the order of the vertices that i want to draw in
-
-	Vertex *Vertices;
-	unsigned int *Indices;
-
-	//The number of the vertices and indices in the mesh
-	unsigned int VerticesCount, IndicesCount;
+	//The number of the indices in the mesh
+	unsigned int IndicesCount;
+	MESH_TYPE MeshType;
+	unsigned int MAX_SIZE;
 };
 
 struct Mesh
 {
-	MeshData Data;
 	MeshBuffers Buffers;
-
+	
 	Texture MeshTexture;
 	Transform GlobalTransform;
 };
 
+struct SpriteBatch
+{
+	MeshBuffers Buffers;
 
+	void *DataBuffer;
+
+	Vertex *VerticesBuffer;
+	unsigned int *IndicesBuffer;
+
+	Texture *MeshTexture;
+
+	int BatchSize;
+	int UsedSize;
+};
 
 //Create the buffers and store the mesh data in them
-void LoadMesh(MeshBuffers *buffers, MeshData *data, Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount);
-
-//NOTE(kai): We create the vertex buffer by:
-//					1) Create a handle for the buffer
-//					2) Bind the buffer
-//					3) Store the data in the buffer
-//					4) Specify the vertex layout by enabling the attributes in the shader
-//						,set the attribute pointer
-
-//Create a Vertex buffer and stores the vertices in it 
-file_internal void InitVBO(MeshBuffers *buffers, MeshData *data);
-
-//NOTE(kai): We create the element buffer by:
-//					1) Create a handle for the buffer
-//					2) Bind the buffer
-//					3) Store the data in the buffer
-
-//Create an Element buffer and stores the indices in it 
-file_internal void InitEBO(MeshBuffers *buffers, MeshData *data);
-
-//NOTE(kai): only one buffer of the same type can be bound at a certain time
+void LoadMesh(MeshBuffers *buffers, Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount);
 
 //Bind the buffers
 file_internal void BindMesh(MeshBuffers *buffers);
@@ -82,3 +78,17 @@ void DrawMesh(Mesh *mesh);
 
 ////
 void CreateSprite(Mesh *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount);
+
+void AddSpriteToBatch(SpriteBatch *batch, int spriteCount, vec3 *pos, int posCount, vec2 *size, int sizeCount, Texture *texture, int textureCount, Color *colors, int colorCount);
+
+void InitSpriteBatch(SpriteBatch *batch, unsigned int maxSize);
+
+void BeginStoringInSpriteBatch(SpriteBatch *batch);
+void AllocateStaticSpriteBatch(SpriteBatch *batch, int size);
+void EndStoringInSpriteBatch();
+
+void AllocateDynamicSpriteBatch(SpriteBatch *batch, int size);
+
+void RenderSpriteBatch(SpriteBatch *batch);
+
+void UpdateSpriteBatch(SpriteBatch *batch, Transform *transform, int transformCount, int *spriteIndex, int spriteCount);

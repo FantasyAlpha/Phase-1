@@ -41,14 +41,14 @@ struct Transform
 	mat4 ModelMatrix;
 };
 
-void CalculateModelMatrix(Transform *transform);
+mat4 CalculateModelMatrix(Transform *transform);
 
-void CalculateLookAtViewMatrix(Camera *cam, vec3 &target, vec3 &up);
-void CalculateFPSViewMatrix(Camera *cam, float pitch, float yaw);
+mat4 CalculateLookAtViewMatrix(Camera *cam, vec3 &target, vec3 &up);
+mat4 CalculateFPSViewMatrix(Camera *cam, float pitch, float yaw);
 
-void CalculateOrthoProjectionMatrix(Camera *cam, float width, float height, float near, float far);
-void CalculateOrthoProjectionMatrix(Camera *cam, float left, float right, float top, float bottom, float near, float far);
+mat4 CalculateOrthoProjectionMatrix(Camera *cam, float width, float height, float near, float far);
+mat4 CalculateOrthoProjectionMatrix(Camera *cam, float left, float right, float top, float bottom, float near, float far);
 
-void CalculatePerspectiveProjection(Camera *cam, float fov, float width, float height, float near, float far);
+mat4 CalculatePerspectiveProjection(Camera *cam, float fov, float width, float height, float near, float far);
 
 mat4 CalculateMVP(Transform *transform, Camera *cam);

@@ -15,12 +15,13 @@ NOTE(kai): This is a test game
 #else
 #define GAME_DLL __declspec(dllimport) 
 #endif
-
+#include<ctime>
 #include <Mesh.h>
 #include <Shader.h>
 #include <Transform.h>
 #include "TileMap.h"
 #include <Entity.h>
+
 //
 struct Game_Memory
 {
@@ -40,7 +41,7 @@ struct Game_Input
 	Game_Button UP;
 	Game_Button DOWN;
 	Game_Button RIGHT;
-	Game_Button LEFT;	
+	Game_Button LEFT;
 };
 
 //Initialize the game
@@ -54,3 +55,7 @@ typedef GAME_UPDATE(game_update);
 //Render the game
 #define GAME_RENDER(name) void name(void)
 typedef GAME_RENDER(game_render);
+
+//compute time 
+
+void computetime(clock_t start, clock_t end);

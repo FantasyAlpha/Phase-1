@@ -3,6 +3,14 @@
 #include "vec3.h"
 #include "MathFunctions.h"
 
+struct vec4
+{
+	float x;
+	float y;
+	float z;
+	float w;
+};
+
 struct mat4
 {
 public:
@@ -35,8 +43,10 @@ public:
 	//Multiply 2 matrices using the '*=' operator
 	mat4 operator*=(const mat4& other);
 
+	friend vec3 operator*(vec3 left, const mat4& right);
+
 	//NOTE(kai): this function calculate the wanted directions (forward, up, right)
-	//			,then calls the overloaded rotation function to rotate the object to the desired position
+	//			,then calls the overloaded rotation function to rotate the object to the desired vec3
 	
 	//Rotate the object to the wanted directions 
 	//static mat4 rotate(const vec3 &forward, const vec3 &up);

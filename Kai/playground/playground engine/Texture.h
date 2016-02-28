@@ -6,11 +6,10 @@
 
 struct Texture
 {
-	unsigned int TextureHandle;
-	unsigned long TextureWidth, TextureHeight;
+	unsigned int TextureHandle;	
 };
 
 ////
-void SetTexture(Texture *estinationtexture, char *imagePath);
+Texture *SetTexture(Texture *estinationtexture, char *imagePath);
 void BindTexture(Texture *texture);
 void UnbindTexture();

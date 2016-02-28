@@ -3,23 +3,25 @@
 static bool Glew_Initialized = false;
 
 ////
-void SetTexture(Texture *texture, char *imagePath)
+Texture *SetTexture(Texture *texture, char *imagePath)
 {
 	if (!Glew_Initialized){
 		bool res = ReloadGlew();
 		Glew_Initialized = true;
 	}
 
+	unsigned long TextureWidth, TextureHeight;
+
 	std::vector<unsigned char> image;
 	DataFile file;
 	LoadFile(imagePath, &file);
 	unsigned char *data = (unsigned char*)file.Data;
-	decodePNG(image, texture->TextureWidth, texture->TextureHeight, (unsigned char*)file.Data, file.Length);
+	decodePNG(image, TextureWidth, TextureHeight, (unsigned char*)file.Data, file.Length);
 	glGenTextures(1, &texture->TextureHandle);
 
 	glBindTexture(GL_TEXTURE_2D, texture->TextureHandle);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture->TextureWidth, texture->TextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TextureWidth, TextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -31,6 +33,8 @@ void SetTexture(Texture *texture, char *imagePath)
 	GLenum error = glGetError();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return texture;
 }
 
 void BindTexture(Texture *texture)
@@ -46,4 +50,3 @@ void UnbindTexture()
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
-

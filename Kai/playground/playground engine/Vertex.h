@@ -7,20 +7,8 @@ NOTE(kai): This file contain:
 =======================================================================================================================*/
 
 #pragma once
-
-struct Position
-{
-	Position(float x = 0.0f, float y = 0.0f, float z = 0.0f)
-	{
-		this->x = x;
-		this->y = y;
-		this->z = z;
-	}
-
-	float x;
-	float y;
-	float z;
-};
+#include "Math\vec3.h"
+#include "Math\vec2.h"
 
 struct Color
 {
@@ -38,28 +26,16 @@ struct Color
 	float alpha;
 };
 
-struct TexCoords
-{
-	TexCoords(float S = 0, float T = 0)
-	{
-		this->S = S;
-		this->T = T;
-	}
-
-	float S;
-	float T;
-};
-
 struct Vertex
 {
-	Vertex(Position pos = Position(0.0f, 0.0f, 0.0f), Color color = Color(0, 0, 0, 0), TexCoords texCoords = (0, 0))
+	Vertex(vec3 pos = vec3(0.0f, 0.0f, 0.0f), Color color = Color(0, 0, 0, 0), vec2 texCoords = vec2(0, 0))
 	{
 		this->pos = pos;
 		this->color = color;
 		this->texCoords = texCoords;
 	}
 
-	Position pos;
+	vec3 pos;
 	Color color;
-	TexCoords texCoords;
+	vec2 texCoords;
 };

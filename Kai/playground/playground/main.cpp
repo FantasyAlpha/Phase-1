@@ -8,6 +8,7 @@ NOTE(kai): This file can:
 #include <io.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <iostream>
 
 //
 FILETIME GetLastWriteTime(char *path)
@@ -52,7 +53,7 @@ void UnloadGameCode(Game_Code *gameCode)
 		gameCode->GameCodeDLL = NULL;
 	}
 
-	gameCode->Game_Init = NULL;	
+	gameCode->Game_Init = NULL;
 	gameCode->Game_Update = NULL;
 	gameCode->Game_Render = NULL;
 }
@@ -111,7 +112,7 @@ LRESULT CALLBACK WindowCallBack(HWND window, UINT message, WPARAM wParam, LPARAM
 	{
 	case WM_DESTROY:
 	{
-		Stop();
+		IsRunning = false;
 
 		OutputDebugString("HERE\n");
 	}
@@ -119,7 +120,7 @@ LRESULT CALLBACK WindowCallBack(HWND window, UINT message, WPARAM wParam, LPARAM
 
 	case WM_QUIT:
 	{
-		Stop();
+		IsRunning = false;
 
 		OutputDebugString("HERE\n");
 	}
@@ -142,7 +143,7 @@ void InitSystem(HINSTANCE hInstance, char *title, int width, int height)
 	state = {};
 
 	LoadFileDirectory(&state);
-	
+
 	char DLLFullPath[MAX_PATH];
 	BuildFileFullPath(&state, "playground game.dll", DLLFullPath, sizeof(DLLFullPath));
 
@@ -197,10 +198,46 @@ void Stop()
 //Release resources (if there is any) and destory  the window
 void Release()
 {
+	timeEndPeriod(1);
 	wglMakeCurrent(NULL, NULL);
 	ReleaseDC(Window.Window, GetDC(Window.Window));
 	//Destroy the window
 	DestroyWindow(Window.Window);
+}
+
+LARGE_INTEGER GetTicks()
+{
+	LARGE_INTEGER result;
+	
+	QueryPerformanceCounter(&result);
+
+	return result;
+}
+
+/*
+	1 second  ===> X ticks
+	n second  ===> Y ticks
+
+	wanted ==> n seconds
+
+	given ==> X = PerformanceFrequency
+	given ==> Y = start - end ==> (start, end = GetWallClock)
+
+*/
+float GetSecondsElapsed(LARGE_INTEGER start, LARGE_INTEGER end)
+{
+	float result = ((float)(end.QuadPart - start.QuadPart)) / (float)TicksPerSecond;
+
+	return result;
+}
+
+void PrintTimeElapsed(LARGE_INTEGER start, LARGE_INTEGER end)
+{
+	float msPerFrame = 1000.0f * GetSecondsElapsed(start, end);
+
+	float fps = 1000.0f / msPerFrame;
+
+	std::cout<< "ms/f: " << msPerFrame << ", FPS: " << fps << "\n";
 }
 
 //Our main loop which should continue running as long as we don't quite the game
@@ -237,21 +274,41 @@ static void MainLoop()
 	Input.RIGHT.Button = VK_RIGHT;
 	Input.LEFT.Button = VK_LEFT;
 
+	LARGE_INTEGER performanceFrequency;
+	QueryPerformanceFrequency(&performanceFrequency);
+	TicksPerSecond = performanceFrequency.QuadPart;
+
+	int monitorRefreshHZ = 60;
+	HDC deviceContext = GetDC(Window.Window);
+	int refreshHz = GetDeviceCaps(deviceContext, VREFRESH);
+	ReleaseDC(Window.Window, deviceContext);
+
+	if (refreshHz > 1)
+	{
+		monitorRefreshHZ = refreshHz;
+	}
+
+	float gameUpdateHZ = (float)(monitorRefreshHZ);
+	float targetSecondsPerFrame = 1.0f / gameUpdateHZ;
+
+	UINT desiredSchedulerTime = 1;
+	bool sleepIsSmaller = true;//timeBeginPeriod(desiredSchedulerTime) == TIMERR_NOERROR;
+
+	LARGE_INTEGER lastTick = GetTicks();
+	float updateTime = 0;
+	int updates = 0;
+	double frames = 0;
+	double frameTime = 0;
+
 	while (IsRunning)
 	{
-		ProcessPendingMessages(&Keys);
-
-		if (Keys.AltF4)
-		{
-			Stop();
-		}
-
-		ProcessInput(&Input);
-		//Update everything
-		Update();
+		/*
+		start_loop = clock();
+		*/
 
 		FILETIME newWriteTimeDLL = GetLastWriteTime(DLLFullPath);
 		FILETIME newWriteTimePDB = GetLastWriteTime(PDBFullPath);
+		
 		if (CompareFileTime(&newWriteTimeDLL, &Game.LastWriteTimeDLL) != 0 && CompareFileTime(&newWriteTimeDLL, &Game.LastWriteTimePDB) != 0)
 		{
 			UnloadGameCode(&Game);
@@ -259,6 +316,15 @@ static void MainLoop()
 			Game = LoadGameCode(DLLFullPath, tempDLLFullPath);
 			Game.Game_Init();
 		}
+
+		LARGE_INTEGER gameTimerStart = GetTicks();
+		ProcessPendingMessages(&Keys);
+
+		ProcessInput(&Input);
+
+		//Update everything
+		//Update the game
+		Game.Game_Update(&Input);
 
 		/*NOTE(kai): TEST ONLY*/
 		//Testing if A button is pressed
@@ -270,40 +336,100 @@ static void MainLoop()
 		if (IsKeyUp(&Keys, 'A'))
 		{
 			OutputDebugString("Key: a is released\n");
+		}		
+
+		//Render everything
+		//Clear the window
+		ClearWindow();
+		//Render the game
+		Game.Game_Render();
+		LARGE_INTEGER gameTimerEnd = GetTicks();
+		frameTime += (double)(1000.0f * GetSecondsElapsed(gameTimerStart, gameTimerEnd));
+		frames++;
+		//frames += 1000.0f / (double)(1000.0f * GetSecondsElapsed(gameTimerStart, gameTimerEnd));
+		//PrintTimeElapsed(lastTick, gameTimerEnd);
+
+		float secondsElapsedForFrame = GetSecondsElapsed(lastTick, GetTicks());
+
+		if (secondsElapsedForFrame < targetSecondsPerFrame)
+		{
+			if (sleepIsSmaller)
+			{
+				DWORD sleepTime = (DWORD)(1000.0f * (targetSecondsPerFrame - secondsElapsedForFrame));
+
+				if (sleepTime > 0)
+				{
+					Sleep(sleepTime);
+				}
+			}
+
+			while (secondsElapsedForFrame < targetSecondsPerFrame)
+			{
+				secondsElapsedForFrame = GetSecondsElapsed(lastTick, GetTicks());
+			}
+			updates++;
+		}
+
+		updateTime += GetSecondsElapsed(lastTick, GetTicks());
+
+		if (updateTime >= 1.0f)
+		{
+			double avgFPS = 1000.0f / ((frameTime) / frames);
+			std::cout << "UPS: " << updates << ", average FPS: " << avgFPS << ", average work/frame: " << (frameTime) / frames << "\n";
+			
+			frames = 0;
+			frameTime = 0;
+			updates = 0;
+			updateTime = 0;
 		}
 		
-		//Render everything
-		Render();
+		LARGE_INTEGER endTick = GetTicks();
+		//PrintTimeElapsed(lastTick, endTick);
+		lastTick = endTick;
+		
+		//Render the window
+		RenderWindow(Window.Window);
+
+		/*
+		//calc fps 
+		calcfps();
+		static int framecount = 0;
+		framecount++;
+		if (framecount == 10) {
+			framecount = 0;
+			std::cout << "frame per second is : " << (fps) << std::endl;
+
+		}
+		//QueryPerformanceCounter(&t_current_loop);
+		end_loop = clock();
+
+		//float frameticks = (t_current_loop.QuadPart - t_previous_loop.QuadPart) / ((frequency_loop.QuadPart) / 1000.0);
+
+		float frameticks = ((float)(end_loop - start_loop) / CLOCKS_PER_SEC) * 1000.0f;
+
+		//print the current fps 
+
+		// std::cout << 1000/frameticks << std::endl;
+
+		if (1000.0f / max_fps > frameticks){
+
+			Sleep(1000.0f / max_fps - frameticks);
+		}
+		*/
+
 	}
 
 	//Release resources (if there is any) and destory  the window
 	Release();
-}
 
-//Render all of the subsystems in the engine
-void Render()
-{
-	//Clear the window
-	ClearWindow();	
-	//Render the game
-	Game.Game_Render();
-	//Render the window
-	RenderWindow(Window.Window);
-}
-
-//Update all of the subsystems in the engine
-void Update()
-{
-	//Update the game
-	Game.Game_Update(&Input);
 }
 
 void CreateConsole()
 {
 	AllocConsole();
 
-	HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);	
-		
+	HANDLE handle_out = GetStdHandle(STD_OUTPUT_HANDLE);
+
 	int hCrt = _open_osfhandle((long)handle_out, _O_TEXT);
 	FILE* hf_out = _fdopen(hCrt, "w");
 	setvbuf(hf_out, NULL, _IONBF, 1);
@@ -317,14 +443,77 @@ void CreateConsole()
 
 }
 
+//calculate frame per second 
+
+void calcfps(){
+
+	static const int num_samples = 10;
+	static float frametimes[num_samples];
+	static int currentframe = 0;
+
+	//QueryPerformanceFrequency(&frequency);
+
+
+	//QueryPerformanceCounter(&t_previous);
+	static clock_t start = clock();
+	//QueryPerformanceCounter(&t_current);	
+	end = clock();
+	//frametime = (t_current.QuadPart - t_previous.QuadPart) / ((frequency.QuadPart) / 1000.0);
+
+	frametime = ((double)(end - start) / CLOCKS_PER_SEC) * 1000.0f;
+
+	// make cycle from 0===> num_samples ====>0 by % module operator if num_samples = 3 then we go through 0 1 2 0 1 2 .............
+
+	frametimes[currentframe % num_samples] = frametime;
+
+	//t_previous.QuadPart = t_current.QuadPart;
+
+
+
+	start = end;
+
+	// how we will calc average : we make average for the current frame with the
+	//previos ones so avergae firsttime frame 0/1 =0 then second 0+16/2 then  0+16+8/3 0+16+8+............../10 
+	//count will be as follow 
+
+	int count = 0;
+	currentframe++;
+
+	if (currentframe <num_samples){
+		count = currentframe;
+	}
+	else {
+		count = num_samples;
+	}
+
+
+	float frametimeaveraged = 0;
+	for (int i = 0; i < count; i++)
+	{
+		frametimeaveraged += frametimes[i];
+	}
+	frametimeaveraged /= count;
+
+	// finally that is the value that we will use tp calc fps 
+
+	// check it is >0 cause for first frame =0   fps in milliseconds 
+	if (frametimeaveraged>0) {
+		fps = 1000 / frametimeaveraged;
+	}
+	else {
+		frametimeaveraged = 60;
+	}
+}
+
+
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPSTR cmdLine, int cmdShow)
 {
 	CreateConsole();
 	//Instance of the engine's core 
 	InitSystem(hInstance, "Kai engine", 1280, 720);
-	
+
 	//Start the engine
 	Run();
-	
+	system("pause");
 	return 0;
 }
