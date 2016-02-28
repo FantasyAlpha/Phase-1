@@ -378,7 +378,7 @@ void RenderSpriteBatch(SpriteBatch *batch)
 
 void UpdateSpriteBatch(SpriteBatch *batch, Transform *transform, int transformCount, int *spriteIndex, int spriteCount)
 {	
-	if (batch->Buffers.MeshType != MESH_TYPE::STATIC_SPRITE_BATCH)
+	if (batch->Buffers.MeshType != MESH_TYPE::STATIC_SPRITE_BATCH && batch->UsedSize > 0)
 	{
 		int transIndex = 0;
 		Transform t = *transform; 

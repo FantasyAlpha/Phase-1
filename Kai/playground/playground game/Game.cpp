@@ -12,6 +12,7 @@ float screenHeight = 720;
 global_variable SpriteBatch Batch;
 
 global_variable	Texture t;
+//global_variable Mesh testMesh[10000];
 
 //Initialize the game
 GAME_DLL GAME_INIT(Game_Init)
@@ -31,10 +32,12 @@ GAME_DLL GAME_INIT(Game_Init)
 	
 	InitSpriteBatch(&Batch, 0);
 	//BeginStoringInSpriteBatch(&Batch);
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < 10000; i++)
 	{
+		//CreateSprite(&testMesh[i], vec2(50, 50), vec3(50 * i, 0, 0), &t, &Color(1, 1, 1, 1), 1);
 		AddSpriteToBatch(&Batch, 1, &vec3((50 * i) , 0, 0), 1, &vec2(50, 50), 1, &t, 1, &Color(1, 1, 1, 1), 1);
 	}
+
 	//EndStoringInSpriteBatch();
 
 //#define BATCH_SIZE 1000
@@ -48,7 +51,6 @@ GAME_DLL GAME_INIT(Game_Init)
 	//AddSpriteToBatch(&Batch, BATCH_SIZE, pos, BATCH_SIZE, siz, BATCH_SIZE, &t, BATCH_SIZE, &Color(1, 1, 1, 1), 1);
 	//AddSpriteToBatch(&Batch, 10000, &vec3(0 , 0, 0), 1, &vec2(50, 50), 1, &t, 1, &Color(1, 1, 1, 1), 1);
 	CalculateLookAtViewMatrix(&Cam, vec3(0, 0, -1), vec3(0, 1, 0));
-
 }
 
 //Render the game
@@ -60,7 +62,10 @@ GAME_DLL GAME_RENDER(Game_Render)
 	shader.Activate();
 	glUniformMatrix4fv(glGetUniformLocation(shader.GetProgram(), "modelMatrix"), 1, false, CalculateMVP(&transform, &Cam).GetElemets());
 	//Draw the mesh
-	//DrawMesh(&test);
+	/*for (int i = 0; i < 10000; i++)
+	{
+		DrawMesh(&testMesh[i]);
+	}*/
 	RenderSpriteBatch(&Batch);
 }
 
