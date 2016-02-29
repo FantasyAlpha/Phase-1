@@ -23,7 +23,8 @@ void InitWindow(HINSTANCE hInstance, WindowManager *window, char* title, int wid
 	{
 		window->Window = CreateWindow(title
 									, title
-									, WS_OVERLAPPEDWINDOW | WS_VISIBLE
+									//, WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE
+									, WS_OVERLAPPEDWINDOW ^ WS_MAXIMIZEBOX ^ WS_THICKFRAME | WS_VISIBLE
 									, CW_USEDEFAULT
 									, CW_USEDEFAULT
 									, width
