@@ -22,6 +22,12 @@ enum MESH_TYPE
 	STATIC_SPRITE_BATCH = 2
 };
 
+enum ATTRIBUTE_INDEX
+{
+	POSITION = 0,
+	TEXTURE_COORDINATES = 1
+};
+
 struct MeshBuffers
 {
 	//Use only with newer GLSL versions
@@ -33,35 +39,20 @@ struct MeshBuffers
 
 	//The Buffers' handles i will use to store the mesh data in
 	unsigned int VBO;		//Vertex buffer 
-	unsigned int EBO;		//Element buffer	
+	unsigned int EBO;		//Element buffer
 
-	//The number of the indices in the mesh
 	unsigned int IndicesCount;
-	MESH_TYPE MeshType;
-	unsigned int MAX_SIZE;
 };
 
 struct Mesh
 {
 	MeshBuffers Buffers;
-	
-	Texture MeshTexture;
-	Transform GlobalTransform;
 };
 
-struct SpriteBatch
+struct Material
 {
-	MeshBuffers Buffers;
-
-	void *DataBuffer;
-
-	Vertex *VerticesBuffer;
-	unsigned int *IndicesBuffer;
-
-	Texture *MeshTexture;
-
-	int BatchSize;
-	int UsedSize;
+	Texture Tex;
+	Color Col;
 };
 
 //Create the buffers and store the mesh data in them
@@ -77,18 +68,5 @@ file_internal void UnbindMesh();
 void DrawMesh(Mesh *mesh);
 
 ////
-void CreateSprite(Mesh *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount);
+Mesh CreateSprite(vec2 size, vec3 pos);
 
-void AddSpriteToBatch(SpriteBatch *batch, int spriteCount, vec3 *pos, int posCount, vec2 *size, int sizeCount, Texture *texture, int textureCount, Color *colors, int colorCount);
-
-void InitSpriteBatch(SpriteBatch *batch, unsigned int maxSize, MESH_TYPE type);
-
-void BeginStoringInSpriteBatch(SpriteBatch *batch);
-void AllocateStaticSpriteBatch(SpriteBatch *batch, int size);
-void EndStoringInSpriteBatch(SpriteBatch *batch);
-
-void AllocateDynamicSpriteBatch(SpriteBatch *batch, int size);
-
-void RenderSpriteBatch(SpriteBatch *batch);
-
-void UpdateSpriteBatch(SpriteBatch *batch, Transform *transform, int transformCount, int *spriteIndex, int spriteCount);

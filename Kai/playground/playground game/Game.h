@@ -23,10 +23,6 @@ NOTE(kai): This is a test game
 #include <Entity.h>
 
 //
-struct Game_Memory
-{
-	void *ScratchPad;
-};
 
 struct Game_Button
 {
@@ -59,3 +55,7 @@ typedef GAME_RENDER(game_render);
 //compute time 
 
 void computetime(clock_t start, clock_t end);
+
+
+void InitShaders();
+void InitCamera();

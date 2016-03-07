@@ -2,8 +2,7 @@
 NOTE(kai): This file contain:
 
 1) Vertex data structure
-2) Position (x, y, z) data structure
-3) Color (R, G, B) data structure
+2) Color (R, G, B, A) data structure
 =======================================================================================================================*/
 
 #pragma once
@@ -28,14 +27,12 @@ struct Color
 
 struct Vertex
 {
-	Vertex(vec3 pos = vec3(0.0f, 0.0f, 0.0f), Color color = Color(0, 0, 0, 0), vec2 texCoords = vec2(0, 0))
+	Vertex(vec3 pos = vec3(0.0f, 0.0f, 0.0f), vec2 texCoords = vec2(0, 0))
 	{
 		this->pos = pos;
-		this->color = color;
 		this->texCoords = texCoords;
 	}
 
 	vec3 pos;
-	Color color;
 	vec2 texCoords;
 };

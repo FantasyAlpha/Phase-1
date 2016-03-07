@@ -1,47 +1,78 @@
 #pragma once
 
+#include "MemoryAllocator.h"
 #include "Mesh.h"
-#include <vector>
 
-struct BoundingBox2D
+enum ComponentID
 {
-	vec3 Position;
-	vec2 Size;
+	NO_COMPONENT = 0x00000000,
+	SPRITE_RENDERER_COMPONENT = 0x00000001,
+	NAME_COMPONENT = 0x00000002
 };
 
-struct Entity
+struct NameComponentSystem
 {
-	Mesh Renderable;
-	char *Type;
-	BoundingBox2D Collider2D;
-	Transform Local_Transform;
-	Transform Global_Transform;
-	Entity *Parent;
+	// 1- Stack allocator (give fixed size)
+	StackAllocator EntityAllocator;
+	// 2- Names
+	char **Names;
 };
 
-struct Layer
+typedef uint32 EntityID;
+struct EntitySystem
 {
-	Entity *Entities;
-	BoundingBox2D Collider2D;
-	Transform Local_Transform;
-	Transform Global_Transform;
-	vec2 LayerSize;
-	int EntityCount;
-	int DepthOrder;
+	// 1- Stack allocator (give fixed size)
+	StackAllocator EntityAllocator;
+	// 2- Components Array
+	uint32 *Components;
+	// 3- Used Count
+	uint32 UsedCount;
+	// 4- Total Count
+	uint32 TotalCount;
+};
+
+struct SpriteRenderer
+{
+	// 1- Mesh 
+	Mesh Sprite;
+	// 2- Material 
+	Material Material;
+};
+
+struct SpriteRendererSystem
+{
+	// 1- Stack allocator (give fixed size)
+	StackAllocator EntityAllocator;
+	// 2- Sprite renderers
+	SpriteRenderer *Renderers;
+	// 3- Used Count
+	uint32 UsedCount;
+	// 4- Total Count
+	uint32 TotalCount;
 };
 
 struct World
 {
-	Layer *Layers;
-	int LayerCount;
+	StackAllocator WorldAllocator;
+	EntitySystem WorldEntities;
+	NameComponentSystem NamesSystem;
+	SpriteRendererSystem SpriteRenderer;
 };
 
-BoundingBox2D CreateBoundingBox2D(vec3 position, vec2 size);
+void InitWorld(World *world, MainAllocator *sourceAllocator, uint32 size);
+void ResetWorld(World *world);
 
-void AddBoundingBox2D(Entity *entity, vec2 bounds);
+void InitEntitySystem(World *world, uint32 size);
+EntityID CreateEntity(World *world, char *name);
+bool EntityIsAlive(World *world, EntityID id);
+void DestroyEntity(World *world, EntityID id);
 
-void AddEntitiesToLayer(Layer *layer, Entity *entities, int entityCount);
+void InitNameSystem(World *world, uint32 size);
 
-void AddLayers(World *world, Layer *layers, int layerCount);
+void InitSpriteRendererSystem(World *world, uint32 size);
 
-void RenderEntities(World *world);
+void RegisterSpriteRenderer(World *world, EntityID id, SpriteRenderer spriteRenderer);
+
+void RemoveSpriteRenderer(World *world, EntityID id);
+
+void RenderSpriteRendererSystem(World *world);

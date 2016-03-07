@@ -54,9 +54,9 @@ public:
 	float *GetElemets(){ return elements; };
 
 	//Translate the object by the desired amount in the desired directions (X, Y, Z)
-	static mat4 Translate(vec3& amount);
+	static mat4 Translation(vec3& amount);
 	//Rotate the object by the desired angle in the desired directions (X, Y, Z)
-	static mat4 Rotate(vec3 &angle);
+	static mat4 Rotation(vec3 &angle);
 	//Scale the object by the desired amount in the desired directions (X, Y, Z)
 	static mat4 Scale(vec3& amount);
 

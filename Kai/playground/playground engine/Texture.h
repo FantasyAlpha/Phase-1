@@ -10,6 +10,6 @@ struct Texture
 };
 
 ////
-Texture *SetTexture(Texture *estinationtexture, char *imagePath);
+Texture SetTexture(char *imagePath);
 void BindTexture(Texture *texture);
 void UnbindTexture();

@@ -13,7 +13,7 @@ mat4 mat4::Identity()
 }
 
 //Translate the object by the desired amount in the desired directions (X, Y, Z)
-mat4 mat4::Translate(vec3& amount)
+mat4 mat4::Translation(vec3& amount)
 {
 	mat4 result;
 
@@ -26,7 +26,7 @@ mat4 mat4::Translate(vec3& amount)
 }
 
 //Rotate the object by the desired angle in the desired directions (X, Y, Z)
-mat4 mat4::Rotate(vec3 &angle)
+mat4 mat4::Rotation(vec3 &angle)
 {
 	mat4 rotX;
 	mat4 rotY;
@@ -39,16 +39,16 @@ mat4 mat4::Rotate(vec3 &angle)
 	float z = ToRadians(angle.z);
 
 	rotX.elements[0] = 1;		rotX.elements[1] = 0;				rotX.elements[2] = 0;				rotX.elements[3] = 0;
-	rotX.elements[4] = 0;		rotX.elements[5] = cosf(x);			rotX.elements[6] = -sinf(x);			rotX.elements[7] = 0;
+	rotX.elements[4] = 0;		rotX.elements[5] = cosf(x);			rotX.elements[6] = -sinf(x);		rotX.elements[7] = 0;
 	rotX.elements[8] = 0;		rotX.elements[9] = sinf(x);			rotX.elements[10] = cosf(x);		rotX.elements[11] = 0;
 	rotX.elements[12] = 0;		rotX.elements[13] = 0;				rotX.elements[14] = 0;				rotX.elements[15] = 1;
 
 	rotY.elements[0] = cosf(y);		rotY.elements[1] = 0;			rotY.elements[2] = sinf(y);			rotY.elements[3] = 0;
 	rotY.elements[4] = 0;			rotY.elements[5] = 1;			rotY.elements[6] = 0;				rotY.elements[7] = 0;
-	rotY.elements[8] = -sinf(y);		rotY.elements[9] = 0;			rotY.elements[10] = cosf(y);		rotY.elements[11] = 0;
+	rotY.elements[8] = -sinf(y);	rotY.elements[9] = 0;			rotY.elements[10] = cosf(y);		rotY.elements[11] = 0;
 	rotY.elements[12] = 0;			rotY.elements[13] = 0;			rotY.elements[14] = 0;				rotY.elements[15] = 1;
 
-	rotZ.elements[0] = cosf(z);		rotZ.elements[1] = -sinf(z);			rotZ.elements[2] = 0;			rotZ.elements[3] = 0;
+	rotZ.elements[0] = cosf(z);		rotZ.elements[1] = -sinf(z);		rotZ.elements[2] = 0;			rotZ.elements[3] = 0;
 	rotZ.elements[4] = sinf(z);		rotZ.elements[5] = cos(z);			rotZ.elements[6] = 0;			rotZ.elements[7] = 0;
 	rotZ.elements[8] = 0;			rotZ.elements[9] = 0;				rotZ.elements[10] = 1;			rotZ.elements[11] = 0;
 	rotZ.elements[12] = 0;			rotZ.elements[13] = 0;				rotZ.elements[14] = 0;			rotZ.elements[15] = 1;

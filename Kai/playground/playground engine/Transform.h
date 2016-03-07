@@ -5,21 +5,14 @@
 
 struct Camera
 {
-	Camera(vec3 eye = vec3(), vec3 scale = vec3(1, 1, 1),
-		   mat4 viewMatrix = mat4(), mat4 projectionMatrix = mat4())
+	Camera(vec3 eye = vec3(), vec3 scale = vec3(1, 1, 1))
 	{
 		Eye = eye;
 		Scale = scale;	
-		
-		ViewMatrix = viewMatrix;
-		ProjectionMatrix = projectionMatrix;
 	}
 
 	vec3 Eye;
 	vec3 Scale;	
-
-	mat4 ViewMatrix;
-	mat4 ProjectionMatrix;
 };
 
 struct Transform
@@ -30,25 +23,25 @@ struct Transform
 		this->Position = Position;
 		this->Rotation = Rotation;
 		this->Scale = Scale;
-
-		this->ModelMatrix = ModelMatrix;
 	}
 
 	vec3 Position;
 	vec3 Rotation;
 	vec3 Scale;
-
-	mat4 ModelMatrix;
 };
 
-mat4 CalculateModelMatrix(Transform *transform);
+void Translate(Transform *transform, vec3 amount);
+void Rotate(Transform *transform, vec3 amount);
+void Scale(Transform *transform, vec3 amount);
 
-mat4 CalculateLookAtViewMatrix(Camera *cam, vec3 &target, vec3 &up);
-mat4 CalculateFPSViewMatrix(Camera *cam, float pitch, float yaw);
+mat4 ModelMatrix(Transform *transform);
 
-mat4 CalculateOrthoProjectionMatrix(Camera *cam, float width, float height, float near, float far);
-mat4 CalculateOrthoProjectionMatrix(Camera *cam, float left, float right, float top, float bottom, float near, float far);
+mat4 LookAtViewMatrix(Camera *cam, vec3 &target, vec3 &up);
+mat4 FPSViewMatrix(Camera *cam, float pitch, float yaw);
 
-mat4 CalculatePerspectiveProjection(Camera *cam, float fov, float width, float height, float near, float far);
+mat4 OrthoProjectionMatrix(Camera *cam, float width, float height, float near, float far);
+mat4 OrthoProjectionMatrix(Camera *cam, float left, float right, float top, float bottom, float near, float far);
 
-mat4 CalculateMVP(Transform *transform, Camera *cam);
+mat4 PerspectiveProjection(Camera *cam, float fov, float width, float height, float near, float far);
+
+mat4 MVP(mat4 model, mat4 view, mat4 projection);
