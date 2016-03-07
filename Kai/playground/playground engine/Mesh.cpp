@@ -181,8 +181,10 @@ void DrawMesh(Mesh *mesh)
 }
 
 ////
-void CreateSprite(Mesh *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount)
+Mesh CreateSprite(vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount)
 {
+	Mesh sprite = {};
+
 	//Square vertices 
 	Vertex vertices[] =
 	{
@@ -204,8 +206,10 @@ void CreateSprite(Mesh *sprite, vec2 size, vec3 pos, Texture *texture, Color *co
 		3,
 	};
 
-	LoadMesh(&sprite->Buffers, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
-	sprite->MeshTexture = *texture;
+	LoadMesh(&sprite.Buffers, vertices, sizeof(vertices) / sizeof(Vertex), indices, sizeof(indices) / sizeof(unsigned int));
+	sprite.MeshTexture = *texture;
+
+	return sprite;
 }
 
 void InitSpriteBatch(SpriteBatch *batch, unsigned int maxSize, MESH_TYPE type)

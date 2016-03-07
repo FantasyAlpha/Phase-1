@@ -161,10 +161,11 @@ void InitSystem(HINSTANCE hInstance, char *title, int width, int height)
 	InitWindow(hInstance, &Window, title, width, height);
 	InitInputManager(&Keys);
 	Game = {};
-
+	Dimensions.Width = (float)Window.Width;
+	Dimensions.Height = (float)Window.Height;
 	Game = LoadGameCode(DLLFullPath, tempDLLFullPath);
 	CopyFile(PDBFullPath, tempPDBFullPath, FALSE);
-	Game.Game_Init();
+	Game.Game_Init(Dimensions);
 }
 
 void ProcessInput(Game_Input *input)
@@ -314,7 +315,7 @@ static void MainLoop()
 			UnloadGameCode(&Game);
 			CopyFile(PDBFullPath, tempPDBFullPath, FALSE);
 			Game = LoadGameCode(DLLFullPath, tempDLLFullPath);
-			Game.Game_Init();
+			Game.Game_Init(Dimensions);
 		}
 
 		LARGE_INTEGER gameTimerStart = GetTicks();
