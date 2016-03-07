@@ -60,7 +60,7 @@ void ConstructMap(TileMap *tileMap, Game_Resources *resources, TileCase *cases, 
 			{
 				if (tileMap->Map[index] == cases[k].Case)
 				{
-					CreateSprite(&tileMap->Tiles[index].TileSprite, vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.GlobalTransform.Position, &cases[k].CaseTexture, cases[k].Colors, 4);
+					tileMap->Tiles[index].TileSprite = CreateSprite(vec2(tileSize.x, tileSize.y), tileMap->Tiles[index].TileSprite.GlobalTransform.Position, &cases[k].CaseTexture, cases[k].Colors, 4);
 
 					tileMap->Tiles[index].Type = k;
 				}

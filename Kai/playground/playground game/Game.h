@@ -44,8 +44,14 @@ struct Game_Input
 	Game_Button LEFT;
 };
 
+struct Window_Dimensions
+{
+	float Width;
+	float Height;
+};
+
 //Initialize the game
-#define GAME_INIT(name) void name(void)
+#define GAME_INIT(name) void name(Window_Dimensions dimensions)
 typedef GAME_INIT(game_init);
 
 //Update the game
@@ -59,3 +65,5 @@ typedef GAME_RENDER(game_render);
 //compute time 
 
 void computetime(clock_t start, clock_t end);
+
+void InitShaders();

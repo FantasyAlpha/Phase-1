@@ -77,7 +77,7 @@ file_internal void UnbindMesh();
 void DrawMesh(Mesh *mesh);
 
 ////
-void CreateSprite(Mesh *sprite, vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount);
+Mesh CreateSprite(vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount);
 
 void AddSpriteToBatch(SpriteBatch *batch, int spriteCount, vec3 *pos, int posCount, vec2 *size, int sizeCount, Texture *texture, int textureCount, Color *colors, int colorCount);
 

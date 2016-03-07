@@ -3,13 +3,13 @@
 static bool Glew_Initialized = false;
 
 ////
-Texture *SetTexture(Texture *texture, char *imagePath)
+Texture SetTexture( char *imagePath)
 {
 	if (!Glew_Initialized){
 		bool res = ReloadGlew();
 		Glew_Initialized = true;
 	}
-
+	Texture texture = {};
 	unsigned long TextureWidth, TextureHeight;
 
 	std::vector<unsigned char> image;
@@ -17,9 +17,9 @@ Texture *SetTexture(Texture *texture, char *imagePath)
 	LoadFile(imagePath, &file);
 	unsigned char *data = (unsigned char*)file.Data;
 	decodePNG(image, TextureWidth, TextureHeight, (unsigned char*)file.Data, file.Length);
-	glGenTextures(1, &texture->TextureHandle);
+	glGenTextures(1, &texture.TextureHandle);
 
-	glBindTexture(GL_TEXTURE_2D, texture->TextureHandle);
+	glBindTexture(GL_TEXTURE_2D, texture.TextureHandle);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, TextureWidth, TextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(image[0]));
 
