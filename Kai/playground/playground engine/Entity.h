@@ -2,6 +2,7 @@
 
 #include "MemoryAllocator.h"
 #include "Mesh.h"
+#include <vector>
 
 enum ComponentID
 {
@@ -49,6 +50,8 @@ struct SpriteRendererSystem
 	uint32 UsedCount;
 	// 4- Total Count
 	uint32 TotalCount;
+
+	std::vector<uint32> UsedRenderer;
 };
 
 struct World

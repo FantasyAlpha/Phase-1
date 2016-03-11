@@ -32,6 +32,7 @@ struct Game_Code
 	game_init *Game_Init;
 	game_update *Game_Update;
 	game_render *Game_Render;
+	game_shutdown *Game_Shutdown;
 
 	FILETIME LastWriteTimeDLL;
 	FILETIME LastWriteTimePDB;
@@ -49,6 +50,7 @@ static WindowManager Window;
 static Game_Code Game;
 static State state;
 static Game_Input Input;
+static Window_Dimensions Dimensions;
 static Input_Keys Keys;
 static int64_t TicksPerSecond;
 

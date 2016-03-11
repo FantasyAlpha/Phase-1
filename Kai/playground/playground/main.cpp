@@ -40,6 +40,7 @@ Game_Code LoadGameCode(char *path, char *temp)
 		result.Game_Init = (game_init *)GetProcAddress(result.GameCodeDLL, "Game_Init");
 		result.Game_Update = (game_update *)GetProcAddress(result.GameCodeDLL, "Game_Update");
 		result.Game_Render = (game_render *)GetProcAddress(result.GameCodeDLL, "Game_Render");
+		result.Game_Shutdown = (game_shutdown *)GetProcAddress(result.GameCodeDLL, "Game_Shutdown");
 	}
 
 	return result;
@@ -56,6 +57,7 @@ void UnloadGameCode(Game_Code *gameCode)
 	gameCode->Game_Init = NULL;
 	gameCode->Game_Update = NULL;
 	gameCode->Game_Render = NULL;
+	gameCode->Game_Shutdown = NULL;
 }
 
 void CatStrings(char *str1, int str1Size, char *str2, int str2Size, char *dest, int destSize)
@@ -160,11 +162,15 @@ void InitSystem(HINSTANCE hInstance, char *title, int width, int height)
 	Window.WindowCallback = WindowCallBack;
 	InitWindow(hInstance, &Window, title, width, height);
 	InitInputManager(&Keys);
+	
 	Game = {};
+	
+	Dimensions.Width = Window.Width;
+	Dimensions.Height = Window.Height;
 
 	Game = LoadGameCode(DLLFullPath, tempDLLFullPath);
 	CopyFile(PDBFullPath, tempPDBFullPath, FALSE);
-	Game.Game_Init();
+	Game.Game_Init(Dimensions);
 }
 
 void ProcessInput(Game_Input *input)
@@ -198,6 +204,7 @@ void Stop()
 //Release resources (if there is any) and destory  the window
 void Release()
 {
+	Game.Game_Shutdown();
 	timeEndPeriod(1);
 	wglMakeCurrent(NULL, NULL);
 	ReleaseDC(Window.Window, GetDC(Window.Window));
@@ -314,7 +321,7 @@ static void MainLoop()
 			UnloadGameCode(&Game);
 			CopyFile(PDBFullPath, tempPDBFullPath, FALSE);
 			Game = LoadGameCode(DLLFullPath, tempDLLFullPath);
-			Game.Game_Init();
+			Game.Game_Init(Dimensions);
 		}
 
 		LARGE_INTEGER gameTimerStart = GetTicks();
@@ -325,18 +332,6 @@ static void MainLoop()
 		//Update everything
 		//Update the game
 		Game.Game_Update(&Input);
-
-		/*NOTE(kai): TEST ONLY*/
-		//Testing if A button is pressed
-		if (IsKeyDown(&Keys, 'A'))
-		{
-			OutputDebugString("Key: a is pressed\n");
-		}
-		//Testing if A button is released
-		if (IsKeyUp(&Keys, 'A'))
-		{
-			OutputDebugString("Key: a is released\n");
-		}		
 
 		//Render everything
 		//Clear the window

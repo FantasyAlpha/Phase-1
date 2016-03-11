@@ -1,7 +1,7 @@
 #pragma once
 #include <GL\glew.h>
 #include <iostream>
-#include "UsefulDefines.h"
+#include "Types.h"
 #include "Utilities.h"
 
 struct Texture

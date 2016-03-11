@@ -8,9 +8,11 @@ attribute vec2 inputTexCoords;
 varying vec2 outputTexCoords;
 
 uniform mat4 modelMatrix;
+uniform mat4 viewMatrix;
+uniform mat4 projectionMatrix;
 
 void main()
 {
-	gl_Position = modelMatrix * vec4(position, 1.0f);
+	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0f);
 	outputTexCoords = inputTexCoords;
 }

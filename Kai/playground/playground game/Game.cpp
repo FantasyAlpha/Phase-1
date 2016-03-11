@@ -7,8 +7,8 @@ global_variable Shader shader;
 global_variable Transform transform;
 global_variable Camera Cam;
 
-float screenWidth = 1280;
-float screenHeight = 720;
+float screenWidth;
+float screenHeight;
 
 global_variable World TestWorld;
 global_variable Game_Memory MainMemory;
@@ -18,14 +18,17 @@ global_variable MainAllocator MainAllocatorSystem;
 GAME_DLL GAME_INIT(Game_Init)
 {
 	{
+		screenWidth = dimensions.Width;
+		screenHeight = dimensions.Height;
+	}
+
+	{
 		InitShaders();
 		InitCamera();
 	}
 
 	{
-		InitGameMemory(&MainMemory, Megabytes(500));
-		SetMainAllocatorType(MainMemory, &MainAllocatorSystem, AllocatorTypes::FRAME_ALLOCATOR);
-		InitFrameSystem(&MainAllocatorSystem, MainMemory.Size, 4);
+		StartMemorySystem(&MainAllocatorSystem, AllocatorTypes::STACK_ALLOCATOR, Megabytes(500), 4);
 	}
 
 	{
@@ -63,6 +66,12 @@ GAME_DLL GAME_UPDATE(Game_Update)
 {
 	
 }
+
+GAME_DLL GAME_SHUTDOWN(Game_Shutdown)
+{
+	ShutDownMemorySystem(&MainAllocatorSystem);
+}
+
 void computetime(clock_t start, clock_t end){
 
 

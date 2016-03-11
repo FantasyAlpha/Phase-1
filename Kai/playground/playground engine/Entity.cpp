@@ -69,19 +69,29 @@ void InitWorld(World *world, MainAllocator *sourceAllocator, uint32 size)
 
 	if (sourceAllocator->MainSystem == AllocatorTypes::FRAME_ALLOCATOR)
 	{
-		if (InitPartialStackSystem(&sourceAllocator->FrameSystem, &world->WorldAllocator, HeapType::LOWER_HEAP, totalSize) == AllocatorErrors::NO_ERRORS)
+		if (InitPartialStackSystem(sourceAllocator->FrameSystem, &world->WorldAllocator, HeapType::LOWER_HEAP, totalSize) == AllocatorErrors::NO_ERRORS)
 		{
 			InitEntitySystem(world, size);
 			InitNameSystem(world, size);
 			InitSpriteRendererSystem(world, size);
 		}
 	}
-	else 
+	else if (sourceAllocator->MainSystem == AllocatorTypes::STACK_ALLOCATOR)
 	{
-		if (InitPartialStackSystem(&sourceAllocator->StackSystem, &world->WorldAllocator, totalSize) == AllocatorErrors::NO_ERRORS)
+		if (InitPartialStackSystem(sourceAllocator->StackSystem, &world->WorldAllocator, totalSize) == AllocatorErrors::NO_ERRORS)
 		{
 			InitEntitySystem(world, size);
 			InitNameSystem(world, size);
+			InitSpriteRendererSystem(world, size);
+		}
+	} 
+	else
+	{
+		if (InitPartialStackSystem(sourceAllocator->PoolSystem, &world->WorldAllocator) == AllocatorErrors::NO_ERRORS)
+		{
+			InitEntitySystem(world, size);
+			InitNameSystem(world, size);
+			InitSpriteRendererSystem(world, size);
 		}
 	}
 }
