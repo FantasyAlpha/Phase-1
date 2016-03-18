@@ -54,14 +54,16 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediates\playground game\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)playground engine;$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)playground engine\include;$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)bin\playground engine\$(Configuration);$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='GLSL 120 Debug|Win32'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediates\playground game\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)playground engine;$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)playground engine\include;$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)bin\playground engine\$(Configuration);$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
