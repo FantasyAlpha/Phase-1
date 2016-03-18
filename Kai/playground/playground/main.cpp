@@ -165,8 +165,8 @@ void InitSystem(HINSTANCE hInstance, char *title, int width, int height)
 	
 	Game = {};
 	
-	Dimensions.Width = Window.Width;
-	Dimensions.Height = Window.Height;
+	Dimensions.Width = (float)Window.Width;
+	Dimensions.Height = (float)Window.Height;
 
 	Game = LoadGameCode(DLLFullPath, tempDLLFullPath);
 	CopyFile(PDBFullPath, tempPDBFullPath, FALSE);

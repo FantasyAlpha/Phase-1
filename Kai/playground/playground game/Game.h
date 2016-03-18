@@ -16,13 +16,16 @@ NOTE(kai): This is a test game
 #define GAME_DLL __declspec(dllimport) 
 #endif
 #include<ctime>
-#include <Mesh.h>
-#include <Shader.h>
-#include <Transform.h>
-#include "TileMap.h"
-#include <Entity.h>
-
+#include <Graphics\Mesh.h>
+#include <Graphics\Shader.h>
+#include <General\Transform.h>
+#include <Memory\ResourceManager.h>
+#include <Memory\MemoryAllocator.h>
+#include <Actor System\ActorSystem.h>
+#include <Actor System\SpriteRenderingSystem.h>
+#include <Actor System\TransformSystem.h>
 //
+
 
 struct Game_Button
 {
@@ -62,9 +65,9 @@ typedef GAME_RENDER(game_render);
 typedef GAME_SHUTDOWN(game_shutdown);
 
 //compute time 
-
 void computetime(clock_t start, clock_t end);
 
 
 void InitShaders();
 void InitCamera();
+void InitResources();

@@ -109,32 +109,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="MemoryAllocator.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="Actor System\ActorSystem.cpp" />
+    <ClCompile Include="Memory\MemoryAllocator.cpp" />
+    <ClCompile Include="Memory\ResourceManager.cpp" />
+    <ClCompile Include="Actor System\SpriteRenderingSystem.cpp" />
+    <ClCompile Include="Graphics\Texture.cpp" />
+    <ClCompile Include="General\Transform.cpp" />
+    <ClCompile Include="Actor System\TransformSystem.cpp" />
     <ClCompile Include="Utilities\ImageLoader.cpp" />
     <ClCompile Include="Math\mat4.cpp" />
     <ClCompile Include="Math\vec2.cpp" />
     <ClCompile Include="Math\vec3.cpp" />
-    <ClCompile Include="Mesh.cpp" />
-    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Graphics\Mesh.cpp" />
+    <ClCompile Include="Graphics\Shader.cpp" />
     <ClCompile Include="Utilities\FileLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Entity.h" />
+    <ClInclude Include="Actor System\ActorSystem.h" />
+    <ClInclude Include="Actor System\Components.h" />
     <ClInclude Include="Math\mat4.h" />
     <ClInclude Include="Math\MathFunctions.h" />
     <ClInclude Include="Math\vec2.h" />
     <ClInclude Include="Math\vec3.h" />
-    <ClInclude Include="MemoryAllocator.h" />
-    <ClInclude Include="Mesh.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="Types.h" />
-    <ClInclude Include="Utilities.h" />
-    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="Memory\MemoryAllocator.h" />
+    <ClInclude Include="Graphics\Mesh.h" />
+    <ClInclude Include="Memory\ResourceManager.h" />
+    <ClInclude Include="Graphics\Shader.h" />
+    <ClInclude Include="Actor System\SpriteRenderingSystem.h" />
+    <ClInclude Include="Graphics\Texture.h" />
+    <ClInclude Include="General\Transform.h" />
+    <ClInclude Include="Actor System\TransformSystem.h" />
+    <ClInclude Include="Common\Types.h" />
+    <ClInclude Include="Utilities\Utilities.h" />
+    <ClInclude Include="Graphics\Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

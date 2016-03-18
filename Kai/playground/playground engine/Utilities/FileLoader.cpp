@@ -1,4 +1,4 @@
-#include "..\Utilities.h"
+#include "Utilities.h"
 
 bool ReloadGlew()
 {

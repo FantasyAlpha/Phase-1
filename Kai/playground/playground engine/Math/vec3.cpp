@@ -206,7 +206,7 @@ bool vec3::operator==(vec3 &other)
 //Check if 2 vectors are not equal
 bool vec3::operator!=(vec3 &other)
 {
-	return (this->x != other.x) && (this->y != other.y) && (this->z != other.z);
+	return (this->x != other.x) || (this->y != other.y) || (this->z != other.z);
 }
 
 float vec3::Dot(vec3 &other)

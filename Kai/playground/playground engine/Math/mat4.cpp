@@ -84,7 +84,7 @@ mat4 operator*(mat4 &left, const mat4& right)
 
 			for (int j = 0; j < 4; j++)
 			{
-				sum += left.elements[j + (i * 4)] * right.elements[j + (k * 4)];
+				sum += left.elements[i + (j * 4)] * right.elements[j + (k * 4)];
 			}
 
 			result.elements[i + (k * 4)] = sum;

@@ -1,4 +1,4 @@
-#include "..\Utilities.h"
+#include "Utilities.h"
 
 /*
 decodePNG: The picoPNG function, decodes a PNG file buffer in memory, into a raw pixel buffer.
