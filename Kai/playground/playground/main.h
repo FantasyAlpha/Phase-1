@@ -9,10 +9,10 @@
 //
 
 
-float fps;
+float fps, delta;
 float frametime;
 
-clock_t	end;
+clock_t	prevois, current,end;
 clock_t start_loop, end_loop;
 LARGE_INTEGER frequency;        // ticks per second
 LARGE_INTEGER frequency_loop;        // ticks per second

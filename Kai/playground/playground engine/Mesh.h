@@ -40,13 +40,21 @@ struct MeshBuffers
 	MESH_TYPE MeshType;
 	unsigned int MAX_SIZE;
 };
+struct Collider
+{
+	vec2 size;
+	vec3 pos;
+	bool detected;
+	float penetration;
+	vec2 normal;
+};
 
 struct Mesh
 {
 	MeshBuffers Buffers;
-	
 	Texture MeshTexture;
 	Transform GlobalTransform;
+	Collider   collider;
 };
 
 struct SpriteBatch

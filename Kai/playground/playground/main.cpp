@@ -181,6 +181,23 @@ void ProcessInput(Game_Input *input)
 
 	input->LEFT.KeyDown = IsKeyDown(&Keys, input->LEFT.Button);
 	input->LEFT.KeyUp = IsKeyUp(&Keys, input->LEFT.Button);
+
+	input->space.KeyDown = IsKeyDown(&Keys, input->space.Button);
+	input->space.KeyUp = IsKeyUp(&Keys, input->space.Button);
+
+
+	input->_A.KeyDown = IsKeyDown(&Keys, input->_A.Button);
+	input->_A.KeyUp = IsKeyUp(&Keys, input->_A.Button);
+
+	input->_D.KeyDown = IsKeyDown(&Keys, input->_D.Button);
+	input->_D.KeyUp = IsKeyUp(&Keys, input->_D.Button);
+
+	input->_S.KeyDown = IsKeyDown(&Keys, input->_S.Button);
+	input->_S.KeyUp = IsKeyUp(&Keys, input->_S.Button);
+
+	input->_W.KeyDown = IsKeyDown(&Keys, input->_W.Button);
+	input->_W.KeyUp = IsKeyUp(&Keys, input->_W.Button);
+
 }
 
 //Begin running the engine
@@ -274,6 +291,14 @@ static void MainLoop()
 	Input.DOWN.Button = VK_DOWN;
 	Input.RIGHT.Button = VK_RIGHT;
 	Input.LEFT.Button = VK_LEFT;
+	Input.space.Button = VK_SPACE;
+	Input._A.Button = 'A'; 
+	Input._D.Button = 'D';
+	Input._S.Button = 'S';
+	Input._W.Button = 'W';
+
+
+
 
 	LARGE_INTEGER performanceFrequency;
 	QueryPerformanceFrequency(&performanceFrequency);
@@ -300,12 +325,18 @@ static void MainLoop()
 	int updates = 0;
 	double frames = 0;
 	double frameTime = 0;
-
+	prevois = 0;
+	current = clock();
 	while (IsRunning)
 	{
-		/*
+		
+		prevois = current;
+		current = clock();
+		delta = double(current - prevois)/CLOCKS_PER_SEC;
+		std::cout << "delta" << delta << std::endl;
+
 		start_loop = clock();
-		*/
+	
 
 		FILETIME newWriteTimeDLL = GetLastWriteTime(DLLFullPath);
 		FILETIME newWriteTimePDB = GetLastWriteTime(PDBFullPath);
@@ -325,7 +356,7 @@ static void MainLoop()
 
 		//Update everything
 		//Update the game
-		Game.Game_Update(&Input);
+		Game.Game_Update(&Input,Dimensions,delta);
 
 		/*NOTE(kai): TEST ONLY*/
 		//Testing if A button is pressed
@@ -417,6 +448,7 @@ static void MainLoop()
 			Sleep(1000.0f / max_fps - frameticks);
 		}
 		*/
+		
 
 	}
 

@@ -174,13 +174,13 @@ void DrawMesh(Mesh *mesh)
 				 , mesh->Buffers.IndicesCount	//Number of indices
 				 , GL_UNSIGNED_INT	//Indices type
 				 , 0);				//The location of the indices (NULL means to look for them in the buffer) 
-
 	//Unbind the buffers
 	UnbindMesh();
 	UnbindTexture();
 }
 
 ////
+
 Mesh CreateSprite(vec2 size, vec3 pos, Texture *texture, Color *colors, int colorCount)
 {
 	Mesh sprite = {};
@@ -188,10 +188,10 @@ Mesh CreateSprite(vec2 size, vec3 pos, Texture *texture, Color *colors, int colo
 	//Square vertices 
 	Vertex vertices[] =
 	{
-		Vertex(vec3(pos.x			, pos.y			  , pos.z), colorCount == 1 ? *colors : colors[0], vec2(1, 1)),		//TOP RIGHT
-		Vertex(vec3(pos.x			, pos.y + (size.y), pos.z), colorCount == 1 ? *colors : colors[1], vec2(1, 0)),		//BOTTOM RIGHT
+		Vertex(vec3(pos.x, pos.y, pos.z), colorCount == 1 ? *colors : colors[0], vec2(1, 1)),		//TOP RIGHT
+		Vertex(vec3(pos.x, pos.y + (size.y), pos.z), colorCount == 1 ? *colors : colors[1], vec2(1, 0)),		//BOTTOM RIGHT
 		Vertex(vec3(pos.x + (size.x), pos.y + (size.y), pos.z), colorCount == 1 ? *colors : colors[2], vec2(0, 0)),		//BOTTOM LEFT
-		Vertex(vec3(pos.x + (size.x), pos.y			  , pos.z), colorCount == 1 ? *colors : colors[3], vec2(0, 1)),		//TOP LEFT
+		Vertex(vec3(pos.x + (size.x), pos.y, pos.z), colorCount == 1 ? *colors : colors[3], vec2(0, 1)),		//TOP LEFT
 	};
 
 
@@ -211,7 +211,6 @@ Mesh CreateSprite(vec2 size, vec3 pos, Texture *texture, Color *colors, int colo
 
 	return sprite;
 }
-
 void InitSpriteBatch(SpriteBatch *batch, unsigned int maxSize, MESH_TYPE type)
 {
 	batch->Buffers.MAX_SIZE = maxSize;	
