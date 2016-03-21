@@ -111,40 +111,39 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\Actor System\ActorSystem.cpp" />
-    <ClCompile Include="source\Memory\MemoryAllocator.cpp" />
-    <ClCompile Include="source\Memory\ResourceManager.cpp" />
-    <ClCompile Include="source\Actor System\SpriteRenderingSystem.cpp" />
-    <ClCompile Include="source\Graphics\Texture.cpp" />
-    <ClCompile Include="source\General\Transform.cpp" />
-    <ClCompile Include="source\Actor System\TransformSystem.cpp" />
-    <ClCompile Include="source\Utilities\ImageLoader.cpp" />
+    <ClCompile Include="source\ActorSystem.cpp" />
+    <ClCompile Include="source\FileLoader.cpp" />
+    <ClCompile Include="source\ImageLoader.cpp" />
+    <ClCompile Include="source\MemoryAllocator.cpp" />
+    <ClCompile Include="source\Mesh.cpp" />
+    <ClCompile Include="source\ResourceManager.cpp" />
+    <ClCompile Include="source\Shader.cpp" />
+    <ClCompile Include="source\RenderingSystem.cpp" />
+    <ClCompile Include="source\Texture.cpp" />
+    <ClCompile Include="source\Transform.cpp" />
+    <ClCompile Include="source\TransformSystem.cpp" />
     <ClCompile Include="source\Math\mat4.cpp" />
     <ClCompile Include="source\Math\vec2.cpp" />
     <ClCompile Include="source\Math\vec3.cpp" />
-    <ClCompile Include="source\Graphics\Mesh.cpp" />
-    <ClCompile Include="source\Graphics\Shader.cpp" />
-    <ClCompile Include="source\Utilities\FileLoader.cpp" />
+    <ClCompile Include="source\World.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\Actor System\ActorSystem.h" />
-    <ClInclude Include="include\Actor System\Components.h" />
-    <ClInclude Include="include\Actor System\SpriteRenderingSystem.h" />
-    <ClInclude Include="include\Actor System\TransformSystem.h" />
-    <ClInclude Include="include\Common\Types.h" />
-    <ClInclude Include="include\General\Transform.h" />
-    <ClInclude Include="include\Graphics\Material.h" />
-    <ClInclude Include="include\Graphics\Mesh.h" />
-    <ClInclude Include="include\Graphics\Shader.h" />
-    <ClInclude Include="include\Graphics\Texture.h" />
-    <ClInclude Include="include\Graphics\Vertex.h" />
+    <ClInclude Include="include\World.h" />
+    <ClInclude Include="include\Components.h" />
+    <ClInclude Include="include\Material.h" />
     <ClInclude Include="include\Math\mat4.h" />
     <ClInclude Include="include\Math\MathFunctions.h" />
     <ClInclude Include="include\Math\vec2.h" />
     <ClInclude Include="include\Math\vec3.h" />
-    <ClInclude Include="include\Memory\MemoryAllocator.h" />
-    <ClInclude Include="include\Memory\ResourceManager.h" />
-    <ClInclude Include="include\Utilities\Utilities.h" />
+    <ClInclude Include="include\MemoryAllocator.h" />
+    <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\ResourceManager.h" />
+    <ClInclude Include="include\Shader.h" />
+    <ClInclude Include="include\Texture.h" />
+    <ClInclude Include="include\Transform.h" />
+    <ClInclude Include="include\Types.h" />
+    <ClInclude Include="include\Utilities.h" />
+    <ClInclude Include="include\Vertex.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

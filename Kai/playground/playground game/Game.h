@@ -16,14 +16,12 @@ NOTE(kai): This is a test game
 #define GAME_DLL __declspec(dllimport) 
 #endif
 #include<ctime>
-#include <Graphics\Mesh.h>
-#include <Graphics\Shader.h>
-#include <General\Transform.h>
-#include <Memory\ResourceManager.h>
-#include <Memory\MemoryAllocator.h>
-#include <Actor System\ActorSystem.h>
-#include <Actor System\SpriteRenderingSystem.h>
-#include <Actor System\TransformSystem.h>
+#include <Mesh.h>
+#include <Shader.h>
+#include <Transform.h>
+#include <ResourceManager.h>
+#include <MemoryAllocator.h>
+#include <World.h>
 //
 
 
@@ -68,6 +66,4 @@ typedef GAME_SHUTDOWN(game_shutdown);
 void computetime(clock_t start, clock_t end);
 
 
-void InitShaders();
-void InitCamera();
 void InitResources();

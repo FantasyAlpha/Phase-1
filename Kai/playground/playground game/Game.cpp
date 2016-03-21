@@ -14,7 +14,7 @@ float screenHeight;
 
 global_variable MainAllocator MainAllocatorSystem;
 global_variable StackAllocator WorldStack;
-global_variable World AM;
+global_variable World Game_World;
 
 //Initialize the game
 GAME_DLL GAME_INIT(Game_Init)
@@ -25,61 +25,54 @@ GAME_DLL GAME_INIT(Game_Init)
 	}
 
 	{
-		InitShaders();
 		InitResources();
 	}
 
 	{
-		InitMainMemorySystem(&MainAllocatorSystem, AllocatorTypes::STACK_ALLOCATOR, 500 * 1024 * 1024, 4);
+		InitMainMemorySystem(&MainAllocatorSystem, AllocatorTypes::STACK_ALLOCATOR, Megabytes(500), 4, Megabytes(100));
 	}
 
 	{
-		InitPartialStackSystem(MainAllocatorSystem.StackSystem, &WorldStack, TOTAL_SPRITES_SIZE + TOTAL_TRANSFORMS_SIZE + TOTAL_ACTORS_SIZE);
-		InitWorld(&WorldStack, &AM);
-		InitSpriteRendererSystem(&WorldStack, &AM);
-		InitMainShader(&AM, "resources\\shaders\\vertex shader 120.vert", "resources\\shaders\\fragment shader 120.frag");
-		InitTransformSystem(&WorldStack, &AM);
-	}
-
-	
+		Game_World.InitWorld(MainAllocatorSystem.StackSystem);
+		Game_World.RendererManager.InitMainShader("resources\\shaders\\vertex shader 120.vert", "resources\\shaders\\fragment shader 120.frag");
+	}	
 
 	{
-		CreateActor(&AM, "KAI");
-		CreateActor(&AM, "KAI1");
-		CreateActor(&AM, "KAI2");
-		CreateActor(&AM, "KAI3");
-		CreateActor(&AM, "KAI4");
-		AddRenderer(&AM, "KAI", SpriteRenderer{ CreateSprite(vec2(50, 50), vec3(0, 0, 0)), Material{ GetTexture(&Resources, "Tile1"), Color(1, 1, 1, 1) } });
-		AddRenderer(&AM, "KAI1", SpriteRenderer{ CreateSprite(vec2(50, 50), vec3(0, 80, 0)), Material{ GetTexture(&Resources, "Tile2"), Color(1, 1, 1, 1) } });
-		AddRenderer(&AM, "KAI3", SpriteRenderer{ CreateSprite(vec2(50, 50), vec3(80, 80, 0)), Material{ GetTexture(&Resources, "Tile1"), Color(1, 1, 1, 1) } });
+		Game_World.ActorManager.CreateActor("KAI");
+		Game_World.ActorManager.CreateActor("KAI1");
+		Game_World.ActorManager.CreateActor("KAI2");
 	}
 
 	{
-		AddTransform(&AM, "KAI", TransformComponent{});
-		AddTransform(&AM, "KAI1", TransformComponent{});
-		AddTransform(&AM, "KAI2", TransformComponent{});
-		AddTransform(&AM, "KAI3", TransformComponent{});
-		AddTransform(&AM, "KAI4", TransformComponent{});
-		AddTransformChild(&AM, "KAI", "KAI1");
-		AddTransformChild(&AM, "KAI", "KAI2");
-		AddTransformChild(&AM, "KAI1", "KAI3");
-		AddTransformChild(&AM, "KAI1", "KAI4");
-		SetMainParent(&AM, "KAI");
-	//	RemoveTransform(&AM, "KAI1");
+		Game_World.RendererManager.AddComponent("KAI"
+			, Renderer{ CreateSprite(vec3(0, 0, 0), vec2(50, 50))
+			, Material{ GetTexture(&Resources, "Tile1"), Color(1, 1, 1, 1) } });
+
+		Game_World.RendererManager.AddComponent("KAI1"
+			, Renderer{ CreateSprite(vec3(0, 80, 0), vec2(50, 50))
+			, Material{ GetTexture(&Resources, "Tile2"), Color(1, 1, 1, 1) } });
+
+		Game_World.RendererManager.AddComponent("KAI2"
+			, Renderer{ CreateSprite(vec3(80, 80, 0), vec2(50, 50))
+			, Material{ GetTexture(&Resources, "Tile1"), Color(1, 1, 1, 1) } });
 	}
 
 	{
-		ActivateShader(&shader);
+		Game_World.TransformManager.AddComponent("KAI", TransformComponent{});
+		Game_World.TransformManager.AddComponent("KAI1", TransformComponent{});
+		Game_World.TransformManager.AddComponent("KAI2", TransformComponent{});
+	}
 
-		glUniformMatrix4fv(GetUniformLocation(&shader, UNIFORMS::PROJECTION_MATRIX), 1, false, OrthoProjectionMatrix(&Cam, screenWidth, screenHeight, -0.1f, 500.0f).GetElemets());
-		glUniformMatrix4fv(GetUniformLocation(&shader, UNIFORMS::VIEW_MATRIX), 1, false, LookAtViewMatrix(&Cam, vec3(0, 0, -1), vec3(0, 1, 0)).GetElemets());
+	{
+		Game_World.TransformManager.AttachTransformChild("KAI", "KAI1");
+		Game_World.TransformManager.AttachTransformChild("KAI1", "KAI2");
 	}
 }
 
 //Render the game
 GAME_DLL GAME_RENDER(Game_Render)
 {
-	RendererSprites(&AM);
+	Game_World.RenderWorld();
 }
 
 //Update the game
@@ -87,15 +80,15 @@ GAME_DLL GAME_UPDATE(Game_Update)
 {
 	if (input->RIGHT.KeyDown)
 	{
-		GetTransform(&AM, "KAI1")->Position.x += 1;
+		Game_World.TransformManager.GetTransform("KAI1")->Position.x += 1;
 	}
 
 	if (input->LEFT.KeyDown)
 	{
-		GetTransform(&AM, "KAI")->Position.x -= 1;
+		Game_World.TransformManager.GetTransform("KAI")->Position.x -= 1;
 	}
 
-	UpdateTransformSystem(&AM);
+	Game_World.UpdateWorld();
 }
 
 GAME_DLL GAME_SHUTDOWN(Game_Shutdown)
@@ -110,23 +103,6 @@ void computetime(clock_t start, clock_t end){
 
 	std::cout << "game render time is : " << elapsedtime << " ms" << std::endl;
 
-}
-
-void InitShaders()
-{
-#if GLSL_VERSION == ANCIENT_VERSION
-	shader = CreateShader("resources\\shaders\\vertex shader 120.vert", "resources\\shaders\\fragment shader 120.frag");
-#elif GLSL_VERSION == MODERN_VERSION	//Use modern shaders with modern GLSL
-	shader = CreateShader("resources\\shaders\\vertex shader.vert", "resources\\shaders\\fragment shader.frag");
-#endif
-}
-
-void InitCamera()
-{
-	OrthoProjectionMatrix(&Cam, screenWidth, screenHeight, -0.1f, 500.0f);
-	//PerspectiveProjection(&Cam, 80.0f, screenWidth, screenHeight, -0.1f, 500.0f);
-
-	LookAtViewMatrix(&Cam, vec3(0, 0, -1), vec3(0, 1, 0));
 }
 
 void InitResources()
