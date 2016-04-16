@@ -1,0 +1,17 @@
+﻿  World.cpp
+  vec3.cpp
+  vec2.cpp
+  mat4.cpp
+  TransformSystem.cpp
+  Transform.cpp
+  Texture.cpp
+  RenderingSystem.cpp
+  Shader.cpp
+  ResourceManager.cpp
+  Mesh.cpp
+  MemoryAllocator.cpp
+  ImageLoader.cpp
+  FileLoader.cpp
+  ActorSystem.cpp
+  Generating Code...
+  playground engine.vcxproj -> G:\Projects\work 3\Phase-1\Kai\playground\bin\playground engine\GLSL 120 Debug\playground engine.lib

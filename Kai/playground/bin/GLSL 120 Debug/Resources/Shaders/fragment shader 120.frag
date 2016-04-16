@@ -1,8 +1,10 @@
 #version 120
 
 varying vec2 outputTexCoords;
+varying vec3 outputNormals;
 
 uniform sampler2D myTexture;
+uniform bool useNormals;
 uniform vec4 myColor;
 
 uniform vec4 ambientColor;

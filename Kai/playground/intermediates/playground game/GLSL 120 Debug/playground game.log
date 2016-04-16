@@ -1,0 +1,5 @@
+﻿  Game.cpp
+     Creating library G:\Projects\work 3\Phase-1\Kai\playground\bin\GLSL 120 Debug\playground game.lib and object G:\Projects\work 3\Phase-1\Kai\playground\bin\GLSL 120 Debug\playground game.exp
+MSVCRTD.lib(cinitexe.obj) : warning LNK4098: defaultlib 'libcmt.lib' conflicts with use of other libs; use /NODEFAULTLIB:library
+glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'G:\Projects\work 3\Phase-1\Kai\playground\bin\GLSL 120 Debug\vc120.pdb'; linking object as if no debug info
+  playground game.vcxproj -> G:\Projects\work 3\Phase-1\Kai\playground\bin\GLSL 120 Debug\playground game.dll

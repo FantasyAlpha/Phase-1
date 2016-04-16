@@ -1,0 +1,49 @@
+﻿  WindowManager.cpp
+g:\projects\work 3\phase-1\kai\playground\playground\windowmanager.cpp(48): warning C4244: 'argument' : conversion from 'LONG' to 'float', possible loss of data
+g:\projects\work 3\phase-1\kai\playground\playground\windowmanager.cpp(121): warning C4244: 'argument' : conversion from 'float' to 'GLsizei', possible loss of data
+g:\projects\work 3\phase-1\kai\playground\playground\windowmanager.cpp(121): warning C4244: 'argument' : conversion from 'float' to 'GLint', possible loss of data
+  OGLInitializerWrapper.cpp
+g:\projects\work 3\phase-1\kai\playground\playground\oglinitializerwrapper.cpp(183): warning C4800: 'BOOL' : forcing value to bool 'true' or 'false' (performance warning)
+  main.cpp
+g:\projects\work 3\phase-1\kai\playground\playground\main.cpp(339): warning C4244: 'argument' : conversion from 'int' to 'float', possible loss of data
+g:\projects\work 3\phase-1\kai\playground\playground\main.cpp(533): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+  InputManager.cpp
+g:\projects\work 3\phase-1\kai\playground\playground\inputmanager.cpp(76): warning C4800: 'LPARAM' : forcing value to bool 'true' or 'false' (performance warning)
+g:\projects\work 3\phase-1\kai\playground\playground\inputmanager.cpp(140): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+g:\projects\work 3\phase-1\kai\playground\playground\inputmanager.cpp(141): warning C4244: '=' : conversion from 'int' to 'float', possible loss of data
+  imgui_draw.cpp
+  imgui_demo.cpp
+  imgui.cpp
+  Generating Code...
+LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewActiveTexture imported
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewBlendEquation imported
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewBindBuffer imported
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewBufferData imported
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewGenBuffers imported
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewBlendEquationSeparate imported
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewEnableVertexAttribArray imported
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewUniform1i imported
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewUniformMatrix4fv imported
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewUseProgram imported
+playgroundGUI.lib(GUITest.obj) : warning LNK4049: locally defined symbol ___glewVertexAttribPointer imported
+glew32s.lib(glew.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'G:\Projects\work 3\Phase-1\Kai\playground\bin\GLSL 120 Debug\vc120.pdb'; linking object as if no debug info
+  playground.vcxproj -> G:\Projects\work 3\Phase-1\Kai\playground\bin\GLSL 120 Debug\playground.exe
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Shaders\fragment shader 120.frag
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Shaders\fragment shader.frag
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Shaders\GUI fragment shader 120.frag
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Shaders\GUI vertex shader 120.vert
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Shaders\vertex shader 120.vert
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Shaders\vertex shader.vert
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Textures\empty.png
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Textures\player.png
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Textures\player1.png
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Textures\player2.png
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Textures\player3.png
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Textures\tile1.png
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Textures\tile2.png
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Textures\tile3.png
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\Textures\tile4.png
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\TileMaps\map1.txt
+  G:\Projects\work 3\Phase-1\Kai\playground\playground\Resources\TileMaps\map2.txt
+  17 File(s) copied
