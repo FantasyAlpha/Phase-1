@@ -5,7 +5,7 @@
 #include "WindowManager.h"
 #include <ctime> 
 #include <stdint.h>
-
+#include <GUITest.h>
 //
 
 
@@ -50,6 +50,7 @@ static WindowManager Window;
 static Game_Code Game;
 static State state;
 static Game_Input Input;
+static GUI_Input GUIInput;
 static Window_Dimensions Dimensions;
 static Input_Keys Keys;
 static int64_t TicksPerSecond;

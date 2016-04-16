@@ -19,17 +19,17 @@ public:
 	{
 		if (diagonalOnly)
 		{
-			elements[0 ] = value;		elements[1 ] = 0;			elements[2 ] = 0;			elements[3 ] = 0;
-			elements[4 ] = 0;			elements[5 ] = value;		elements[6 ] = 0;			elements[7 ] = 0;
-			elements[8 ] = 0;			elements[9 ] = 0;			elements[10] = value;		elements[11] = 0;
-			elements[12] = 0;			elements[13] = 0;			elements[14] = 0;			elements[15] = value;
+			elements[0][0] = value;		elements[0][1] = 0;			elements[0][2] = 0;			elements[0][3] = 0;
+			elements[1][0] = 0;			elements[1][1] = value;		elements[1][2] = 0;			elements[1][3] = 0;
+			elements[2][0] = 0;			elements[2][1] = 0;			elements[2][2] = value;		elements[2][3] = 0;
+			elements[3][0] = 0;			elements[3][1] = 0;			elements[3][2] = 0;			elements[3][3] = value;
 		}
 		else
 		{
-			elements[0] = value;		elements[1] = value;		elements[2] = value;		elements[3] = value;
-			elements[4] = value;		elements[5] = value;		elements[6] = value;		elements[7] = value;
-			elements[8] = value;		elements[9] = value;		elements[10] = value;		elements[11] = value;
-			elements[12] = value;		elements[13] = value;		elements[14] = value;		elements[15] = value;
+			elements[0][0] = value;		elements[0][1] = value;		elements[0][2] = value;		elements[0][3] = value;
+			elements[1][0] = value;		elements[1][1] = value;		elements[1][2] = value;		elements[1][3] = value;
+			elements[2][0] = value;		elements[2][1] = value;		elements[2][2] = value;		elements[2][3] = value;
+			elements[3][0] = value;		elements[3][1] = value;		elements[3][2] = value;		elements[3][3] = value;
 		
 		}
 	}
@@ -43,7 +43,7 @@ public:
 	//Multiply 2 matrices using the '*=' operator
 	mat4 operator*=(const mat4& other);
 
-	friend vec3 operator*(vec3 left, const mat4& right);
+	friend vec3 operator*(mat4 &left, vec3& right);
 
 	//NOTE(kai): this function calculate the wanted directions (forward, up, right)
 	//			,then calls the overloaded rotation function to rotate the object to the desired vec3
@@ -51,7 +51,7 @@ public:
 	//Rotate the object to the wanted directions 
 	//static mat4 rotate(const vec3 &forward, const vec3 &up);
 
-	float *GetElemets(){ return elements; };
+	float *GetElemets(){ return &elements[0][0]; };
 
 	//Translate the object by the desired amount in the desired directions (X, Y, Z)
 	static mat4 Translation(vec3& amount);
@@ -60,7 +60,7 @@ public:
 	//Scale the object by the desired amount in the desired directions (X, Y, Z)
 	static mat4 Scale(vec3& amount);
 
-	static mat4 LookAtMatrix(vec3 &eye, vec3 &target, vec3 &up);
+	static mat4 LookAtMatrix(vec3 &target, vec3 &up);
 	static mat4 FPSMatrix(vec3 &eye, float pitch, float yaw);
 	
 	static mat4 OrthographicMatrix(float left, float right, float top, float bottom, float near, float far);
@@ -73,5 +73,6 @@ private:
 
 private:
 	//Matrix elements
-	float elements[4 * 4];
+	//float elements[4 * 4];
+	float elements[4][4];
 };

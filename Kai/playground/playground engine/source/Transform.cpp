@@ -1,6 +1,6 @@
 #include <Transform.h>
 
-mat4 ModelMatrix(Transform *transform)
+mat4 CalcModelMatrix(Transform *transform)
 {
 	mat4 pos = mat4::Translation(transform->Position);
 	mat4 rot = mat4::Rotation(transform->Rotation);
@@ -9,55 +9,70 @@ mat4 ModelMatrix(Transform *transform)
 	return pos * rot * scale;
 }
 
-mat4 LookAtViewMatrix(Camera *cam, vec3 &target, vec3 &up)
+mat4 CalcLookAtViewMatrix(Camera *cam)
 {	
-	return mat4::LookAtMatrix(cam->Eye, target, up) * mat4::Scale(cam->Scale);
+	mat4 camTrans = mat4::Translation(cam->Eye * -1);
+	return (mat4::Scale(cam->Scale) * mat4::LookAtMatrix(cam->Target, cam->Up) * camTrans);
 }
 
-mat4 FPSViewMatrix(Camera *cam, float pitch, float yaw)
+mat4 CalcFPSViewMatrix(Camera *cam, float pitch, float yaw)
 {	
 	return mat4::FPSMatrix(cam->Eye, pitch, yaw) * mat4::Scale(cam->Scale);
 }
 
-mat4 OrthoProjectionMatrix(Camera *cam, float width, float height, float near, float far)
+mat4 CalcOrthoProjectionMatrix(float width, float height, float near, float far)
 {
 	return mat4::OrthographicMatrix(width, height, near, far);
 }
 
-mat4 OrthoProjectionMatrix(Camera *cam, float left, float right, float top, float bottom, float near, float far)
-{
-	return mat4::OrthographicMatrix(left, right, top, bottom, near, far);
-}
-
-mat4 PerspectiveProjection(Camera *cam, float fov, float width, float height, float near, float far)
+mat4 CalcPerspectiveProjection(float fov, float width, float height, float near, float far)
 {
 	return mat4::PerspectiveMatrix(fov, width, height, near, far);
 }
 
-mat4 MVP(mat4 model, mat4 view, mat4 projection)
+mat4 CalcProjection(Camera *cam)
 {
-	return projection * view * model;
+	mat4 result;
+	mat4 proj;
+
+	if (cam->Type == CameraType::ORTHOGRAPHIC)
+	{
+		proj = CalcOrthoProjectionMatrix(cam->Size.x, cam->Size.y, cam->Eye.z, cam->Far);
+	}
+	else
+	{
+		proj = CalcPerspectiveProjection(cam->FOV, cam->Size.x, cam->Size.y, cam->Eye.z + 0.1f, cam->Far);
+	}
+
+	result = proj * CalcLookAtViewMatrix(cam);
+
+	return result;
+}
+
+mat4 CalcMVP(Transform *transform, Camera *cam)
+{
+	return CalcProjection(cam) * CalcLookAtViewMatrix(cam) * CalcModelMatrix(transform);
 }
 
 void Translate(Transform *transform, vec3 amount)
 {
 	mat4 transMat = mat4::Translation(amount);
 
-	transform->Position = transform->Position * transMat;
+	transform->Position = transMat * transform->Position;
 }
 
 void Rotate(Transform *transform, vec3 amount)
 {
 	mat4 rotMat = mat4::Rotation(amount);
 
-	transform->Rotation = transform->Rotation * rotMat;
+	transform->Rotation = rotMat * transform->Rotation;
 }
 
 void Scale(Transform *transform, vec3 amount)
 {
 	mat4 scaleMat = mat4::Scale(amount);
 
-	transform->Scale = transform->Scale * scaleMat;
+	transform->Scale = scaleMat * transform->Scale;
 }
 
 bool operator!=(Transform &left, Transform &right)

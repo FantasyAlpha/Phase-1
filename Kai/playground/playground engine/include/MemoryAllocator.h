@@ -99,10 +99,9 @@ enum AllocatorTypes
 struct MainAllocator
 {
 	BlockDimensions MainMemory;
+	void *OriginalBase;
 	FrameAllocator *FrameSystem;
 	StackAllocator *StackSystem;
-	PoolAllocator *PoolSystem;
-
 	AllocatorTypes MainSystem;
 };
 
@@ -112,7 +111,7 @@ uint32 ForwardAlign(uint32 size, uint8 align);
 
 void ShutDownMemorySystem(MainAllocator *mainAlloc);
 
-void InitMainMemorySystem(MainAllocator *mainAlloc, AllocatorTypes allocType, uint32 size, int8 align, uint32 poolBlockSize = 0);
+void InitMainMemorySystem(MainAllocator *mainAlloc, AllocatorTypes allocType, uint32 size, int8 align);
 
 AllocatorErrors SetMemorySystemDimensions(void *memory, BlockDimensions *dimensions, uint32 size, int8 align);
 
@@ -149,12 +148,6 @@ AllocatorErrors InitPartialStackSystem(FrameAllocator *sourceAllocator, StackAll
 
 AllocatorErrors InitPartialStackSystem(StackAllocator *sourceAllocator, StackAllocator *destinationAlloctor, uint32 size);
 
-AllocatorErrors InitPartialStackSystem(PoolAllocator *sourceAllocator, StackAllocator *destinationAlloctor);
-
-AllocatorErrors InitPartialFrameSystem(PoolAllocator *sourceAllocator, FrameAllocator *destinationAlloctor);
-
 AllocatorErrors InitPartialPoolSystem(StackAllocator *sourceAllocator, PoolAllocator *destinationAlloctor, uint32 size, uint32 blockSize, bool useQueue = true);
 
 AllocatorErrors InitPartialPoolSystem(FrameAllocator *sourceAllocator, PoolAllocator *destinationAlloctor, HeapType sourceHeapType, uint32 size, uint32 blockSize, bool useQueue = true);
-
-AllocatorErrors InitPartialPoolSystem(PoolAllocator *sourceAllocator, PoolAllocator *destinationAlloctor, uint32 destinationBlockSize, bool useQueue = true);

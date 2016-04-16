@@ -201,7 +201,5 @@ bool InitOpengl(HINSTANCE hInstance, WindowManager *window)
 	}
 	ReleaseDC(window->Window, windowDC);
 
-
-
 	return true;
 }

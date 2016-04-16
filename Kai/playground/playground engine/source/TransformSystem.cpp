@@ -142,7 +142,7 @@ void TransformSystem::UpdateTransformChildren(TransformComponent *transform, boo
 			|| transform->OldTransform.Rotation != transform->CurrentTransform.Rotation
 			|| transform->OldTransform.Scale != transform->CurrentTransform.Scale))
 		{
-			transform->ModelMatrix = ModelMatrix(&transform->CurrentTransform);
+			transform->ModelMatrix = CalcModelMatrix(&transform->CurrentTransform);
 			if (transform->ParentIndex < MAX_TRANSFORM_COUNT)
 			{
 				transform->ModelMatrix = Transforms[transform->ParentIndex].ModelMatrix * transform->ModelMatrix;
@@ -150,7 +150,7 @@ void TransformSystem::UpdateTransformChildren(TransformComponent *transform, boo
 		}
 		else if (parentChanged)
 		{
-			transform->ModelMatrix = Transforms[transform->ParentIndex].ModelMatrix * ModelMatrix(&transform->CurrentTransform);
+			transform->ModelMatrix = Transforms[transform->ParentIndex].ModelMatrix * CalcModelMatrix(&transform->CurrentTransform);
 		}
 	}
 
@@ -165,7 +165,7 @@ void TransformSystem::UpdateTransformChildren(TransformComponent *transform, boo
 		{
 			if (i == 0)
 			{
-				transform->ModelMatrix = ModelMatrix(&transform->CurrentTransform);
+				transform->ModelMatrix = CalcModelMatrix(&transform->CurrentTransform);
 				if (transform->ParentIndex < MAX_TRANSFORM_COUNT)
 				{
 					transform->ModelMatrix = Transforms[transform->ParentIndex].ModelMatrix * transform->ModelMatrix;
@@ -178,7 +178,7 @@ void TransformSystem::UpdateTransformChildren(TransformComponent *transform, boo
 		{
 			if (i == 0)
 			{
-				transform->ModelMatrix = Transforms[Owner->ActorManager.ActiveActorMap[transform->ParentName]].ModelMatrix * ModelMatrix(&transform->CurrentTransform);
+				transform->ModelMatrix = Transforms[Owner->ActorManager.ActiveActorMap[transform->ParentName]].ModelMatrix * CalcModelMatrix(&transform->CurrentTransform);
 			}
 
 			didChange = true;

@@ -7,7 +7,7 @@ NOTE(kai): This file can:
 #pragma once
 
 #include <Windows.h>
-
+#include <Windowsx.h>
 //NOTE(kai): Callback is basically: once an event is fired store it in an event queue 
 //			,then use a callback function to process these events.
 //			Polling is basically going through the event queue at certain intervals 
@@ -20,6 +20,13 @@ struct Input_Keys
 	//Array holding the key released state
 	bool KeysUp[200];
 
+	bool ButtonsDown[3];
+	bool ButtonsUp[3];
+
+	float MouseX, MouseY;
+	unsigned int Key;
+	unsigned int Char;
+	
 	bool AltF4;
 };
 

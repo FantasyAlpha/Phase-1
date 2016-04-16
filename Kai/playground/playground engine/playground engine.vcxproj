@@ -56,14 +56,14 @@
     <LibraryPath>$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\playground engine\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediates\playground engine\$(Configuration)\</IntDir>
-    <SourcePath>$(SourcePath)</SourcePath>
+    <SourcePath>$(SolutionDir)playground engine\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='GLSL 120 Debug|Win32'">
     <IncludePath>$(ProjectDir)include;$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\playground engine\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediates\playground engine\$(Configuration)\</IntDir>
-    <SourcePath>$(SourcePath)</SourcePath>
+    <SourcePath>$(SolutionDir)playground engine\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
@@ -82,6 +82,10 @@
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='GLSL 120 Debug|Win32'">
     <ClCompile>
@@ -89,11 +93,15 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;ANCIENT_VERSION=120;MODERN_VERSION=330;GLSL_VERSION=ANCIENT_VERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -109,6 +117,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\ActorSystem.cpp" />
@@ -128,6 +140,7 @@
     <ClCompile Include="source\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Lights.h" />
     <ClInclude Include="include\World.h" />
     <ClInclude Include="include\Components.h" />
     <ClInclude Include="include\Material.h" />

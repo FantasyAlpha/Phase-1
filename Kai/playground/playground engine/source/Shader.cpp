@@ -19,9 +19,6 @@ Shader CreateShader(char *vertexPath, char *fragmentPath)
 
 	//Link the shaders in the program and check for errors
 	LinkShaders(&shader);
-	AddUniform(&shader, UNIFORMS::MODEL_MATRIX, "modelMatrix");
-	AddUniform(&shader, UNIFORMS::VIEW_MATRIX, "viewMatrix");
-	AddUniform(&shader, UNIFORMS::PROJECTION_MATRIX, "projectionMatrix");
 
 	return shader;
 }

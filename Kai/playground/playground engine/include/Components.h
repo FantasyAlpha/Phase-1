@@ -24,10 +24,14 @@ struct Renderer
 {
 	Mesh Renderable;
 	Material RenderableMaterial;
+
+	uint32 OwnerIndex;
 };
 
+void RenderSingleRenderer(Renderer *renderer, Shader *shader, Transform *transform, Camera *camera);
+
 #define SPRITE_RENDERER_SIZE sizeof(Renderer)
-#define TOTAL_SPRITES_ALLOCATOR_SIZE ((SPRITE_RENDERER_SIZE + sizeof(PoolBlock)) * MAX_SPRITE_COUNT) + sizeof(PoolAllocator)
+#define TOTAL_SPRITES_ALLOCATOR_SIZE ((SPRITE_RENDERER_SIZE + sizeof(PoolBlock)) * MAX_SPRITE_COUNT)
 #define TOTAL_SPRITES_SIZE SPRITE_RENDERER_SIZE * MAX_SPRITE_COUNT
 
 struct RendererSystem
@@ -37,6 +41,7 @@ struct RendererSystem
 	Shader MainShader;
 	uint32 MaxSize;
 	World *Owner;
+	std::unordered_map<char*, uint32> Owner_ComponentMap;
 
 	void InitRendererSystem(StackAllocator *sourceAllocator);
 
@@ -65,7 +70,7 @@ struct TransformComponent
 };
  
 #define TRANSFORM_COMPONENT_SIZE sizeof(TransformComponent)
-#define TOTAL_TRANSFORMS_ALLOCATOR_SIZE ((TRANSFORM_COMPONENT_SIZE + sizeof(PoolBlock)) * MAX_TRANSFORM_COUNT) + sizeof(PoolAllocator)
+#define TOTAL_TRANSFORMS_ALLOCATOR_SIZE ((TRANSFORM_COMPONENT_SIZE + sizeof(PoolBlock)) * MAX_TRANSFORM_COUNT)
 #define TOTAL_TRANSFORMS_SIZE TRANSFORM_COMPONENT_SIZE * MAX_TRANSFORM_COUNT
 
 struct TransformSystem
@@ -103,7 +108,7 @@ struct TransformSystem
 };
 
 #define ACTOR_SIZE sizeof(Actor)
-#define TOTAL_ACTORS_ALLOCATOR_SIZE ((ACTOR_SIZE + sizeof(PoolBlock)) * MAX_ACTOR_COUNT) + sizeof(PoolAllocator)
+#define TOTAL_ACTORS_ALLOCATOR_SIZE ((ACTOR_SIZE + sizeof(PoolBlock)) * MAX_ACTOR_COUNT)
 #define TOTAL_ACTORS_SIZE ACTOR_SIZE * MAX_ACTOR_COUNT
 
 struct Actor

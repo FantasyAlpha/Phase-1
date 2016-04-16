@@ -10,12 +10,18 @@ NOTE(kai): This file can:
 #include <GL\glew.h>
 #include <GL\wglew.h>
 
+struct ClearColor
+{
+	float r, g, b, a;
+};
+
 struct WindowManager
 {
 	HWND Window;
 	WNDPROC WindowCallback;
 	int Width;
 	int Height;	
+	ClearColor Color;
 };
 
 BOOL RegisterWindowClass(HINSTANCE hInstance, char* name, WNDPROC callback);
@@ -24,7 +30,7 @@ bool InitGlew(HINSTANCE hInstance);
 
 bool InitOpengl(HINSTANCE hIsntance, WindowManager *window);
 
-void InitWindow(HINSTANCE hInstance, WindowManager *window, char* title, int width, int height);
+void InitWindow(HINSTANCE hInstance, WindowManager *window, char* title, int width, int height, ClearColor color = ClearColor{ 0.0f, 0.3f, 0.4f, 1.0f });
 
 //Renders our window (this should happen each frame)
 void RenderWindow(HWND window);
@@ -37,3 +43,6 @@ void SetOpenglOptions();
 
 //Clear the window
 void ClearWindow();
+
+void SetClearColor(ClearColor color);
+void SetViewPort(float x, float y, float width, float height);

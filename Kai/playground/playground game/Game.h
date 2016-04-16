@@ -24,7 +24,6 @@ NOTE(kai): This is a test game
 #include <World.h>
 //
 
-
 struct Game_Button
 {
 	int Button;
@@ -33,12 +32,33 @@ struct Game_Button
 	bool KeyUp;
 };
 
+#define BUTTON_COUNT 11
+
 struct Game_Input
 {
-	Game_Button UP;
-	Game_Button DOWN;
-	Game_Button RIGHT;
-	Game_Button LEFT;
+	union 
+	{
+		Game_Button Buttons[BUTTON_COUNT];
+	
+		struct 
+		{
+			Game_Button UP;
+			Game_Button DOWN;
+			Game_Button RIGHT;
+			Game_Button LEFT;
+
+			Game_Button W;
+			Game_Button S;
+			Game_Button A;
+			Game_Button D;
+
+			Game_Button MOUSE_LEFT;
+			Game_Button MOUSE_RIGHT;
+			Game_Button MOUSE_MIDDLE;
+		};
+	};
+
+	vec2 MousePos;
 };
 
 struct Window_Dimensions
@@ -65,5 +85,6 @@ typedef GAME_SHUTDOWN(game_shutdown);
 //compute time 
 void computetime(clock_t start, clock_t end);
 
-
+void InitEverything();
 void InitResources();
+void InitGameWorld();

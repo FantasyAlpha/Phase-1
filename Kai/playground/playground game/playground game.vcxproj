@@ -55,21 +55,21 @@
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediates\playground game\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)playground engine\include;$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)bin\playground engine\$(Configuration);$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>$(SourcePath)</SourcePath>
+    <LibraryPath>$(SolutionDir)bin\playgroundGUI\$(Configuration);$(SolutionDir)bin\playground engine\$(Configuration);$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SolutionDir)playground engine\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='GLSL 120 Debug|Win32'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediates\playground game\$(Configuration)\</IntDir>
-    <IncludePath>$(SolutionDir)playground engine\include;$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)bin\playground engine\$(Configuration);$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
-    <SourcePath>$(SourcePath)</SourcePath>
+    <IncludePath>$(SolutionDir)playgroundGUI;$(SolutionDir)playground engine\include;$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)bin\playgroundGUI\$(Configuration);$(SolutionDir)bin\playground engine\$(Configuration);$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
+    <SourcePath>$(SolutionDir)3rd party libraries\source;$(SourcePath)</SourcePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediates\playground game\$(Configuration)\</IntDir>
     <IncludePath>$(SolutionDir)playground engine;$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)bin\playground engine\$(Configuration);$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)bin\playgroundGUI\$(Configuration);$(SolutionDir)bin\playground engine\$(Configuration);$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -81,7 +81,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;opengl32.lib;playground engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>playgroundGUI.lib;glew32s.lib;opengl32.lib;playground engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -104,11 +104,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GAME_DLL_EXPORTS;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;ANCIENT_VERSION=120;MODERN_VERSION=330;GLSL_VERSION=ANCIENT_VERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glew32s.lib;opengl32.lib;playground engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>playgroundGUI.lib;glew32s.lib;opengl32.lib;playground engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <ProgramDatabaseFile>$(OutDir)$(TargetName).pdb</ProgramDatabaseFile>
       <SubSystem>Windows</SubSystem>
     </Link>
@@ -138,7 +138,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>glew32s.lib;opengl32.lib;playground engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>playgroundGUI.lib;glew32s.lib;opengl32.lib;playground engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
     </Link>
     <PostBuildEvent>

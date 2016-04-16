@@ -12,41 +12,22 @@ uint32 ForwardAlign(uint32 size, uint8 align)
 
 void ShutDownMemorySystem(MainAllocator *mainAlloc)
 {
-	if (mainAlloc->PoolSystem)
-	{
-		if (mainAlloc->PoolSystem->UnusedIndex)
-		{
-			for (uint32 i = 0; i < mainAlloc->PoolSystem->UnusedIndex->size(); i++)
-			{
-				mainAlloc->PoolSystem->UnusedIndex->pop();
-			}
-		}
-	}
-	free(mainAlloc->MainMemory.BaseAddress);
-	mainAlloc->MainMemory.BaseAddress = NULL;
+	free(mainAlloc->OriginalBase);
+	//mainAlloc->MainMemory.BaseAddress = NULL;
 }
 
-void InitMainMemorySystem(MainAllocator *mainAlloc, AllocatorTypes allocType, uint32 size, int8 align, uint32 poolBlockSize)
+void InitMainMemorySystem(MainAllocator *mainAlloc, AllocatorTypes allocType, uint32 size, int8 align)
 {
 	crash(size <= 0);
 
-	if (allocType == POOL_ALLOCATOR)
+	if (allocType == STACK_ALLOCATOR)
 	{
-		mainAlloc->MainMemory.Size = (size + sizeof(PoolAllocator) + 4) + ((sizeof(PoolBlock)) * (size / poolBlockSize));
+		mainAlloc->MainMemory.Size = (size + sizeof(StackAllocator) + 4);
 		mainAlloc->MainMemory.BaseAddress = malloc(mainAlloc->MainMemory.Size);
+		mainAlloc->OriginalBase = mainAlloc->MainMemory.BaseAddress;
 		mainAlloc->MainMemory.CapAddress = (void*)((uint8*)mainAlloc->MainMemory.BaseAddress + mainAlloc->MainMemory.Size);
 
-		mainAlloc->MainMemory.BaseAddress = ForwardAlign((void*)((uint8*)mainAlloc->MainMemory.BaseAddress), align);
-		mainAlloc->MainMemory.CapAddress = ForwardAlign(mainAlloc->MainMemory.CapAddress, align);
-		mainAlloc->MainMemory.Size = mainAlloc->MainMemory.Size - ((sizeof(PoolBlock)) * (size / poolBlockSize)) - sizeof(PoolAllocator);
-	}
-	else if (allocType == STACK_ALLOCATOR)
-	{
-		mainAlloc->MainMemory.Size = (size + sizeof(StackAllocator) +4);
-		mainAlloc->MainMemory.BaseAddress = malloc(mainAlloc->MainMemory.Size);
-		mainAlloc->MainMemory.CapAddress = (void*)((uint8*)mainAlloc->MainMemory.BaseAddress + mainAlloc->MainMemory.Size);
-
-		mainAlloc->MainMemory.BaseAddress = ForwardAlign((void*)((uint8*)mainAlloc->MainMemory.BaseAddress), align);
+		mainAlloc->MainMemory.BaseAddress = ForwardAlign((mainAlloc->MainMemory.BaseAddress), align);
 		mainAlloc->MainMemory.CapAddress = ForwardAlign(mainAlloc->MainMemory.CapAddress, align);
 	}
 	else
@@ -55,13 +36,12 @@ void InitMainMemorySystem(MainAllocator *mainAlloc, AllocatorTypes allocType, ui
 		mainAlloc->MainMemory.BaseAddress = malloc(mainAlloc->MainMemory.Size);
 		mainAlloc->MainMemory.CapAddress = (void*)((uint8*)mainAlloc->MainMemory.BaseAddress + mainAlloc->MainMemory.Size);
 
-		mainAlloc->MainMemory.BaseAddress = ForwardAlign((void*)((uint8*)mainAlloc->MainMemory.BaseAddress), align);
+		mainAlloc->MainMemory.BaseAddress = ForwardAlign((mainAlloc->MainMemory.BaseAddress), align);
 		mainAlloc->MainMemory.CapAddress = ForwardAlign(mainAlloc->MainMemory.CapAddress, align);
 	}
 
 	mainAlloc->FrameSystem = NULL;
 	mainAlloc->StackSystem = NULL;
-	mainAlloc->PoolSystem = NULL;
 
 	crash(!mainAlloc->MainMemory.BaseAddress);
 	
@@ -71,28 +51,22 @@ void InitMainMemorySystem(MainAllocator *mainAlloc, AllocatorTypes allocType, ui
 		{
 			mainAlloc->MainSystem = AllocatorTypes::FRAME_ALLOCATOR;
 			mainAlloc->FrameSystem = (FrameAllocator*)mainAlloc->MainMemory.BaseAddress;
+			mainAlloc->MainMemory.BaseAddress = (uint8*)mainAlloc->MainMemory.BaseAddress + sizeof(FrameAllocator);
 			InitFrameSystem(&mainAlloc->MainMemory, mainAlloc->FrameSystem, align);
 		} break;
 		case STACK_ALLOCATOR:
 		{
 			mainAlloc->MainSystem = AllocatorTypes::STACK_ALLOCATOR;
 			mainAlloc->StackSystem = (StackAllocator*)mainAlloc->MainMemory.BaseAddress;
+			mainAlloc->MainMemory.BaseAddress = (uint8*)mainAlloc->MainMemory.BaseAddress + sizeof(StackAllocator);
 			InitStackSystem(&mainAlloc->MainMemory, mainAlloc->StackSystem, align);
-		} break;
-		case POOL_ALLOCATOR:
-		{
-			mainAlloc->MainSystem = AllocatorTypes::POOL_ALLOCATOR;
-			mainAlloc->PoolSystem = (PoolAllocator*)mainAlloc->MainMemory.BaseAddress;
-			if (poolBlockSize > 0)
-			{
-				InitPoolSystem(&mainAlloc->MainMemory, mainAlloc->PoolSystem, poolBlockSize, align);
-			}
 		} break;
 		default:
 		{
-			mainAlloc->MainSystem = AllocatorTypes::FRAME_ALLOCATOR;
-			mainAlloc->FrameSystem = (FrameAllocator*)mainAlloc->MainMemory.BaseAddress;
-			InitFrameSystem(&mainAlloc->MainMemory, mainAlloc->FrameSystem, align);
+			mainAlloc->MainSystem = AllocatorTypes::STACK_ALLOCATOR;
+			mainAlloc->StackSystem = (StackAllocator*)mainAlloc->MainMemory.BaseAddress;
+			mainAlloc->MainMemory.BaseAddress = (uint8*)mainAlloc->MainMemory.BaseAddress + sizeof(StackAllocator);
+			InitStackSystem(&mainAlloc->MainMemory, mainAlloc->StackSystem, align);
 		} break;
 	}
 }
@@ -116,7 +90,7 @@ AllocatorErrors InitFrameSystem(BlockDimensions *sourceDimensions, FrameAllocato
 	destinationAllocator->ByteAlignment = align;
 	destinationAllocator->Dimensions = *sourceDimensions;
 
-	destinationAllocator->StackPointer[HeapType::LOWER_HEAP] = (uint8*)destinationAllocator->Dimensions.BaseAddress + sizeof(FrameAllocator);
+	destinationAllocator->StackPointer[HeapType::LOWER_HEAP] = (uint8*)destinationAllocator->Dimensions.BaseAddress;
 	destinationAllocator->StackPointer[HeapType::HIGHER_HEAP] = destinationAllocator->Dimensions.CapAddress;
 
 	return AllocatorErrors::NO_ERRORS;
@@ -197,7 +171,7 @@ void FrameRelease(FrameAllocator *allocator, FrameBookmark *bookmark)
 AllocatorErrors InitStackSystem(BlockDimensions *sourceDimensions, StackAllocator *destinationAllocator, int8 align)
 {
 	destinationAllocator->Dimensions = *sourceDimensions; 
-	destinationAllocator->StackPointer = (uint8*)sourceDimensions->BaseAddress + sizeof(StackAllocator);
+	destinationAllocator->StackPointer = (uint8*)sourceDimensions->BaseAddress;
 	destinationAllocator->UsedSize = 0;
 	destinationAllocator->ByteAlignment = align;
 
@@ -257,7 +231,7 @@ AllocatorErrors InitPoolSystem(BlockDimensions *sourceDimensions, PoolAllocator 
 	uint32 alignedBlockSize = ForwardAlign(blockSize , align);
 	uint32 blockCount = destinationAllocator->Dimensions.Size / blockSize;
 
-	crash((blockCount * (alignedBlockSize + sizeof(PoolBlock))) + sizeof(PoolAllocator) > sourceDimensions->Size + (blockCount * (alignedBlockSize + sizeof(PoolBlock))) + sizeof(PoolAllocator));
+	crash((blockCount * (alignedBlockSize + sizeof(PoolBlock))) + sizeof(PoolAllocator) > sourceDimensions->Size + (blockCount * (alignedBlockSize + sizeof(PoolBlock))));
 	crash(alignedBlockSize <= 0);
 	crash(blockCount <= 1);
 	
@@ -276,7 +250,7 @@ AllocatorErrors InitPoolSystem(BlockDimensions *sourceDimensions, PoolAllocator 
 
 	for (uint32 i = 0; i < blockCount; i++)
 	{
-		void *base = ((uint8*)destinationAllocator->Dimensions.BaseAddress + sizeof(PoolAllocator)) + (blockCount * sizeof(PoolBlock)) + (alignedBlockSize * i);
+		void *base = ((uint8*)destinationAllocator->Dimensions.BaseAddress) + (blockCount * sizeof(PoolBlock)) + (alignedBlockSize * i);
 		void *cap = (uint8*)base + alignedBlockSize;
 
 		destinationAllocator->Blocks[i].Dimensions.BaseAddress = base;
@@ -385,7 +359,7 @@ void PoolDealloc(PoolAllocator *allocator, uint32 blockIndex)
 
 AllocatorErrors InitPartialFrameSystem(FrameAllocator *sourceAllocator, FrameAllocator *destinationAllocator, HeapType sourceHeapType, uint32 size)
 {
-	uint32 allocSize = ForwardAlign(size + sizeof(FrameAllocator), sourceAllocator->ByteAlignment);
+	uint32 allocSize = ForwardAlign(size, sourceAllocator->ByteAlignment);
 
 	crash(allocSize > sourceAllocator->Dimensions.Size - (sourceAllocator->UsedSize[HeapType::LOWER_HEAP] + sourceAllocator->UsedSize[HeapType::HIGHER_HEAP]));
 
@@ -403,7 +377,7 @@ AllocatorErrors InitPartialFrameSystem(FrameAllocator *sourceAllocator, FrameAll
 
 AllocatorErrors InitPartialFrameSystem(StackAllocator *sourceAllocator, FrameAllocator *destinationAllocator, uint32 size)
 {
-	uint32 allocSize = ForwardAlign(size + sizeof(FrameAllocator), sourceAllocator->ByteAlignment);
+	uint32 allocSize = ForwardAlign(size, sourceAllocator->ByteAlignment);
 
 	crash(allocSize > sourceAllocator->Dimensions.Size - (sourceAllocator->UsedSize));
 
@@ -416,16 +390,6 @@ AllocatorErrors InitPartialFrameSystem(StackAllocator *sourceAllocator, FrameAll
 
 	InitFrameSystem(&baseBookmark.Dimensions, destinationAllocator, sourceAllocator->ByteAlignment);
 
-
-	return AllocatorErrors::NO_ERRORS;
-}
-
-AllocatorErrors InitPartialFrameSystem(PoolAllocator *sourceAllocator, FrameAllocator *destinationAllocator)
-{
-	PoolBlock newPool = PoolAlloc(sourceAllocator);
-	uint32 allocSize = newPool.Dimensions.Size;
-
-	InitFrameSystem(&newPool.Dimensions, destinationAllocator, sourceAllocator->ByteAlignment);
 
 	return AllocatorErrors::NO_ERRORS;
 }
@@ -452,7 +416,7 @@ AllocatorErrors InitPartialPoolSystem(FrameAllocator *sourceAllocator, PoolAlloc
 	uint32 newBlockSize = ForwardAlign(blockSize, sourceAllocator->ByteAlignment);
 	uint32 blockCount = size / newBlockSize;
 
-	uint32 allocSize = ForwardAlign((blockCount * (newBlockSize + sizeof(PoolBlock))) + sizeof(PoolAllocator), sourceAllocator->ByteAlignment);
+	uint32 allocSize = ForwardAlign((blockCount * (newBlockSize + sizeof(PoolBlock))), sourceAllocator->ByteAlignment);
 
 	crash(blockCount <= 1);
 
@@ -462,7 +426,7 @@ AllocatorErrors InitPartialPoolSystem(FrameAllocator *sourceAllocator, PoolAlloc
 	}
 
 	FrameBookmark baseBookmark = FrameAlloc(sourceAllocator, sourceHeapType, allocSize);
-	baseBookmark.Dimensions.Size = allocSize - ((blockCount * sizeof(PoolBlock)) + sizeof(PoolAllocator));
+	baseBookmark.Dimensions.Size = allocSize - ((blockCount * sizeof(PoolBlock)));
 
 	InitPoolSystem(&baseBookmark.Dimensions, destinationAllocator, newBlockSize, sourceAllocator->ByteAlignment, useQueue);
 
@@ -474,7 +438,7 @@ AllocatorErrors InitPartialPoolSystem(StackAllocator *sourceAllocator, PoolAlloc
 	uint32 newBlockSize = ForwardAlign(blockSize, sourceAllocator->ByteAlignment);
 	uint32 blockCount = size / newBlockSize;
 
-	uint32 allocSize = ForwardAlign((blockCount * (newBlockSize + sizeof(PoolBlock))) + sizeof(PoolAllocator), sourceAllocator->ByteAlignment);
+	uint32 allocSize = ForwardAlign((blockCount * (newBlockSize + sizeof(PoolBlock))), sourceAllocator->ByteAlignment);
 
 	crash(blockCount <= 1);
 	crash(allocSize > sourceAllocator->Dimensions.Size - (sourceAllocator->UsedSize));
@@ -485,7 +449,7 @@ AllocatorErrors InitPartialPoolSystem(StackAllocator *sourceAllocator, PoolAlloc
 	}
 
 	StackBookmark baseBookmark = StackAlloc(sourceAllocator, allocSize);
-	baseBookmark.Dimensions.Size = allocSize - ((blockCount * sizeof(PoolBlock)) + sizeof(PoolAllocator));
+	baseBookmark.Dimensions.Size = allocSize - ((blockCount * sizeof(PoolBlock)));
 
 	InitPoolSystem(&baseBookmark.Dimensions, destinationAllocator, newBlockSize, sourceAllocator->ByteAlignment, useQueue);
 
@@ -495,7 +459,7 @@ AllocatorErrors InitPartialPoolSystem(StackAllocator *sourceAllocator, PoolAlloc
 
 AllocatorErrors InitPartialStackSystem(FrameAllocator *sourceAllocator, StackAllocator *destinationAllocator, HeapType sourceHeapType, uint32 size)
 {
-	uint32 allocSize = ForwardAlign(size + sizeof(StackAllocator), sourceAllocator->ByteAlignment);
+	uint32 allocSize = ForwardAlign(size, sourceAllocator->ByteAlignment);
 
 	if (allocSize > sourceAllocator->Dimensions.Size - (sourceAllocator->UsedSize[HeapType::LOWER_HEAP] + sourceAllocator->UsedSize[HeapType::HIGHER_HEAP]))
 	{
@@ -511,7 +475,7 @@ AllocatorErrors InitPartialStackSystem(FrameAllocator *sourceAllocator, StackAll
 
 AllocatorErrors InitPartialStackSystem(StackAllocator *sourceAllocator, StackAllocator *destinationAllocator, uint32 size)
 {
-	uint32 allocSize = ForwardAlign(size + sizeof(StackAllocator), sourceAllocator->ByteAlignment);
+	uint32 allocSize = ForwardAlign(size, sourceAllocator->ByteAlignment);
 
 	if (allocSize > sourceAllocator->Dimensions.Size - (sourceAllocator->UsedSize))
 	{
@@ -521,17 +485,6 @@ AllocatorErrors InitPartialStackSystem(StackAllocator *sourceAllocator, StackAll
 	StackBookmark baseBookmark = StackAlloc(sourceAllocator, allocSize);
 	
 	InitStackSystem(&baseBookmark.Dimensions, destinationAllocator, sourceAllocator->ByteAlignment);
-
-	return AllocatorErrors::NO_ERRORS;
-}
-
-AllocatorErrors InitPartialStackSystem(PoolAllocator *sourceAllocator, StackAllocator *destinationAllocator)
-{
-	PoolBlock newPool = PoolAlloc(sourceAllocator);
-
-	uint32 allocSize = newPool.Dimensions.Size;
-
-	InitStackSystem(&newPool.Dimensions, destinationAllocator, sourceAllocator->ByteAlignment);
 
 	return AllocatorErrors::NO_ERRORS;
 }

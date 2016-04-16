@@ -162,7 +162,6 @@ void InitSystem(HINSTANCE hInstance, char *title, int width, int height)
 	Window.WindowCallback = WindowCallBack;
 	InitWindow(hInstance, &Window, title, width, height);
 	InitInputManager(&Keys);
-	
 	Game = {};
 	
 	Dimensions.Width = (float)Window.Width;
@@ -175,17 +174,49 @@ void InitSystem(HINSTANCE hInstance, char *title, int width, int height)
 
 void ProcessInput(Game_Input *input)
 {
-	input->UP.KeyDown = IsKeyDown(&Keys, input->UP.Button);
-	input->UP.KeyUp = IsKeyUp(&Keys, input->UP.Button);
+	for (size_t i = 0; i < BUTTON_COUNT; i++)
+	{
+		if (i < BUTTON_COUNT - 3)
+		{
+			input->Buttons[i].KeyDown = IsKeyDown(&Keys, input->Buttons[i].Button);
+			input->Buttons[i].KeyUp = IsKeyDown(&Keys, input->Buttons[i].Button);
+		}
+		else
+		{
+			input->Buttons[i].KeyDown = Keys.ButtonsDown[i - (BUTTON_COUNT - 3)];
+			input->Buttons[i].KeyUp = Keys.ButtonsUp[i - (BUTTON_COUNT - 3)];
+		}
+	}
 
-	input->DOWN.KeyDown = IsKeyDown(&Keys, input->DOWN.Button);
-	input->DOWN.KeyUp = IsKeyUp(&Keys, input->DOWN.Button);
+	for (size_t i = 0; i < GUI_BUTTON_COUNT; i++)
+	{
+		if (i < GUI_BUTTON_COUNT - 3)
+		{
+			GUIInput.Buttons[i].KeyDown = IsKeyDown(&Keys, GUIInput.Buttons[i].Button);
+			GUIInput.Buttons[i].KeyUp = IsKeyDown(&Keys, GUIInput.Buttons[i].Button);
+		}
+		else
+		{
+			GUIInput.Buttons[i].KeyDown = Keys.ButtonsDown[i - (GUI_BUTTON_COUNT - 3)];
+			GUIInput.Buttons[i].KeyUp = Keys.ButtonsUp[i - (GUI_BUTTON_COUNT - 3)];
+		}
+	}
 
-	input->RIGHT.KeyDown = IsKeyDown(&Keys, input->RIGHT.Button);
-	input->RIGHT.KeyUp = IsKeyUp(&Keys, input->RIGHT.Button);
+	GUIInput.Key.Button = Keys.Key;
+	GUIInput.Key.KeyUp = IsKeyUp(&Keys, Keys.Key);
+	GUIInput.Char = Keys.Char;
+	GUIInput.MouseX = Keys.MouseX;
+	GUIInput.MouseY = Keys.MouseY;	
 
-	input->LEFT.KeyDown = IsKeyDown(&Keys, input->LEFT.Button);
-	input->LEFT.KeyUp = IsKeyUp(&Keys, input->LEFT.Button);
+	GUI_ProcessInput(&GUIInput);
+
+	input->MousePos = vec2(Keys.MouseX, Keys.MouseY);
+
+	Keys.ButtonsUp[0] = false;
+	Keys.ButtonsUp[1] = false;
+	Keys.ButtonsUp[2] = false;
+
+	//Keys.Key = 1000000000;
 }
 
 //Begin running the engine
@@ -276,11 +307,36 @@ static void MainLoop()
 	BuildFileFullPath(&state, "playground game_temp.pdb", tempPDBFullPath, sizeof(tempPDBFullPath));
 
 	Input = {};
-	Input.UP.Button = VK_UP;
-	Input.DOWN.Button = VK_DOWN;
-	Input.RIGHT.Button = VK_RIGHT;
-	Input.LEFT.Button = VK_LEFT;
+	GUIInput = {};
 
+	{
+		Input.UP.Button = VK_UP;
+		Input.DOWN.Button = VK_DOWN;
+		Input.RIGHT.Button = VK_RIGHT;
+		Input.LEFT.Button = VK_LEFT;
+
+		Input.W.Button = 'W';
+		Input.S.Button = 'S';
+		Input.A.Button = 'A';
+		Input.D.Button = 'D';
+
+		Input.MOUSE_LEFT.Button = MK_LBUTTON;
+		Input.MOUSE_MIDDLE.Button = MK_MBUTTON;
+		Input.MOUSE_RIGHT.Button = MK_RBUTTON;
+	}
+
+	{
+		GUIInput.UP.Button = VK_UP;
+		GUIInput.DOWN.Button = VK_DOWN;
+		GUIInput.RIGHT.Button = VK_RIGHT;
+		GUIInput.LEFT.Button = VK_LEFT;
+		GUIInput.BACKSPACE.Button = VK_BACK;
+		
+		GUIInput.MOUSE_LEFT.Button = MK_LBUTTON;
+		GUIInput.MOUSE_RIGHT.Button = MK_RBUTTON;
+		GUIInput.MOUSE_MIDDLE.Button = MK_MBUTTON;
+	}
+	GUI_Init(Window.Width, Window.Height, &GUIInput);
 	LARGE_INTEGER performanceFrequency;
 	QueryPerformanceFrequency(&performanceFrequency);
 	TicksPerSecond = performanceFrequency.QuadPart;
@@ -307,6 +363,9 @@ static void MainLoop()
 	double frames = 0;
 	double frameTime = 0;
 
+	bool createWindow = false;
+	ImVec4 clearColor = ImVec4(0, 0.3f, 0.4f, 1.0f);
+	ClearColor color = ClearColor{ 0, 0.3f, 0.4f, 1.0f };
 	while (IsRunning)
 	{
 		/*
@@ -328,16 +387,32 @@ static void MainLoop()
 		ProcessPendingMessages(&Keys);
 
 		ProcessInput(&Input);
-
-		//Update everything
+		//Clear the window
+		ClearWindow();
+		GUI_NewFrame();
+		{
+			if (ImGui::Button("KAI"))
+			{
+				createWindow ^= 1;
+			}
+			ImGui::ColorEdit3("CLEAR COLOR!", (float*)&clearColor);
+			ImGui::SetNextWindowSize(ImVec2(100, 300), ImGuiSetCond_FirstUseEver);
+			//ImGui::Begin("KAAI", &createWindow);
+			ImGui::Text("KAAAAAAAAAAAAAAAAAAI");
+			//ImGui::End();
+		}
 		//Update the game
 		Game.Game_Update(&Input);
 
-		//Render everything
-		//Clear the window
-		ClearWindow();
 		//Render the game
 		Game.Game_Render();
+		color.r = clearColor.x;
+		color.g = clearColor.y;
+		color.b = clearColor.z;
+		color.a = clearColor.w;
+		SetClearColor(color);
+		ImGui::Render();
+		
 		LARGE_INTEGER gameTimerEnd = GetTicks();
 		frameTime += (double)(1000.0f * GetSecondsElapsed(gameTimerStart, gameTimerEnd));
 		frames++;
@@ -370,7 +445,7 @@ static void MainLoop()
 		if (updateTime >= 1.0f)
 		{
 			double avgFPS = 1000.0f / ((frameTime) / frames);
-			std::cout << "UPS: " << updates << ", average FPS: " << avgFPS << ", average work/frame: " << (frameTime) / frames << "\n";
+			//std::cout << "UPS: " << updates << ", average FPS: " << avgFPS << ", average work/frame: " << (frameTime) / frames << "\n";
 			
 			frames = 0;
 			frameTime = 0;
@@ -509,6 +584,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPSTR cmdLine, i
 
 	//Start the engine
 	Run();
-	system("pause");
+
 	return 0;
 }
