@@ -1,8 +1,7 @@
 #include <Shader.h>
 
-
 //Create a vertex and fragment shader  
-Shader CreateShader(char *vertexPath, char *fragmentPath)
+Shader CreateShader(char *vertexPath, char *fragmentPath, char **attributeLocations, uint32 attributeLocationCount)
 {
 	bool res = ReloadGlew();
 
@@ -16,6 +15,14 @@ Shader CreateShader(char *vertexPath, char *fragmentPath)
 
 	//Add fragment shader to the program
 	AddShader(&shader, fragmentPath, FRAGMENT_SHADER);
+
+	if (attributeLocations)
+	{
+		for (uint32 i = 0; i < attributeLocationCount; i++)
+		{
+			glBindAttribLocation(shader.ProgramHandle, i, attributeLocations[i]);
+		}
+	}
 
 	//Link the shaders in the program and check for errors
 	LinkShaders(&shader);
@@ -135,6 +142,10 @@ void GetLinkError(Shader *shader)
 //Activate the shader (We need to do this before we begin drawing)
 void ActivateShader(Shader *shader)
 {
+	if (!shader)
+	{
+		glUseProgram(0);
+	}
 	glUseProgram(shader->ProgramHandle);
 }
 

@@ -47,7 +47,7 @@ void ActorSystem::DestroyActor(char *name)
 	{
 		uint32 actorIndex = this->ActiveActorMap[name];
 		
-		if (Owner->RendererManager.GetRendererIndex(name) < MAX_SPRITE_COUNT)
+		if (Owner->RendererManager.GetRenderableIndex(name) < MAX_SPRITE_COUNT)
 		{
 			Owner->RendererManager.RemoveRenderer(name);
 		}

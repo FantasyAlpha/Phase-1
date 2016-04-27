@@ -11,6 +11,10 @@ NOTE(kai): This file contain:
 
 struct Color
 {
+	Color(float r = 1, float g = 1, float b = 1, float a = 1):
+		red(r), green(g), blue(b), alpha(a)
+	{}
+
 	float red;
 	float green;
 	float blue;
@@ -19,7 +23,12 @@ struct Color
 
 struct Vertex
 {
+	Vertex(vec3 pos = vec3(), vec2 texCoords = vec2(), Color color = Color(), float slot = 0) :
+		Pos(pos), TexCoords(texCoords), Col(color), TextureSlot(slot)
+	{}
 	vec3 Pos;
 	vec2 TexCoords;
-	vec3 Normal;
+	Color Col;
+	float TextureSlot;
+	//vec3 Normal;
 };

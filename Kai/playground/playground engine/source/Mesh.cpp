@@ -1,9 +1,11 @@
 #include <Mesh.h>
+#include <stdint.h>
+#include <Components.h>
 
 static bool Glew_Initialized = false;
 
 //Create the buffers and store the mesh data in them
-Mesh CreateMesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount, bool withNormals)
+Mesh CreateMesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount, bool withNormals, bool batch)
 {
 	Mesh mesh = {};
 	if (!Glew_Initialized){
@@ -15,26 +17,7 @@ Mesh CreateMesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indi
 
 	if (withNormals)
 	{
-		for (uint32 i = 0; i < indicesCount; i += 3)
-		{
-			uint32 i0 = indices[i];
-			uint32 i1 = indices[i + 1];
-			uint32 i2 = indices[i + 2];
-
-			vec3 v1 = vertices[i1].Pos - vertices[i0].Pos;
-			vec3 v2 = vertices[i2].Pos - vertices[i0].Pos;
-
-			vec3 normal = v1.Cross(v2);
-			normal.Normalize();
-
-			vertices[i0].Normal += normal;
-			vertices[i1].Normal += normal;
-			vertices[i2].Normal += normal;
-
-			vertices[i0].Normal.Normalize();
-			vertices[i1].Normal.Normalize();
-			vertices[i2].Normal.Normalize();
-		}
+		CalculateNormals(vertices, verticesCount, indices, indicesCount);
 	}
 
 	//Use only with newer GLSL versions
@@ -63,37 +46,43 @@ Mesh CreateMesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indi
 	//					3) Store the data in the buffer
 	/***********************************************************************************************************/
 
-	if (!mesh.VBO)
-	{
-		//Generate a handle to a vertex buffer object
-		glGenBuffers(1, &mesh.VBO);
-	}
-
-	if (!mesh.EBO)
-	{
-		//Generate a handle to a element buffer object
-		glGenBuffers(1, &mesh.EBO);
-	}	
+	//Generate a handle to a vertex buffer object
+	glGenBuffers(1, &mesh.VBO);
+	//Generate a handle to a element buffer object
+	glGenBuffers(1, &mesh.EBO);
 	
 	BindMesh(&mesh);
 	
-	//Store the data in the buffer
-	glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(Vertex), vertices, GL_STATIC_DRAW);
+
+	if (!batch)
+	{
+		//Store the data in the buffer
+		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(Vertex), vertices, GL_STATIC_DRAW);
 	
-	//Store the data in the buffer
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(unsigned int), indices, GL_STATIC_DRAW);	
+		//Store the data in the buffer
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(unsigned int), indices, GL_STATIC_DRAW);	
+	}
+	else
+	{
+		//Store the data in the buffer
+		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(Vertex), vertices, GL_DYNAMIC_DRAW);
+
+		//Store the data in the buffer
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(unsigned int), indices, GL_DYNAMIC_DRAW);
+	}
 
 	/***********************************************************************************************************/
 	/***********************************************************************************************************/
 
 	//Unbind everything
 	UnbindMesh();
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	return mesh;
 }
 
 //Bind the buffers
-file_internal void BindMesh(Mesh *mesh)
+void BindMesh(Mesh *mesh)
 {
 	//Use only with newer GLSL versions
 #if GLSL_VERSION == MODERN_VERSION
@@ -106,32 +95,31 @@ file_internal void BindMesh(Mesh *mesh)
 	glBindBuffer(GL_ARRAY_BUFFER, mesh->VBO);
 
 	//Enable the attribute with the given index in the shader to be used in rendering
-	glEnableVertexAttribArray(ATTRIBUTE_INDEX::POSITION);
-	glEnableVertexAttribArray(ATTRIBUTE_INDEX::TEXTURE_COORDINATES);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+	glEnableVertexAttribArray(3);
 
 	//Defines where the attribute with the given index should look in buffer
-	glVertexAttribPointer(ATTRIBUTE_INDEX::POSITION				//The attribute index
+	glVertexAttribPointer(0				//The attribute index
 		, 3				//Number of elements
 		, GL_FLOAT		//Type of elements
 		, GL_FALSE		//Normalized or not
 		, sizeof(Vertex)//Size of the stride (the next location that the pointer will go to)
-		, 0);			//The pointer offset
+		, (void *)offsetof(Vertex, Vertex::Pos));			//The pointer offset
 
-	glVertexAttribPointer(ATTRIBUTE_INDEX::TEXTURE_COORDINATES, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(sizeof(vec3)));
-
-	if (mesh->WithNormals)
-	{
-		glEnableVertexAttribArray(ATTRIBUTE_INDEX::NORMALS);
-		glVertexAttribPointer(ATTRIBUTE_INDEX::NORMALS, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(sizeof(vec3) + sizeof(vec2)));
-	}
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Vertex::TexCoords));
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Vertex::Col));
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, Vertex::TextureSlot)));
 
 	//Bind the vertex buffer
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->EBO);
+	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mesh->Debug_EBO);
 #endif
 }
 
 //Unbind the buffers
-file_internal void UnbindMesh()
+void UnbindMesh()
 {
 	//Use only with newer GLSL versions
 #if GLSL_VERSION == MODERN_VERSION
@@ -163,17 +151,17 @@ void DrawMesh(Mesh *mesh)
 }
 
 ////
-Mesh CreateSprite(vec3 pos, vec2 size)
+Mesh CreateSprite(vec3 pos, vec2 size, Color color, bool withNormals)
 {
 	Mesh sprite = {};
 
 	//Square vertices 
 	Vertex vertices[] =
 	{
-		Vertex{vec3(pos.x			, pos.y			  , pos.z), vec2(1, 1)},		//TOP RIGHT
-		Vertex{vec3(pos.x			, pos.y - (size.y), pos.z), vec2(1, 0)},		//BOTTOM RIGHT
-		Vertex{vec3(pos.x + (size.x), pos.y - (size.y), pos.z), vec2(0, 0)},		//BOTTOM LEFT
-		Vertex{vec3(pos.x + (size.x), pos.y			  , pos.z), vec2(0, 1)},		//TOP LEFT
+		Vertex(vec3(pos.x			, pos.y			  , pos.z), vec2(0, 0), color, 0),		//TOP RIGHT
+		Vertex(vec3(pos.x			, pos.y + (size.y), pos.z), vec2(0, 1), color, 0),		//BOTTOM RIGHT
+		Vertex(vec3(pos.x + (size.x), pos.y + (size.y), pos.z), vec2(1, 1), color, 0),		//BOTTOM LEFT
+		Vertex(vec3(pos.x + (size.x), pos.y			  , pos.z), vec2(1, 0), color, 0)		//TOP LEFT
 	};
 
 
@@ -184,44 +172,44 @@ Mesh CreateSprite(vec3 pos, vec2 size)
 		1, 2, 3,
 	};
 
-	sprite = CreateMesh(vertices, ArrayCount(vertices), indices, ArrayCount(indices));
+	sprite = CreateMesh(vertices, ArrayCount(vertices), indices, ArrayCount(indices), withNormals);
 
 	return sprite;
 }
 
-Mesh CreateCube(vec3 pos, vec3 size)
+Mesh CreateCube(vec3 pos, vec3 size, Color color, bool withNormals)
 {
 	Vertex vertices[24] =
 	{
-		Vertex{vec3(pos.x		  , pos.y		  , pos.z), vec2(0, 0)},
-		Vertex{vec3(pos.x + size.x, pos.y		  , pos.z), vec2(1, 0)},
-		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z), vec2(1, 1)},
-		Vertex{vec3(pos.x		  , pos.y + size.y, pos.z), vec2(0, 1)},
+		Vertex{vec3(pos.x		  , pos.y		  , pos.z), vec2(0, 0), color},
+		Vertex{vec3(pos.x + size.x, pos.y		  , pos.z), vec2(1, 0), color},
+		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z), vec2(1, 1), color},
+		Vertex{vec3(pos.x		  , pos.y + size.y, pos.z), vec2(0, 1), color},
 			  
-		Vertex{vec3(pos.x		  , pos.y + size.y, pos.z		  ), vec2(0, 0)},
-		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z		  ), vec2(1, 0)},
-		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z - size.z), vec2(1, 1)},
-		Vertex{vec3(pos.x		  , pos.y + size.y, pos.z - size.z), vec2(0, 1)},
+		Vertex{vec3(pos.x		  , pos.y + size.y, pos.z		  ), vec2(0, 0), color},
+		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z		  ), vec2(1, 0), color},
+		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z - size.z), vec2(1, 1), color},
+		Vertex{vec3(pos.x		  , pos.y + size.y, pos.z - size.z), vec2(0, 1), color},
 			  
-		Vertex{vec3(pos.x		  , pos.y		  , pos.z - size.z), vec2(0, 0)},
-		Vertex{vec3(pos.x + size.x, pos.y		  , pos.z - size.z), vec2(1, 0)},
-		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z - size.z), vec2(1, 1)},
-		Vertex{vec3(pos.x		  , pos.y + size.y, pos.z - size.z), vec2(0, 1)},
+		Vertex{vec3(pos.x		  , pos.y		  , pos.z - size.z), vec2(0, 0), color},
+		Vertex{vec3(pos.x + size.x, pos.y		  , pos.z - size.z), vec2(1, 0), color},
+		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z - size.z), vec2(1, 1), color},
+		Vertex{vec3(pos.x		  , pos.y + size.y, pos.z - size.z), vec2(0, 1), color},
 			  
-		Vertex{vec3(pos.x		  , pos.y, pos.z	     ), vec2(0, 0)},
-		Vertex{vec3(pos.x + size.x, pos.y, pos.z		 ), vec2(1, 0)},
-		Vertex{vec3(pos.x + size.x, pos.y, pos.z - size.z), vec2(1, 1)},
-		Vertex{vec3(pos.x		  , pos.y, pos.z - size.z), vec2(0, 1)},
+		Vertex{vec3(pos.x		  , pos.y, pos.z	     ), vec2(0, 0), color},
+		Vertex{vec3(pos.x + size.x, pos.y, pos.z		 ), vec2(1, 0), color},
+		Vertex{vec3(pos.x + size.x, pos.y, pos.z - size.z), vec2(1, 1), color},
+		Vertex{vec3(pos.x		  , pos.y, pos.z - size.z), vec2(0, 1), color},
 			  														  
-		Vertex{vec3(pos.x, pos.y		 , pos.z - size.z), vec2(0, 0)},
-		Vertex{vec3(pos.x, pos.y		 , pos.z		 ), vec2(1, 0)},
-		Vertex{vec3(pos.x, pos.y + size.y, pos.z		 ), vec2(1, 1)},
-		Vertex{vec3(pos.x, pos.y + size.y, pos.z - size.z), vec2(0, 1)},
+		Vertex{vec3(pos.x, pos.y		 , pos.z - size.z), vec2(0, 0), color},
+		Vertex{vec3(pos.x, pos.y		 , pos.z		 ), vec2(1, 0), color},
+		Vertex{vec3(pos.x, pos.y + size.y, pos.z		 ), vec2(1, 1), color},
+		Vertex{vec3(pos.x, pos.y + size.y, pos.z - size.z), vec2(0, 1), color},
 			  
-		Vertex{vec3(pos.x + size.x, pos.y		  , pos.z - size.z), vec2(0, 0)},
-		Vertex{vec3(pos.x + size.x, pos.y		  , pos.z		  ), vec2(1, 0)},
-		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z		  ), vec2(1, 1)},
-		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z - size.z), vec2(0, 1)},
+		Vertex{vec3(pos.x + size.x, pos.y		  , pos.z - size.z), vec2(0, 0), color},
+		Vertex{vec3(pos.x + size.x, pos.y		  , pos.z		  ), vec2(1, 0), color},
+		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z		  ), vec2(1, 1), color},
+		Vertex{vec3(pos.x + size.x, pos.y + size.y, pos.z - size.z), vec2(0, 1), color},
 	};
 
 	uint32 indices[36] =
@@ -245,7 +233,272 @@ Mesh CreateCube(vec3 pos, vec3 size)
 		2 + 20, 0 + 20, 3 + 20,
 	};
 
-	Mesh result = CreateMesh(vertices, ArrayCount(vertices), indices, ArrayCount(indices));
+	Mesh result = CreateMesh(vertices, ArrayCount(vertices), indices, ArrayCount(indices), withNormals);
 
 	return result;
+}
+
+void CalculateNormals(Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount)
+{
+	/*for (uint32 i = 0; i < indicesCount; i += 3)
+	{
+		uint32 i0 = indices[i];
+		uint32 i1 = indices[i + 1];
+		uint32 i2 = indices[i + 2];
+
+		vec3 v1 = vertices[i1].Pos - vertices[i0].Pos;
+		vec3 v2 = vertices[i2].Pos - vertices[i0].Pos;
+
+		vec3 normal = v1.Cross(v2);
+		normal.Normalize();
+
+		vertices[i0].Normal += normal;
+		vertices[i1].Normal += normal;
+		vertices[i2].Normal += normal;
+
+		vertices[i0].Normal.Normalize();
+		vertices[i1].Normal.Normalize();
+		vertices[i2].Normal.Normalize();
+	}*/
+}
+
+void BeginBatch(MeshBatch *batch, BATCH_TYPE type, uint32 maxCount, bool debug)
+{
+	batch->MaxCount = maxCount;
+
+	if (batch->Type == BATCH_TYPE::UNKNOWN && type != BATCH_TYPE::UNKNOWN)
+	{
+		batch->Type = type;
+	}
+	
+	if (type = BATCH_TYPE::SPRITE_BATCH)
+	{
+		if (debug)
+		{
+			if (!batch->Batch.VBO)
+			{
+				batch->Batch = CreateMesh(NULL, 4 * batch->MaxCount, NULL, 8 * batch->MaxCount, false, true);
+			}
+
+			BindMesh(&batch->Batch);
+
+			//Store the data in the buffer
+			glBufferData(GL_ARRAY_BUFFER, 4 * batch->MaxCount * sizeof(Vertex), NULL, GL_DYNAMIC_DRAW);
+
+			//Store the data in the buffer
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, 8 * batch->MaxCount * sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);
+		}
+		else
+		{
+			if (!batch->Batch.VBO)
+			{
+				batch->Batch = CreateMesh(NULL, 4 * batch->MaxCount, NULL, 6 * batch->MaxCount, false, true);
+			}
+
+			BindMesh(&batch->Batch);
+
+			//Store the data in the buffer
+			glBufferData(GL_ARRAY_BUFFER, 4 * batch->MaxCount * sizeof(Vertex), NULL, GL_DYNAMIC_DRAW);
+
+			//Store the data in the buffer
+			glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * batch->MaxCount * sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);
+		}
+	}
+	else
+	{
+		if (!batch->Batch.VBO)
+		{
+			batch->Batch = CreateMesh(NULL, 24 * batch->MaxCount, NULL, 36 * batch->MaxCount, false, true);
+		}		
+
+		BindMesh(&batch->Batch);
+
+		//Store the data in the buffer
+		glBufferData(GL_ARRAY_BUFFER, 24 * batch->MaxCount * sizeof(Vertex), NULL, GL_DYNAMIC_DRAW);
+
+		//Store the data in the buffer
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, 36 * batch->MaxCount * sizeof(unsigned int), NULL, GL_DYNAMIC_DRAW);
+	}
+}
+
+void PauseBatch(MeshBatch *batch)
+{
+	UnbindMesh();
+}
+
+void ResumeBatch(MeshBatch *batch)
+{	
+	BindMesh(&batch->Batch);	
+
+	for (uint32 i = 0; i < batch->UsedSlotsCount; i++)
+	{
+		batch->TextureSlots[i] = 0;
+	}
+
+	batch->UsedSlotsCount = 0;
+}
+
+void AddSprite(MeshBatch *batch, vec3 pos, vec2 size, Color color, uint32 textureID, AnimationClip *clip, bool debug, bool withNormals)
+{
+	uint32 vertexOffset = batch->CurrentSize * 4;
+	uint32 indexOffset = batch->CurrentSize * 6;
+	if (debug)
+	{
+		indexOffset = batch->CurrentSize * 8;
+	}
+
+	batch->CurrentSize++;
+
+	bool found = false;
+	float slotIndex = 0;
+
+	for (uint32 i = 0; i < batch->UsedSlotsCount; i++)
+	{
+		if (batch->TextureSlots[i] == textureID)
+		{
+			found = true;
+			slotIndex = i;
+			break;
+		}
+	}
+
+	if (!found)
+	{
+		if (batch->UsedSlotsCount >= 8)
+		{
+			PauseBatch(batch);
+			RenderBatch(batch, debug);
+			ResumeBatch(batch);
+		}
+
+		batch->TextureSlots[batch->UsedSlotsCount] = textureID;
+		slotIndex = batch->UsedSlotsCount;
+		batch->UsedSlotsCount++;
+	}
+	if (!debug)
+	{
+		if (clip)
+		{
+			if (clip->Loop)
+			{
+				if (clip->Counter >= clip->FrameCount)
+				{
+					clip->Counter = 0;
+				}
+			}
+
+			if (clip->Counter < clip->FrameCount)
+			{
+				if (clip->TimeElapsed > clip->RunSpeed_FPS)
+				{
+					clip->TimeElapsed = 0;
+
+					uint32 col = clip->Indices[clip->Counter] % clip->MaxCountHorizontal;
+					uint32 row = (clip->MaxCountVertical - 1) - (clip->Indices[clip->Counter] / clip->MaxCountHorizontal);
+
+					vec2 bottomLeft = vec2(float(col) * clip->FrameWidth, float(row) * clip->FrameHeight);
+					vec2 bottomRight = vec2((float(col) * clip->FrameWidth) + clip->FrameWidth, float(row) * clip->FrameHeight);
+					vec2 topLeft = vec2(float(col) * clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
+					vec2 topRight = vec2((float(col) * clip->FrameWidth) + clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
+					Vertex vertices[] =
+					{
+						Vertex{ vec3(pos.x, pos.y, pos.z), bottomLeft, color, slotIndex },
+						Vertex{ vec3(pos.x, pos.y + (size.y), pos.z), topLeft, color, slotIndex },
+						Vertex{ vec3(pos.x + (size.x), pos.y + (size.y), pos.z), topRight, color, slotIndex },
+						Vertex{ vec3(pos.x + (size.x), pos.y, pos.z), bottomRight, color, slotIndex }
+					};
+					glBufferSubData(GL_ARRAY_BUFFER, vertexOffset * sizeof(Vertex), 4 * sizeof(Vertex), vertices);
+					clip->Counter++;
+				}
+				clip->TimeElapsed += (1.0f / 60.0f);
+			}
+		}
+		else
+		{
+			Vertex vertices[] =
+			{
+				Vertex{ vec3(pos.x, pos.y, pos.z), vec2(0, 0), color, slotIndex },
+				Vertex{ vec3(pos.x, pos.y + (size.y), pos.z), vec2(0, 1), color, slotIndex },
+				Vertex{ vec3(pos.x + (size.x), pos.y + (size.y), pos.z), vec2(1, 1), color, slotIndex },
+				Vertex{ vec3(pos.x + (size.x), pos.y, pos.z), vec2(1, 0), color, slotIndex }
+			};
+			glBufferSubData(GL_ARRAY_BUFFER, vertexOffset * sizeof(Vertex), 4 * sizeof(Vertex), vertices);
+		}
+	}
+	else
+	{
+		Vertex vertices[] =
+		{
+			Vertex{ vec3(pos.x, pos.y, pos.z), vec2(0, 0), color },
+			Vertex{ vec3(pos.x, pos.y + (size.y), pos.z), vec2(0, 1), color },
+			Vertex{ vec3(pos.x + (size.x), pos.y + (size.y), pos.z), vec2(1, 1), color },
+			Vertex{ vec3(pos.x + (size.x), pos.y, pos.z), vec2(1, 0), color }
+		};
+		glBufferSubData(GL_ARRAY_BUFFER, vertexOffset * sizeof(Vertex), 4 * sizeof(Vertex), vertices);
+	}	
+
+	if (debug)
+	{
+		uint32 indices[] =
+		{
+			0 + vertexOffset,
+			1 + vertexOffset,
+
+			1 + vertexOffset,
+			2 + vertexOffset,
+
+			2 + vertexOffset,
+			3 + vertexOffset,
+
+			3 + vertexOffset,
+			0 + vertexOffset,
+		};
+
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, indexOffset * sizeof(uint32), 8 * sizeof(uint32), indices);
+	}
+	else
+	{
+		uint32 indices[] =
+		{
+			0 + vertexOffset,
+			1 + vertexOffset,
+			3 + vertexOffset,
+
+			1 + vertexOffset,
+			2 + vertexOffset,
+			3 + vertexOffset
+		};
+
+		glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, indexOffset * sizeof(uint32), 6 * sizeof(uint32), indices);
+	}
+}
+
+void EndBatch(MeshBatch *batch, bool debug)
+{
+	UnbindMesh();
+	RenderBatch(batch, debug);
+	batch->CurrentSize = 0;
+}
+
+void RenderBatch(MeshBatch *batch, bool debug)
+{
+	for (uint32 i = 0; i < batch->UsedSlotsCount; i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, batch->TextureSlots[i]);
+	}
+	
+	if (debug)
+	{
+		glLineWidth(1.0f);
+		BindMesh(&batch->Batch);
+		glDrawElements(GL_LINES, batch->Batch.IndicesCount, GL_UNSIGNED_INT, NULL);
+		UnbindMesh();
+	}
+	else
+	{
+		DrawMesh(&batch->Batch);
+	}
+
+	glBindTexture(GL_TEXTURE_2D, 0);
 }

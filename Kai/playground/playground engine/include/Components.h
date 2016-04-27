@@ -3,32 +3,40 @@
 #include <unordered_map>
 #include <vector>
 #include <MemoryAllocator.h>
+#include <Texture.h>
 #include <Mesh.h>
-#include <Material.h>
 #include <Shader.h>
 #include <Transform.h>
 #include <Types.h>
 
 #define MAX_ACTOR_COUNT 100
+#define MAX_CLIP_COUNT 100
 #define MAX_SPRITE_COUNT 100
 #define MAX_TRANSFORM_COUNT MAX_ACTOR_COUNT
 
 struct World;
 
-struct ComponentData
+struct Renderable
 {
-	PoolAllocator Allocator;
+	vec3 Position;
+	vec2 Size;
+
+	Material RenderableMaterial;
+
+	AnimationClip *Clip;
+
+	uint32 OwnerIndex;
+
+	bool WithClip;
 };
 
-struct Renderer
+struct BatchRenderer
 {
-	Mesh Renderable;
+	MeshBatch RenderableBatch;
 	Material RenderableMaterial;
 
 	uint32 OwnerIndex;
 };
-
-void RenderSingleRenderer(Renderer *renderer, Shader *shader, Transform *transform, Camera *camera);
 
 #define SPRITE_RENDERER_SIZE sizeof(Renderer)
 #define TOTAL_SPRITES_ALLOCATOR_SIZE ((SPRITE_RENDERER_SIZE + sizeof(PoolBlock)) * MAX_SPRITE_COUNT)
@@ -37,23 +45,29 @@ void RenderSingleRenderer(Renderer *renderer, Shader *shader, Transform *transfo
 struct RendererSystem
 {
 	PoolAllocator Allocator;
-	Renderer *Renderers;
+	Renderable *Renderables;
+	BatchRenderer Renderer;
+	BatchRenderer DebugRenderer;
 	Shader MainShader;
+	Shader DebugShader;
 	uint32 MaxSize;
 	World *Owner;
 	std::unordered_map<char*, uint32> Owner_ComponentMap;
 
 	void InitRendererSystem(StackAllocator *sourceAllocator);
 
-	void AddComponent(char *actorName, Renderer renderer);
+	void AddComponent(char *actorName, vec3 pos, vec2 size, Material material, AnimationClip *clip = 0);
 
-	uint32 GetRendererIndex(char *name);
+	uint32 GetRenderableIndex(char *name);
+	Renderable* GetRenderable(char *name);
 
 	void RemoveRenderer(char *actorName);
 
 	void RenderAllActive();
+	void RenderDebugShapes();
 
 	void InitMainShader(char *vertexShader, char *fragmentShader);
+	void InitDebugShader(char *vertexShader, char *fragmentShader);
 };
 
 struct TransformComponent
@@ -105,6 +119,53 @@ struct TransformSystem
 	void UpdateOldTransform(TransformComponent *transform);
 
 	Transform* GetTransform(char *name);
+};
+
+struct AnimationClip
+{
+	uint32 MaxCountHorizontal;
+	uint32 MaxCountVertical;
+
+	uint32 *Indices;
+	uint32 FrameCount;
+
+	float FrameWidth;
+	float FrameHeight;
+
+	float RunSpeed_FPS;
+	float TimeElapsed;
+	float Delta;
+
+	uint32 Counter;
+
+	char *Name;
+	bool Loop;
+};
+
+#define CLIP_SIZE sizeof(AnimationClip)
+#define TOTAL_CLIPS_ALLOCATOR_SIZE ((CLIP_SIZE + sizeof(PoolBlock)) * MAX_CLIP_COUNT)
+#define TOTAL_CLIPS_SIZE CLIP_SIZE * MAX_CLIP_COUNT
+
+struct AnimationSystem
+{
+	PoolAllocator Allocator;
+	AnimationClip *Clips;
+	World *Owner;
+	uint32 MaxSize;
+
+	std::unordered_map<char*, uint32> Name_ComponentMap;
+
+	void InitAnimationSystem(StackAllocator *sourceAllocator);
+
+	void AddComponent(char *name, uint32 maxCountHorizontal, uint32 maxCountVertical, uint32 *indices
+		, uint32 frameCount, float runSpeed_FPS, bool loop);
+
+	uint32 GetAnimationClipIndex(char *name);
+	AnimationClip* GetAnimationClip(char *name);
+
+	void RemoveAnimationClip(char *name);
+
+	void SwitchAnimation(char *actor, char *animation);
 };
 
 #define ACTOR_SIZE sizeof(Actor)

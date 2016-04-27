@@ -1,23 +1,11 @@
 #include "Game.h"
 
-#define ORTHO 0
+#define ORTHO 1
 
 global_variable Game_Resources Resources;
 
 float screenWidth;
 float screenHeight;
-
-global_variable Transform trans1;
-global_variable Transform trans2;
-global_variable Transform trans3;
-global_variable Transform trans4;
-global_variable Camera cam;
-global_variable Shader shader;
-
-global_variable Renderer r1;
-global_variable Renderer r2;
-global_variable Renderer r3;
-global_variable Renderer r4;
 
 global_variable MainAllocator MainAllocatorSystem;
 global_variable StackAllocator WorldStack;
@@ -34,20 +22,14 @@ GAME_DLL GAME_INIT(Game_Init)
 	{
 		InitResources();
 	}
-	InitEverything();
-	//InitGameWorld();
+	InitGameWorld();
 }
-
+float x, y;
+bool debug = false;
 //Render the game
 GAME_DLL GAME_RENDER(Game_Render)
-{
-	/*
-	*/
-	//RenderSingleRenderer(&r1, &shader, &trans1, &cam);
-	//RenderSingleRenderer(&r2, &shader, &trans2, &cam);
-	RenderSingleRenderer(&r3, &shader, &trans3, &cam);
-	RenderSingleRenderer(&r4, &shader, &trans4, &cam);
-	//Game_World.RenderWorld();
+{	
+	Game_World.RenderWorld(debug);
 }
 
 float speed = 0.0f;
@@ -55,53 +37,20 @@ float speed = 0.0f;
 //Update the game
 GAME_DLL GAME_UPDATE(Game_Update)
 {
-	speed = 0.5f;
-	trans3.Rotation.x += speed;//sinf(speed) * (1.0f / 60.0f); 
-	//trans3.Position = vec3(0.0f);
+	Game_World.MousePos.x = input->MousePos.x - (screenWidth / 2.0f);
+	Game_World.MousePos.y = -input->MousePos.y + (screenHeight / 2.0f);
 
-	if (input->RIGHT.KeyDown)
-	{
-		cam.Eye.x += 0.1f;
-		//cam.Target.x -= 0.01f;// vec3() - cam.Target;
-		//Game_World.TransformManager.GetTransform("KAI1")->Position.x += 1;
-	}
-
-	if (input->LEFT.KeyDown)
-	{
-		//Game_World.TransformManager.GetTransform("KAI")->Position.x -= 1;
-		cam.Eye.x -= 0.1f;
-		//cam.Target.x += 0.01f;// vec3() - cam.Target;
-
-	}
-
-	if (input->UP.KeyDown)
-	{
-		trans3.Position.z += 1;
-	}
-
-	if (input->DOWN.KeyDown)
-	{
-		trans3.Position.z -= 1;
-	}
-
-	if (input->W.KeyDown)
-	{
-		trans4.Position.z -= 1;
-	}
-	if (input->S.KeyDown)
-	{
-		trans4.Position.z += 1;
-	}
 	if (input->A.KeyDown)
 	{
-		trans4.Position.x -= 1;
-	}
-	if (input->D.KeyDown)
-	{
-		trans4.Position.x += 1;
+		debug = true;
 	}
 
-	//Game_World.UpdateWorld();
+	if (input->D.KeyDown)
+	{
+		debug = false;
+	}
+
+	Game_World.UpdateWorld();
 }
 
 GAME_DLL GAME_SHUTDOWN(Game_Shutdown)
@@ -120,20 +69,27 @@ void computetime(clock_t start, clock_t end){
 
 void InitResources()
 {
+	//AddTexture(&Resources, LoadTexture("resources\\textures\\walk1.png"), "SHEET");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\tile1.png"), "Tile1");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\tile2.png"), "Tile2");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\empty.png"), "Empty");
+	AddTexture(&Resources, LoadTexture("resources\\textures\\player_2.png"), "PLAYER");
 }
 
 void InitGameWorld()
 {
+	{}
+
 	{
 		InitMainMemorySystem(&MainAllocatorSystem, AllocatorTypes::STACK_ALLOCATOR, Megabytes(500), 4);
+		Game_World.MainCamera = Camera(vec2(screenWidth, screenHeight));
+		Game_World.MainCamera.Type = CameraType::ORTHOGRAPHIC;
 	}
 
 	{
 		Game_World.InitWorld(MainAllocatorSystem.StackSystem);
 		Game_World.RendererManager.InitMainShader("resources\\shaders\\vertex shader 120.vert", "resources\\shaders\\fragment shader 120.frag");
+		Game_World.RendererManager.InitDebugShader("resources\\shaders\\vertex shader 120_2.vert", "resources\\shaders\\fragment shader 120_2.frag");
 	}
 
 	{
@@ -143,23 +99,44 @@ void InitGameWorld()
 	}
 
 	{
-		Game_World.RendererManager.AddComponent("KAI"
-			, Renderer{ CreateSprite(vec3(0, 0, 0), vec2(50, 50))
-			, Material{ GetTexture(&Resources, "Tile1"), Color{ 1, 1, 1, 1 } } });
-
-		Game_World.RendererManager.AddComponent("KAI1"
-			, Renderer{ CreateSprite(vec3(0, 80, 0), vec2(50, 50))
-			, Material{ GetTexture(&Resources, "Tile2"), Color{ 1, 1, 1, 1 } } });
-
-		Game_World.RendererManager.AddComponent("KAI2"
-			, Renderer{ CreateSprite(vec3(80, 80, 0), vec2(50, 50))
-			, Material{ GetTexture(&Resources, "Tile1"), Color{ 1, 1, 1, 1 } } });
-	}
-
-	{
 		Game_World.TransformManager.AddComponent("KAI", TransformComponent{});
 		Game_World.TransformManager.AddComponent("KAI1", TransformComponent{});
 		Game_World.TransformManager.AddComponent("KAI2", TransformComponent{});
+	}
+
+	{
+		uint32 frames[4];
+		
+		frames[0] = 4;
+		frames[1] = 5;
+		frames[2] = 6;
+		frames[3] = 7;
+
+		Game_World.AnimationManager.AddComponent("a1", 4, 2, frames, 4, 0.1f, true);
+		/*
+
+		uint32 frames[48];
+		for (uint32 i = 0; i < 48; i++)
+		{
+			frames[i] = i;
+		}
+		Game_World.AnimationManager.AddComponent("a1", 3, 16, frames, 48, 0.1f, true);
+		*/
+	}
+
+	{
+
+		Game_World.RendererManager.AddComponent("KAI"
+			, vec3(0, 0, 0), vec2(100, 100)
+			, Material{ GetTexture(&Resources, "PLAYER"), Color{ 0, 1, 1, 1 } }, Game_World.AnimationManager.GetAnimationClip("a1"));
+
+		Game_World.RendererManager.AddComponent("KAI1"
+			, vec3(0, 200, 0), vec2(200, 100)
+			, Material{ GetTexture(&Resources, "Tile1"), Color{ 0, 0.3f, 0.8f, 1 } });
+
+		Game_World.RendererManager.AddComponent("KAI2"
+			, vec3(80, 80, 0), vec2(50, 50)
+			, Material{ GetTexture(&Resources, "Empty"), Color{ 0, 0.3f, 0.8f, 1 } });
 	}
 
 	{
@@ -170,40 +147,28 @@ void InitGameWorld()
 
 void InitEverything()
 {
-	shader = CreateShader("resources\\shaders\\vertex shader 120.vert", "resources\\shaders\\fragment shader 120.frag");
-	
-	AddUniform(&shader, UNIFORMS::COLOR, "myColor");
-
-	AddUniform(&shader, UNIFORMS::PROJECTION_MATRIX, "projectionMatrix");
-	AddUniform(&shader, UNIFORMS::VIEW_MATRIX, "viewMatrix");
-	AddUniform(&shader, UNIFORMS::MODEL_MATRIX, "modelMatrix");
-	AddUniform(&shader, UNIFORMS::AMBIENT_COLOR, "ambientColor");
-	AddUniform(&shader, UNIFORMS::AMBIENT_STRENGTH, "ambientStrength");
-
-	cam = Camera(vec2(screenWidth, screenHeight));
-	//cam.Size = vec2(screenWidth, screenHeight);
-	cam.Type = CameraType::PERSPECTIVE;
-
-#if ORTHO == 1
-	float spriteSize = 50;
-	float cubeSize = 50;
-#else
-	float spriteSize = 1;
-	float cubeSize = 1;
-#endif
-
-	r1 = Renderer{ CreateSprite(trans1.Position, vec2(spriteSize, spriteSize))
-		, Material{ GetTexture(&Resources, "Empty"), Color{ 1, 1, 1, 1 } } };
-
-	r2 = Renderer{ CreateSprite(trans2.Position, vec2(spriteSize, spriteSize))
-		, Material{ GetTexture(&Resources, "Empty"), Color{ 1, 0.3, 1, 1 } } };
-
-	r3 = Renderer{ CreateCube(trans3.Position, vec3(cubeSize, cubeSize, cubeSize))
-		, Material{ GetTexture(&Resources, "Empty"), Color{ 0, 0.5f, 1, 1 } } };
-	trans3.Position = vec3(0, 0, -8.0f);
-	
-	r4 = Renderer{ CreateCube(trans4.Position, vec3(cubeSize, cubeSize, cubeSize))
-		, Material{ GetTexture(&Resources, "Empty"), Color{ 1, 1.0f, 1, 1 } } };
-	trans4.Position = vec3(cubeSize * 2.0f, 0, -8.0f);
+//	shader = CreateShader("resources\\shaders\\vertex shader 120.vert", "resources\\shaders\\fragment shader 120.frag");
+//	
+//	//AddUniform(&shader, UNIFORMS::COLOR, "myColor");
+//
+//	AddUniform(&shader, UNIFORMS::PROJECTION_MATRIX, "projectionMatrix");
+//	AddUniform(&shader, UNIFORMS::VIEW_MATRIX, "viewMatrix");
+//	AddUniform(&shader, UNIFORMS::MODEL_MATRIX, "modelMatrix");
+//	AddUniform(&shader, UNIFORMS::AMBIENT_COLOR, "ambientColor");
+//	AddUniform(&shader, UNIFORMS::AMBIENT_STRENGTH, "ambientStrength");
+//
+//	cam = Camera(vec2(screenWidth, screenHeight));
+//	//cam.Size = vec2(screenWidth, screenHeight);
+//
+//#if ORTHO == 1
+//	float spriteSize = 50;
+//	float cubeSize = 50;
+//	cam.Type = CameraType::ORTHOGRAPHIC;
+//#else
+//	float spriteSize = 1;
+//	float cubeSize = 1;
+//	cam.Type = CameraType::PERSPECTIVE;
+//
+//#endif
 
 }

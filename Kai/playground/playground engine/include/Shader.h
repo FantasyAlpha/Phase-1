@@ -9,18 +9,27 @@ NOTE(kai): This file can:
 
 #include <GL\glew.h>
 #include <Utilities.h>
+#include <Types.h>
 
 #define MAX_NUMBER 100
 
 enum UNIFORMS
 {
-	MODEL_MATRIX = 0,
-	VIEW_MATRIX = 1,
-	PROJECTION_MATRIX = 2,
-	COLOR = 3,
-	TEXTURE = 4,
-	AMBIENT_COLOR = 5,
-	AMBIENT_STRENGTH = 6
+	MODEL_MATRIX,
+	VIEW_MATRIX,
+	PROJECTION_MATRIX,
+	MOUSE_POS,
+	TEXTURE0,
+	TEXTURE1,
+	TEXTURE2,
+	TEXTURE3,
+	TEXTURE4,
+	TEXTURE5,
+	TEXTURE6,
+	TEXTURE7,
+	AMBIENT_COLOR,
+	AMBIENT_STRENGTH,
+	DEBUG
 };
 
 enum ShaderType
@@ -56,7 +65,8 @@ void AddUniform(Shader *shader, UNIFORMS type, char *name);
 //					8) Check for link errors
 
 //Create a shader  
-Shader CreateShader(char *vertexPath, char *fragmentPath);
+Shader CreateShader(char *vertexPath, char *fragmentPath, char **attributeLocations = 0, uint32 attributeLocationCount = 0);
+
 
 //Add a shader into the program  
 void AddShader(Shader *shader, char *path, ShaderType type);

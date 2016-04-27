@@ -93,7 +93,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;ANCIENT_VERSION=120;MODERN_VERSION=330;GLSL_VERSION=ANCIENT_VERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -102,6 +102,11 @@
       <Command>
       </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalDependencies>libglew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -124,6 +129,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="source\ActorSystem.cpp" />
+    <ClCompile Include="source\Animator.cpp" />
     <ClCompile Include="source\FileLoader.cpp" />
     <ClCompile Include="source\ImageLoader.cpp" />
     <ClCompile Include="source\MemoryAllocator.cpp" />
@@ -143,7 +149,6 @@
     <ClInclude Include="include\Lights.h" />
     <ClInclude Include="include\World.h" />
     <ClInclude Include="include\Components.h" />
-    <ClInclude Include="include\Material.h" />
     <ClInclude Include="include\Math\mat4.h" />
     <ClInclude Include="include\Math\MathFunctions.h" />
     <ClInclude Include="include\Math\vec2.h" />

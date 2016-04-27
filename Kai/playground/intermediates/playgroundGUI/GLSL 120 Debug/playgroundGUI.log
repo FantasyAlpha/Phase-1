@@ -1,11 +1,1 @@
-﻿  imgui_draw.cpp
-  imgui_demo.cpp
-  imgui.cpp
-  GUITest.cpp
-g:\projects\work 3\phase-1\kai\playground\playgroundgui\guitest.cpp(36): warning C4800: 'GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-g:\projects\work 3\phase-1\kai\playground\playgroundgui\guitest.cpp(37): warning C4800: 'GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-g:\projects\work 3\phase-1\kai\playground\playgroundgui\guitest.cpp(38): warning C4800: 'GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-g:\projects\work 3\phase-1\kai\playground\playgroundgui\guitest.cpp(39): warning C4800: 'GLboolean' : forcing value to bool 'true' or 'false' (performance warning)
-g:\projects\work 3\phase-1\kai\playground\playgroundgui\guitest.cpp(49): warning C4244: 'argument' : conversion from 'float' to 'GLsizei', possible loss of data
-  Generating Code...
-  playgroundGUI.vcxproj -> G:\Projects\work 3\Phase-1\Kai\playground\bin\playgroundGUI\GLSL 120 Debug\playgroundGUI.lib
+﻿

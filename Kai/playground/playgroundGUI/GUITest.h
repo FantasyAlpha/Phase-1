@@ -4,7 +4,7 @@
 #include "ImGUI\imgui.h"
 #include <GL\glew.h>
 #include <Shader.h>
-#include <Material.h>
+#include <Texture.h>
 #include <Types.h>
 #include <Transform.h>
 

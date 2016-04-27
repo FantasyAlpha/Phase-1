@@ -59,7 +59,7 @@ void GUI_Render(ImDrawData *drawData)
 	};
 
 	glUniformMatrix4fv(GetUniformLocation(&GUIData.MainShader, UNIFORMS::PROJECTION_MATRIX), 1, GL_FALSE, &projMat[0][0]);
-	glUniform1i(GetUniformLocation(&GUIData.MainShader, UNIFORMS::TEXTURE), 0);
+	glUniform1i(GetUniformLocation(&GUIData.MainShader, UNIFORMS::TEXTURE0), 0);
 	GUI_BindBuffers();
 
 	for (int n = 0; n < drawData->CmdListsCount; n++)
@@ -173,7 +173,7 @@ void GUI_Init(float width, float height, GUI_Input *input)
 	{
 		GUIData.MainShader = CreateShader("resources\\shaders\\GUI vertex shader 120.vert", "resources\\shaders\\GUI fragment shader 120.frag");
 		AddUniform(&GUIData.MainShader, UNIFORMS::PROJECTION_MATRIX, "projectionMatrix");
-		AddUniform(&GUIData.MainShader, UNIFORMS::TEXTURE, "myTexture");
+		AddUniform(&GUIData.MainShader, UNIFORMS::TEXTURE0, "myTexture");
 	}
 
 	{

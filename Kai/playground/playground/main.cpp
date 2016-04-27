@@ -445,7 +445,7 @@ static void MainLoop()
 		if (updateTime >= 1.0f)
 		{
 			double avgFPS = 1000.0f / ((frameTime) / frames);
-			//std::cout << "UPS: " << updates << ", average FPS: " << avgFPS << ", average work/frame: " << (frameTime) / frames << "\n";
+			std::cout << "UPS: " << updates << ", average FPS: " << avgFPS << ", average work/frame: " << (frameTime) / frames << "\n";
 			
 			frames = 0;
 			frameTime = 0;
