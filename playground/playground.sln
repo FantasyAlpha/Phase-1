@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playground", "playground\playground.vcxproj", "{87D69A32-6DA3-4728-882E-E08740EB0476}"
+	ProjectSection(ProjectDependencies) = postProject
+		{63C1E849-5413-4B21-BB74-40B67C3C4ECE} = {63C1E849-5413-4B21-BB74-40B67C3C4ECE}
+		{7361398A-894F-4B99-AB83-960ECA9D8659} = {7361398A-894F-4B99-AB83-960ECA9D8659}
+		{D7A59DB0-9365-4749-B3B3-C72F92BC6020} = {D7A59DB0-9365-4749-B3B3-C72F92BC6020}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playground engine", "playground engine\playground engine.vcxproj", "{7361398A-894F-4B99-AB83-960ECA9D8659}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playground game", "playground game\playground game.vcxproj", "{D7A59DB0-9365-4749-B3B3-C72F92BC6020}"
+	ProjectSection(ProjectDependencies) = postProject
+		{63C1E849-5413-4B21-BB74-40B67C3C4ECE} = {63C1E849-5413-4B21-BB74-40B67C3C4ECE}
+		{7361398A-894F-4B99-AB83-960ECA9D8659} = {7361398A-894F-4B99-AB83-960ECA9D8659}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "playgroundGUI", "playgroundGUI\playgroundGUI.vcxproj", "{63C1E849-5413-4B21-BB74-40B67C3C4ECE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{7361398A-894F-4B99-AB83-960ECA9D8659} = {7361398A-894F-4B99-AB83-960ECA9D8659}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		GLSL 120 Debug|Win32 = GLSL 120 Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.Debug|Win32.ActiveCfg = Debug|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.Debug|Win32.Build.0 = Debug|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.GLSL 120 Debug|Win32.ActiveCfg = GLSL 120 Debug|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.GLSL 120 Debug|Win32.Build.0 = GLSL 120 Debug|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.Release|Win32.ActiveCfg = Release|Win32
+		{87D69A32-6DA3-4728-882E-E08740EB0476}.Release|Win32.Build.0 = Release|Win32
+		{7361398A-894F-4B99-AB83-960ECA9D8659}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7361398A-894F-4B99-AB83-960ECA9D8659}.Debug|Win32.Build.0 = Debug|Win32
+		{7361398A-894F-4B99-AB83-960ECA9D8659}.GLSL 120 Debug|Win32.ActiveCfg = GLSL 120 Debug|Win32
+		{7361398A-894F-4B99-AB83-960ECA9D8659}.GLSL 120 Debug|Win32.Build.0 = GLSL 120 Debug|Win32
+		{7361398A-894F-4B99-AB83-960ECA9D8659}.Release|Win32.ActiveCfg = Release|Win32
+		{7361398A-894F-4B99-AB83-960ECA9D8659}.Release|Win32.Build.0 = Release|Win32
+		{D7A59DB0-9365-4749-B3B3-C72F92BC6020}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D7A59DB0-9365-4749-B3B3-C72F92BC6020}.Debug|Win32.Build.0 = Debug|Win32
+		{D7A59DB0-9365-4749-B3B3-C72F92BC6020}.GLSL 120 Debug|Win32.ActiveCfg = GLSL 120 Debug|Win32
+		{D7A59DB0-9365-4749-B3B3-C72F92BC6020}.GLSL 120 Debug|Win32.Build.0 = GLSL 120 Debug|Win32
+		{D7A59DB0-9365-4749-B3B3-C72F92BC6020}.Release|Win32.ActiveCfg = Release|Win32
+		{D7A59DB0-9365-4749-B3B3-C72F92BC6020}.Release|Win32.Build.0 = Release|Win32
+		{63C1E849-5413-4B21-BB74-40B67C3C4ECE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{63C1E849-5413-4B21-BB74-40B67C3C4ECE}.Debug|Win32.Build.0 = Debug|Win32
+		{63C1E849-5413-4B21-BB74-40B67C3C4ECE}.GLSL 120 Debug|Win32.ActiveCfg = GLSL 120 Debug|Win32
+		{63C1E849-5413-4B21-BB74-40B67C3C4ECE}.GLSL 120 Debug|Win32.Build.0 = GLSL 120 Debug|Win32
+		{63C1E849-5413-4B21-BB74-40B67C3C4ECE}.Release|Win32.ActiveCfg = Release|Win32
+		{63C1E849-5413-4B21-BB74-40B67C3C4ECE}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

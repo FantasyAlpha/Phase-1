@@ -1,0 +1,50 @@
+﻿Build started 5/6/2016 10:00:04 AM.
+     1>Project "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\playground.vcxproj" on node 2 (Build target(s)).
+     1>Link:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\playground.exe" /INCREMENTAL /NOLOGO playgroundGUI.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libcmt.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\playground.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\playground.lib" /MACHINE:X86 "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground\GLSL 120 Debug\imgui.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground\GLSL 120 Debug\imgui_demo.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground\GLSL 120 Debug\imgui_draw.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground\GLSL 120 Debug\InputManager.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground\GLSL 120 Debug\main.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground\GLSL 120 Debug\OGLInitializerWrapper.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground\GLSL 120 Debug\WindowManager.obj"
+         playground.vcxproj -> C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\playground.exe
+       PostBuildEvent:
+         xcopy /Y /E "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources" "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\Resources\"
+         :VCEnd
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Shaders\fragment shader 120.frag
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Shaders\fragment shader 120_2.frag
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Shaders\fragment shader.frag
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Shaders\GUI fragment shader 120.frag
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Shaders\GUI vertex shader 120.vert
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Shaders\vertex shader 120.vert
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Shaders\vertex shader 120_2.vert
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Shaders\vertex shader.vert
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\empty.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\Genta.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\Neo In.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\player.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\player1.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\player2.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\player3.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\player_2.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\sheet1.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\sheet2.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\Thumbs.db
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\tile1.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\tile2.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\tile3.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\tile4.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\walk.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\walk1.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\Warrior.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\Wizard.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\Textures\yellow.png
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\TileMaps\map1.txt
+         C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\Resources\TileMaps\map2.txt
+         30 File(s) copied
+     1>Done Building Project "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground\playground.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.37

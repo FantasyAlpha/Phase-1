@@ -1,0 +1,30 @@
+﻿Build started 5/6/2016 10:00:01 AM.
+     1>Project "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground engine\playground engine.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D GLEW_STATIC /D _CRT_SECURE_NO_WARNINGS /D ANCIENT_VERSION=120 /D MODERN_VERSION=330 /D GLSL_VERSION=ANCIENT_VERSION /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\\" /Fd"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source\RenderingSystem.cpp
+         RenderingSystem.cpp
+       Lib:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\playground engine\GLSL 120 Debug\playground engine.lib" libglew32.lib opengl32.lib "Cinder Math_Debug.lib" /NOLOGO /NODEFAULTLIB:libcmt.lib "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\ActorSystem.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Animator.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Collision.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\CollisionSystem.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\FileLoader.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\ImageLoader.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\MemoryAllocator.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Mesh.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\ResourceManager.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Shader.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\RenderingSystem.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Texture.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\Transform.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\TransformSystem.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\mat4.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\vec2.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\vec3.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground engine\GLSL 120 Debug\World.obj"
+         playground engine.vcxproj -> C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\playground engine\GLSL 120 Debug\playground engine.lib
+     1>Done Building Project "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground engine\playground engine.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.41
