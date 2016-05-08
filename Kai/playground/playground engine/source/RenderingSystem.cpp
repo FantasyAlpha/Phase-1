@@ -8,7 +8,7 @@ void RendererSystem::InitRendererSystem(StackAllocator *sourceAllocator)
 	Renderables = (Renderable*)Allocator.Blocks->Dimensions.BaseAddress;
 }
 
-void RendererSystem::AddComponent(char *actorName, vec3 pos, vec2 size, Material material, AnimationClip *clip)
+void RendererSystem::AddComponent(char *actorName, vec3f pos, vec2f size, Material material, AnimationClip *clip)
 {
 	uint32 actorIndex = Owner->ActorManager.GetActorIndex(actorName);
 	if (actorIndex < MAX_ACTOR_COUNT)
@@ -29,6 +29,7 @@ void RendererSystem::AddComponent(char *actorName, vec3 pos, vec2 size, Material
 			{
 				Renderables[block.BlockIndex].WithClip = true;
 			}
+
 			Renderables[block.BlockIndex].OwnerIndex = actorIndex;
 			Owner_ComponentMap[actorName] = block.BlockIndex;
 		}
@@ -64,8 +65,9 @@ void RendererSystem::RenderAllActive()
 {
 	ActivateShader(&MainShader);
 
-	glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::PROJECTION_MATRIX), 1, true, CalcProjection(&Owner->MainCamera).GetElemets());
-	glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::VIEW_MATRIX), 1, true, CalcLookAtViewMatrix(&Owner->MainCamera).GetElemets());
+	glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::PROJECTION_MATRIX), 1, true, CalcProjection(&Owner->MainCamera).Elements_1D);
+	glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::VIEW_MATRIX), 1, true, CalcLookAtViewMatrix(&Owner->MainCamera).Elements_1D);
+	glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::MODEL_MATRIX), 1, GL_TRUE, mat4f().Elements_1D);
 
 	glUniform1i(GetUniformLocation(&MainShader, UNIFORMS::TEXTURE0), 0);
 	glUniform1i(GetUniformLocation(&MainShader, UNIFORMS::TEXTURE1), 1);
@@ -83,21 +85,10 @@ void RendererSystem::RenderAllActive()
 	while (index != Allocator.BlockCount + 1)
 	{
 		uint32 ownerIndex = Renderables[index].OwnerIndex;
-		//Mesh m = CreateSprite(Renderables[index].Position + (vec3(1, 1, 0) * index * 51), vec2(50, 50), Color());
-		glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::MODEL_MATRIX), 1, GL_TRUE, Owner->TransformManager.Transforms[ownerIndex].ModelMatrix.GetElemets());
-
-		/*glUniform4f(GetUniformLocation(&MainShader, UNIFORMS::AMBIENT_COLOR)
-		, Renderables[index].RenderableMaterial.BaseLight.LightColor.red
-		, Renderables[index].RenderableMaterial.BaseLight.LightColor.green
-		, Renderables[index].RenderableMaterial.BaseLight.LightColor.blue
-		, Renderables[index].RenderableMaterial.BaseLight.LightColor.alpha);
-
-		glUniform1f(GetUniformLocation(&MainShader, UNIFORMS::AMBIENT_STRENGTH)
-		, Renderables[index].RenderableMaterial.BaseLight.LightStrength);
-		*/		
 
 		AddSprite(&Renderer.RenderableBatch
-			, Renderables[index].Position
+			, Owner->TransformManager.Transforms[ownerIndex].ModelMatrix
+			, Owner->TransformManager.Transforms[ownerIndex].CurrentTransform.Position
 			, Renderables[index].Size
 			, Renderables[index].RenderableMaterial.MeshColor
 			, Renderables[index].RenderableMaterial.MeshTexture.TextureHandle
@@ -113,33 +104,25 @@ void RendererSystem::RenderDebugShapes()
 {
 	ActivateShader(&DebugShader);
 
-	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::PROJECTION_MATRIX), 1, true, CalcProjection(&Owner->MainCamera).GetElemets());
-	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::VIEW_MATRIX), 1, true, CalcLookAtViewMatrix(&Owner->MainCamera).GetElemets());
+	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::PROJECTION_MATRIX), 1, true, CalcProjection(&Owner->MainCamera).Elements_1D);
+	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::VIEW_MATRIX), 1, true, CalcLookAtViewMatrix(&Owner->MainCamera).Elements_1D);
+	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::MODEL_MATRIX), 1, GL_TRUE, mat4f().Elements_1D);
 
 	uint32 index = Allocator.FirstUsed;
 
-	BeginBatch(&DebugRenderer.RenderableBatch, BATCH_TYPE::SPRITE_BATCH, Owner_ComponentMap.size(), true);
+	uint32 batchSize = Owner_ComponentMap.size() + Owner->CollisionManager.Owner_ComponentMap.size();
+
+	BeginBatch(&DebugRenderer.RenderableBatch, BATCH_TYPE::SPRITE_BATCH, batchSize, true);
 
 	while (index != Allocator.BlockCount + 1)
 	{
-		uint32 ownerIndex = Renderables[index].OwnerIndex;
-		//Mesh m = CreateSprite(Renderables[index].Position + (vec3(1, 1, 0) * index * 51), vec2(50, 50), Color());
-		glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::MODEL_MATRIX), 1, GL_TRUE, Owner->TransformManager.Transforms[ownerIndex].ModelMatrix.GetElemets());
+		uint32 ownerIndex = Renderables[index].OwnerIndex;		
 
-		/*glUniform4f(GetUniformLocation(&MainShader, UNIFORMS::AMBIENT_COLOR)
-		, Renderables[index].RenderableMaterial.BaseLight.LightColor.red
-		, Renderables[index].RenderableMaterial.BaseLight.LightColor.green
-		, Renderables[index].RenderableMaterial.BaseLight.LightColor.blue
-		, Renderables[index].RenderableMaterial.BaseLight.LightColor.alpha);
-
-		glUniform1f(GetUniformLocation(&MainShader, UNIFORMS::AMBIENT_STRENGTH)
-		, Renderables[index].RenderableMaterial.BaseLight.LightStrength);
-		*/
-
-		Color c = Color{ 1, 0, 0, 1 };
+		vec4f c = vec4f{ 1, 0, 0, 1 };
 
 		AddSprite(&DebugRenderer.RenderableBatch
-			, Renderables[index].Position
+			, Owner->TransformManager.Transforms[ownerIndex].ModelMatrix
+			, Owner->TransformManager.Transforms[ownerIndex].CurrentTransform.Position
 			, Renderables[index].Size
 			, c
 			, Renderables[index].RenderableMaterial.MeshTexture.TextureHandle
@@ -147,6 +130,26 @@ void RendererSystem::RenderDebugShapes()
 			, true);
 
 		index = Allocator.Blocks[index].NextUsedIndex;
+
+	}
+
+	index = Owner->CollisionManager.Allocator.FirstUsed;
+
+	while (index != Owner->CollisionManager.Allocator.BlockCount + 1)
+	{
+		uint32 ownerIndex = Owner->CollisionManager.Colliders[index].OwnerIndex;
+		vec4f c = vec4f{ 0, 0, 1, 1 };
+
+		AddSprite(&DebugRenderer.RenderableBatch
+			, Owner->TransformManager.Transforms[ownerIndex].ModelMatrix
+			, Owner->TransformManager.Transforms[ownerIndex].CurrentTransform.Position
+			, Owner->CollisionManager.Colliders[index].size
+			, c
+			, 0
+			, 0
+			, true);
+
+		index = Owner->CollisionManager.Allocator.Blocks[index].NextUsedIndex;
 	}
 
 	EndBatch(&DebugRenderer.RenderableBatch, true);

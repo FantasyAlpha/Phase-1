@@ -4,6 +4,6 @@
 
 struct AmbientLight
 {
-	Color LightColor = Color{1, 1, 1, 1};
+	vec4f LightColor = vec4f{ 1, 1, 1, 1 };
 	float LightStrength = 0.9f;
 };

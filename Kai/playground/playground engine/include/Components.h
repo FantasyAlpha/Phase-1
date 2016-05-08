@@ -12,14 +12,53 @@
 #define MAX_ACTOR_COUNT 100
 #define MAX_CLIP_COUNT 100
 #define MAX_SPRITE_COUNT 100
+#define MAX_COLLIDER_COUNT 100
 #define MAX_TRANSFORM_COUNT MAX_ACTOR_COUNT
 
 struct World;
+struct Collider
+{
+	vec3f *pos;
+	vec2f size;
+	vec2f velocity;
+	bool wall;
+	bool trigger;
+
+	vec2f normal=vec2f(0,0);
+	float penetration=0.0f;
+
+	uint32 OwnerIndex;
+	char *OwnerName;
+
+	bool detected=0;
+	bool  rigth = 0, left = 0, down = 0, up = 0;
+	
+};
+
+#define COLLIDER_SIZE sizeof(Collider)
+#define TOTAL_COLLIDER_ALLOCATOR_SIZE ((COLLIDER_SIZE + sizeof(PoolBlock)) * MAX_COLLIDER_COUNT)
+#define TOTAL_COLLIDER_SIZE COLLIDER_SIZE * MAX_COLLIDER_COUNT
+
+struct CollisionSystem
+{
+	PoolAllocator Allocator;
+	Collider *Colliders;
+	World *Owner;
+	std::unordered_map<char*, uint32> Owner_ComponentMap;
+
+	void InitCollisionSystem(StackAllocator *allocator);
+	void AddComponent(char *name, vec3f *pos , vec2f size , vec2f velocity , bool wall ,bool trigger);
+	void RemoveComponent(char *name);
+	void UpdateCollisionSystem(float delta);
+	uint32 GetColliderIndex(char *name);
+	Collider* GetCollider(char *name);
+};
+
 
 struct Renderable
 {
-	vec3 Position;
-	vec2 Size;
+	vec3f Position;
+	vec2f Size;
 
 	Material RenderableMaterial;
 
@@ -56,7 +95,7 @@ struct RendererSystem
 
 	void InitRendererSystem(StackAllocator *sourceAllocator);
 
-	void AddComponent(char *actorName, vec3 pos, vec2 size, Material material, AnimationClip *clip = 0);
+	void AddComponent(char *actorName, vec3f pos, vec2f size, Material material, AnimationClip *clip = 0);
 
 	uint32 GetRenderableIndex(char *name);
 	Renderable* GetRenderable(char *name);
@@ -75,7 +114,7 @@ struct TransformComponent
 	Transform CurrentTransform;
 	Transform OldTransform;
 
-	mat4 ModelMatrix;
+	mat4f ModelMatrix;
 
 	char *ParentName;
 	uint32 ParentIndex;

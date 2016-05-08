@@ -10,16 +10,17 @@ struct World
 	ActorSystem ActorManager;
 	RendererSystem RendererManager;
 	TransformSystem TransformManager;
+	CollisionSystem CollisionManager;
 	AnimationSystem AnimationManager;
 
 	Camera MainCamera;
-	vec2 MousePos;
+	vec2f MousePos;
 	float Delta;
 	bool Debug;
 
 	void InitWorld(StackAllocator *sourceAllocator);	
 
-	void UpdateWorld();
+	void UpdateWorld(float delta);
 
 	void RenderWorld(bool debug);
 };

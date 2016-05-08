@@ -15,17 +15,20 @@ void World::InitWorld(StackAllocator *sourceAllocator)
 	this->ActorManager.Owner = this;
 	this->RendererManager.Owner = this;
 	this->TransformManager.Owner = this;
-	this->AnimationManager.Owner = this;
+	this->CollisionManager.Owner = this;
+    this->AnimationManager.Owner = this;
 
 	this->ActorManager.InitActorSystem(sourceAllocator);
 	this->RendererManager.InitRendererSystem(sourceAllocator);
 	this->TransformManager.InitTransformSystem(sourceAllocator);
+	this->CollisionManager.InitCollisionSystem(sourceAllocator);
 	this->AnimationManager.InitAnimationSystem(sourceAllocator);
 }
 
-void World::UpdateWorld()
+void World::UpdateWorld(float delta)
 {
 	ActivateShader(&RendererManager.MainShader);
-	glUniform2f(GetUniformLocation(&RendererManager.MainShader, UNIFORMS::MOUSE_POS), this->MousePos.x, this->MousePos.y);
+	glUniform2f(GetUniformLocation(&RendererManager.MainShader, UNIFORMS::MOUSE_POS), this->MousePos.X, this->MousePos.Y);
+	this->CollisionManager.UpdateCollisionSystem(delta);
 	this->TransformManager.UpdateTransformSystem();
 }

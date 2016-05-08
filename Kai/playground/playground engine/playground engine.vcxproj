@@ -103,7 +103,7 @@
       </Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>libglew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libglew32.lib;opengl32.lib;Cinder Math_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Lib>
@@ -130,6 +130,8 @@
   <ItemGroup>
     <ClCompile Include="source\ActorSystem.cpp" />
     <ClCompile Include="source\Animator.cpp" />
+    <ClCompile Include="source\Collision.cpp" />
+    <ClCompile Include="source\CollisionSystem.cpp" />
     <ClCompile Include="source\FileLoader.cpp" />
     <ClCompile Include="source\ImageLoader.cpp" />
     <ClCompile Include="source\MemoryAllocator.cpp" />
@@ -140,19 +142,13 @@
     <ClCompile Include="source\Texture.cpp" />
     <ClCompile Include="source\Transform.cpp" />
     <ClCompile Include="source\TransformSystem.cpp" />
-    <ClCompile Include="source\Math\mat4.cpp" />
-    <ClCompile Include="source\Math\vec2.cpp" />
-    <ClCompile Include="source\Math\vec3.cpp" />
     <ClCompile Include="source\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Collision.h" />
     <ClInclude Include="include\Lights.h" />
     <ClInclude Include="include\World.h" />
     <ClInclude Include="include\Components.h" />
-    <ClInclude Include="include\Math\mat4.h" />
-    <ClInclude Include="include\Math\MathFunctions.h" />
-    <ClInclude Include="include\Math\vec2.h" />
-    <ClInclude Include="include\Math\vec3.h" />
     <ClInclude Include="include\MemoryAllocator.h" />
     <ClInclude Include="include\Mesh.h" />
     <ClInclude Include="include\ResourceManager.h" />

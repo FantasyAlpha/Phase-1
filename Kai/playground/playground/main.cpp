@@ -210,7 +210,7 @@ void ProcessInput(Game_Input *input)
 
 	GUI_ProcessInput(&GUIInput);
 
-	input->MousePos = vec2(Keys.MouseX, Keys.MouseY);
+	input->MousePos = vec2f(Keys.MouseX, Keys.MouseY);
 
 	Keys.ButtonsUp[0] = false;
 	Keys.ButtonsUp[1] = false;
@@ -306,7 +306,7 @@ static void MainLoop()
 	char tempPDBFullPath[MAX_PATH];
 	BuildFileFullPath(&state, "playground game_temp.pdb", tempPDBFullPath, sizeof(tempPDBFullPath));
 
-	Input = {};
+	//Input = {};
 	GUIInput = {};
 
 	{
@@ -319,6 +319,8 @@ static void MainLoop()
 		Input.S.Button = 'S';
 		Input.A.Button = 'A';
 		Input.D.Button = 'D';
+		Input.P.Button = 'P';
+		Input.P.Button = 'O';
 
 		Input.MOUSE_LEFT.Button = MK_LBUTTON;
 		Input.MOUSE_MIDDLE.Button = MK_MBUTTON;
@@ -366,11 +368,17 @@ static void MainLoop()
 	bool createWindow = false;
 	ImVec4 clearColor = ImVec4(0, 0.3f, 0.4f, 1.0f);
 	ClearColor color = ClearColor{ 0, 0.3f, 0.4f, 1.0f };
+
+	start_loop = clock();
+
 	while (IsRunning)
 	{
-		/*
-		start_loop = clock();
-		*/
+
+		end_loop = clock();
+		delta = ((end_loop - start_loop) / double(CLOCKS_PER_SEC));
+		start_loop = end_loop;
+
+		std::cout << "delta is  " << delta << std::endl;
 
 		FILETIME newWriteTimeDLL = GetLastWriteTime(DLLFullPath);
 		FILETIME newWriteTimePDB = GetLastWriteTime(PDBFullPath);
@@ -402,7 +410,7 @@ static void MainLoop()
 			//ImGui::End();
 		}
 		//Update the game
-		Game.Game_Update(&Input);
+		Game.Game_Update(&Input, delta);
 
 		//Render the game
 		Game.Game_Render();

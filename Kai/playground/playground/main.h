@@ -11,6 +11,7 @@
 
 float fps;
 float frametime;
+double delta;
 
 clock_t	end;
 clock_t start_loop, end_loop;

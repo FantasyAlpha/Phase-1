@@ -35,5 +35,5 @@ void main()
 	if(tid == 6){	tex = texture2D(myTexture6, outputTexCoords);	}
 	if(tid == 7){	tex = texture2D(myTexture7, outputTexCoords);	}
 
-	gl_FragColor = tex * myColor * intensity;// * totalLight;
+	gl_FragColor = tex * myColor/* * intensity*/;// * totalLight;
 }
