@@ -21,7 +21,7 @@ NOTE(kai): This is a test game
 #include <Transform.h>
 #include <ResourceManager.h>
 #include <MemoryAllocator.h>
-#include <World.h>
+#include <Components.h>
 //
 
 struct Game_Button

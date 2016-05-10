@@ -1,37 +1,34 @@
 #include <Components.h>
-#include <World.h>
 
-void RendererSystem::InitRendererSystem(StackAllocator *sourceAllocator)
+void RendererSystem::InitRendererSystem(uint32 count)
 {
-	MaxSize = TOTAL_SPRITES_SIZE;
-	InitPartialPoolSystem(sourceAllocator, &Allocator, MaxSize, SPRITE_RENDERER_SIZE);
-	Renderables = (Renderable*)Allocator.Blocks->Dimensions.BaseAddress;
+	Pool = Cinder::Memory::MemoryPool(sizeof(Renderable), count, false);
+	Renderables = (Renderable *)Pool.Elements;
 }
 
-void RendererSystem::AddComponent(char *actorName, vec3f pos, vec2f size, Material material, AnimationClip *clip)
+void RendererSystem::AddComponent(char *actorName, vec2f size, Material material, AnimationClip *clip)
 {
 	uint32 actorIndex = Owner->ActorManager.GetActorIndex(actorName);
-	if (actorIndex < MAX_ACTOR_COUNT)
+	if (actorIndex < Pool.ChunkCount)
 	{
-		if (!Allocator.Blocks[actorIndex].IsUsed)
+		if (Pool.UsedHeaders[actorIndex].Current == Pool.ChunkCount + 1)
 		{
-			PoolBlock block = PoolAlloc(&Allocator);
+			Cinder::Memory::PoolHeader block = Pool.Alloc();
 
-			Renderables[block.BlockIndex].Position = pos;
-			Renderables[block.BlockIndex].Size = size;
-			Renderables[block.BlockIndex].RenderableMaterial = material;
-			Renderables[block.BlockIndex].Clip = clip;
+			Renderables[block.Current].Size = size;
+			Renderables[block.Current].RenderableMaterial = material;
+			Renderables[block.Current].Clip = clip;
 			if (!clip)
 			{
-				Renderables[block.BlockIndex].WithClip = false;
+				Renderables[block.Current].WithClip = false;
 			}
 			else
 			{
-				Renderables[block.BlockIndex].WithClip = true;
+				Renderables[block.Current].WithClip = true;
 			}
 
-			Renderables[block.BlockIndex].OwnerIndex = actorIndex;
-			Owner_ComponentMap[actorName] = block.BlockIndex;
+			Renderables[block.Current].OwnerIndex = actorIndex;
+			Owner_ComponentMap[actorName] = block.Current;
 		}
 	}	
 }
@@ -40,7 +37,7 @@ uint32 RendererSystem::GetRenderableIndex(char *name)
 {
 	uint32 actorIndex = Owner->ActorManager.GetActorIndex(name);
 
-	if (Owner->ActorManager.Allocator.Blocks[actorIndex].IsUsed)
+	if (Owner->ActorManager.Pool.UsedHeaders[actorIndex].Current != Owner->ActorManager.Pool.ChunkCount + 1)
 	{
 		if (Owner_ComponentMap.find(name) != Owner_ComponentMap.end())
 		{
@@ -48,16 +45,16 @@ uint32 RendererSystem::GetRenderableIndex(char *name)
 		}
 	}
 
-	return MAX_SPRITE_COUNT + 1;
+	return Pool.ChunkCount + 1;
 }
 
 void RendererSystem::RemoveRenderer(char *actorName)
 {
 	uint32 index = GetRenderableIndex(actorName);
-	if (index < MAX_SPRITE_COUNT)
+	if (index < Pool.ChunkCount)
 	{
 		Owner_ComponentMap.erase(actorName);
-		PoolDealloc(&Allocator, index);
+		Pool.Dealloc(index);
 	}
 }
 
@@ -78,81 +75,80 @@ void RendererSystem::RenderAllActive()
 	glUniform1i(GetUniformLocation(&MainShader, UNIFORMS::TEXTURE6), 6);
 	glUniform1i(GetUniformLocation(&MainShader, UNIFORMS::TEXTURE7), 7);
 
-	uint32 index = Allocator.FirstUsed;
+	uint32 index = Pool.FirstUsed;
 
-	BeginBatch(&Renderer.RenderableBatch, BATCH_TYPE::SPRITE_BATCH, Owner_ComponentMap.size(), false);
+	BeginBatch(&Renderer, BATCH_TYPE::SPRITE_BATCH, Owner_ComponentMap.size(), false);
 
-	while (index != Allocator.BlockCount + 1)
+	while (index != Pool.ChunkCount + 1)
 	{
 		uint32 ownerIndex = Renderables[index].OwnerIndex;
 
-		AddSprite(&Renderer.RenderableBatch
-			, Owner->TransformManager.Transforms[ownerIndex].ModelMatrix
-			, Owner->TransformManager.Transforms[ownerIndex].CurrentTransform.Position
+		AddSprite(&Renderer
+			, Owner->ActorManager.Actors[ownerIndex].ModelMatrix
+			, vec3f()
 			, Renderables[index].Size
 			, Renderables[index].RenderableMaterial.MeshColor
 			, Renderables[index].RenderableMaterial.MeshTexture.TextureHandle
 			, Renderables[index].Clip);
 
-		index = Allocator.Blocks[index].NextUsedIndex;
+		index = Pool.UsedHeaders[index].Next;
 	}
 
-	EndBatch(&Renderer.RenderableBatch, false);
+	EndBatch(&Renderer, false);
 }
 
 void RendererSystem::RenderDebugShapes()
 {
 	ActivateShader(&DebugShader);
 
-	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::PROJECTION_MATRIX), 1, true, CalcProjection(&Owner->MainCamera).Elements_1D);
-	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::VIEW_MATRIX), 1, true, CalcLookAtViewMatrix(&Owner->MainCamera).Elements_1D);
-	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::MODEL_MATRIX), 1, GL_TRUE, mat4f().Elements_1D);
+	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::PROJECTION_MATRIX), 1, false, CalcProjection(&Owner->MainCamera).Elements_1D);
+	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::VIEW_MATRIX), 1, false, CalcLookAtViewMatrix(&Owner->MainCamera).Elements_1D);
+	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::MODEL_MATRIX), 1, false, mat4f().Elements_1D);
 
-	uint32 index = Allocator.FirstUsed;
+	uint32 index = Pool.FirstUsed;
 
 	uint32 batchSize = Owner_ComponentMap.size() + Owner->CollisionManager.Owner_ComponentMap.size();
 
-	BeginBatch(&DebugRenderer.RenderableBatch, BATCH_TYPE::SPRITE_BATCH, batchSize, true);
+	BeginBatch(&DebugRenderer, BATCH_TYPE::SPRITE_BATCH, batchSize, true);
 
-	while (index != Allocator.BlockCount + 1)
+	while (index != Pool.ChunkCount + 1)
 	{
 		uint32 ownerIndex = Renderables[index].OwnerIndex;		
 
 		vec4f c = vec4f{ 1, 0, 0, 1 };
 
-		AddSprite(&DebugRenderer.RenderableBatch
-			, Owner->TransformManager.Transforms[ownerIndex].ModelMatrix
-			, Owner->TransformManager.Transforms[ownerIndex].CurrentTransform.Position
+		AddSprite(&DebugRenderer
+			, Owner->ActorManager.Actors[ownerIndex].ModelMatrix
+			, vec3f()
 			, Renderables[index].Size
 			, c
 			, Renderables[index].RenderableMaterial.MeshTexture.TextureHandle
 			, Renderables[index].Clip
 			, true);
 
-		index = Allocator.Blocks[index].NextUsedIndex;
-
+		index = Pool.UsedHeaders[index].Next;
 	}
 
-	index = Owner->CollisionManager.Allocator.FirstUsed;
+	index = Owner->CollisionManager.Pool.FirstUsed;
 
-	while (index != Owner->CollisionManager.Allocator.BlockCount + 1)
+	while (index != Owner->CollisionManager.Pool.ChunkCount + 1)
 	{
 		uint32 ownerIndex = Owner->CollisionManager.Colliders[index].OwnerIndex;
 		vec4f c = vec4f{ 0, 0, 1, 1 };
 
-		AddSprite(&DebugRenderer.RenderableBatch
-			, Owner->TransformManager.Transforms[ownerIndex].ModelMatrix
-			, Owner->TransformManager.Transforms[ownerIndex].CurrentTransform.Position
+		AddSprite(&DebugRenderer
+			, Owner->ActorManager.Actors[ownerIndex].ModelMatrix
+			, vec3f()
 			, Owner->CollisionManager.Colliders[index].size
 			, c
 			, 0
 			, 0
 			, true);
 
-		index = Owner->CollisionManager.Allocator.Blocks[index].NextUsedIndex;
+		index = Owner->CollisionManager.Pool.UsedHeaders[index].Next;
 	}
 
-	EndBatch(&DebugRenderer.RenderableBatch, true);
+	EndBatch(&DebugRenderer, true);
 }
 
 void RendererSystem::InitMainShader(char *vertexShader, char *fragmentShader)
@@ -202,7 +198,7 @@ Renderable* RendererSystem::GetRenderable(char *name)
 {
 	uint32 index = GetRenderableIndex(name);
 
-	if (index < MAX_SPRITE_COUNT)
+	if (index < Pool.ChunkCount)
 	{
 		return &Renderables[index];
 	}

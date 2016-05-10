@@ -9,7 +9,7 @@ float screenHeight;
 
 global_variable MainAllocator MainAllocatorSystem;
 global_variable StackAllocator WorldStack;
-global_variable World Game_World;
+global_variable SceneManager Game_World;
 
 //Movement
 
@@ -21,8 +21,8 @@ void AutomaticMove(char *ActorName, float velocity,float delta)
 		
 		if (! Game_World.CollisionManager.GetCollider(ActorName)->rigth )
 		{
-			Game_World.TransformManager.GetTransform(ActorName)->Position.X += velocity*0.016f*40.0f;
-			float temp = Game_World.TransformManager.GetTransform(ActorName)->Position.X;
+			Game_World.ActorManager.GetTransform(ActorName)->Position.X += velocity*0.016f*40.0f;
+			float temp = Game_World.ActorManager.GetTransform(ActorName)->Position.X;
 			Game_World.CollisionManager.GetCollider(ActorName)->pos->X = temp;
 
 			//Movable->collider.pos.X += velocity*0.016f*40.0f;
@@ -50,9 +50,9 @@ void AutomaticMove(char *ActorName, float velocity,float delta)
 	{
 		if ( !Game_World.CollisionManager.GetCollider(ActorName)->left)
 		{
-			Game_World.TransformManager.GetTransform(ActorName)->Position.X -= velocity*0.016f*40.0f;
+			Game_World.ActorManager.GetTransform(ActorName)->Position.X -= velocity*0.016f*40.0f;
 		//	Movable->collider.pos.X -= velocity*0.016f*40.0f;
-			float temp = Game_World.TransformManager.GetTransform(ActorName)->Position.X;
+			float temp = Game_World.ActorManager.GetTransform(ActorName)->Position.X;
 		    Game_World.CollisionManager.GetCollider(ActorName)->pos->X = temp;
 
 			Game_World.CollisionManager.GetCollider(ActorName)->velocity.X = -velocity*0.016f*40.0f;
@@ -116,7 +116,7 @@ void Move(char *ActorName, vec2f goalVelocity, float delta, Game_Input *input, b
 		{
 			currentvelocity.X = Accelerate(goalVelocity.X, currentvelocity.X, delta);
 
-			Game_World.TransformManager.GetTransform(ActorName)->Position.X += currentvelocity.X;
+			Game_World.ActorManager.GetTransform(ActorName)->Position.X += currentvelocity.X;
 			
 			Game_World.CollisionManager.GetCollider(ActorName)->velocity = currentvelocity;
 		}
@@ -127,7 +127,7 @@ void Move(char *ActorName, vec2f goalVelocity, float delta, Game_Input *input, b
 		{
 			currentvelocity.X = -1.0f * Accelerate(goalVelocity.X, currentvelocity.X, delta);
 
-			Game_World.TransformManager.GetTransform(ActorName)->Position.X += currentvelocity.X;
+			Game_World.ActorManager.GetTransform(ActorName)->Position.X += currentvelocity.X;
 			
 			Game_World.CollisionManager.GetCollider(ActorName)->velocity = currentvelocity;
 		}
@@ -157,7 +157,7 @@ bool debug = false;
 //Render the game
 GAME_DLL GAME_RENDER(Game_Render)
 {	
-	Game_World.RenderWorld(debug);
+	Game_World.RenderScene(debug);
 }
 
 float speed = 0.0f;
@@ -178,20 +178,20 @@ GAME_DLL GAME_UPDATE(Game_Update)
 		debug = false;
 	}
 
-	/*if (input->DOWN.KeyDown)
+	if (input->DOWN.KeyDown)
 	{
-		Game_World.TransformManager.GetTransform("player")->Position.X += 100.0f*delta;
-		Game_World.CollisionManager.GetCollider("player")->velocity = 100.0f*delta;
-
-
-	}*/
-
+		Game_World.ActorManager.GetTransform("KAI2")->Rotation.Z += 1;
+	}
+	if (input->UP.KeyDown)
+	{
+		Game_World.ActorManager.GetTransform("player")->Position.X -= 1;
+	}
 	AutomaticMove("brick", 2.0f,delta);
 
 
 	Move("player",5.0f, delta, input, false);
 
-	Game_World.UpdateWorld(delta);
+	Game_World.UpdateScene(delta);
 }
 
 GAME_DLL GAME_SHUTDOWN(Game_Shutdown)
@@ -220,8 +220,6 @@ void InitResources()
 
 void InitGameWorld()
 {
-	{}
-
 	{
 		InitMainMemorySystem(&MainAllocatorSystem, AllocatorTypes::STACK_ALLOCATOR, Megabytes(500), 4);
 		Game_World.MainCamera = Camera(vec2f(screenWidth, screenHeight));
@@ -229,41 +227,33 @@ void InitGameWorld()
 	}
 
 	{
-		Game_World.InitWorld(MainAllocatorSystem.StackSystem);
+		Game_World.InitScene(100);
 		Game_World.RendererManager.InitMainShader("resources\\shaders\\vertex shader 120.vert", "resources\\shaders\\fragment shader 120.frag");
 		Game_World.RendererManager.InitDebugShader("resources\\shaders\\vertex shader 120_2.vert", "resources\\shaders\\fragment shader 120_2.frag");
 	}
 
 	{
 		// Actor creations
-		Game_World.ActorManager.CreateActor("dummy");
-		Game_World.ActorManager.CreateActor("KAI2");
-		Game_World.ActorManager.CreateActor("brick");
-		Game_World.ActorManager.CreateActor("wall");
-		Game_World.ActorManager.CreateActor("player");
+		Game_World.ActorManager.AddActor("KAI2", Transform{});
+		Game_World.ActorManager.AddActor("player", Transform{});
+		Game_World.ActorManager.AddActor("brick", Transform{});
+		Game_World.ActorManager.AddActor("wall", Transform{});
 	}
 
 	{
-		// Transform components
+		// Modify Transforms
 
-		Game_World.TransformManager.AddComponent("dummy", TransformComponent{});
-		Game_World.TransformManager.AddComponent("KAI2", TransformComponent{});
-		Game_World.TransformManager.GetTransform("KAI2")->Position = vec3f(-300.0f, 0, 
-			Game_World.TransformManager.GetTransform("KAI2")->Position.Z);
+		Game_World.ActorManager.GetTransform("KAI2")->Position = vec3f(-300.0f, 0, 
+			Game_World.ActorManager.GetTransform("KAI2")->Position.Z);
 
-		Game_World.TransformManager.AddComponent("brick", TransformComponent{});
-		Game_World.TransformManager.GetTransform("brick")->Position = vec3f(120.0f, -100.0f,
-			Game_World.TransformManager.GetTransform("brick")->Position.Z);
+		Game_World.ActorManager.GetTransform("brick")->Position = vec3f(120.0f, -50.0f,
+			Game_World.ActorManager.GetTransform("brick")->Position.Z);
 
-		Game_World.TransformManager.AddComponent("player", TransformComponent{});
-		Game_World.TransformManager.GetTransform("player")->Position = vec3f(0.0f, -100.0f,
-		 Game_World.TransformManager.GetTransform("player")->Position.Z);
+		Game_World.ActorManager.GetTransform("player")->Position = vec3f(0.0f, -100.0f,
+			Game_World.ActorManager.GetTransform("player")->Position.Z);
 
-		Game_World.TransformManager.AddComponent("wall", TransformComponent{});
-		Game_World.TransformManager.GetTransform("wall")->Position = vec3f(-screenWidth / 2.0f, -200.0f,
-			Game_World.TransformManager.GetTransform("wall")->Position.Z);
-
-
+		Game_World.ActorManager.GetTransform("wall")->Position = vec3f(-632, -20,
+			Game_World.ActorManager.GetTransform("wall")->Position.Z);
 	}
 
 	{
@@ -284,19 +274,19 @@ void InitGameWorld()
 		// Render components
 
 		Game_World.RendererManager.AddComponent("KAI2"
-			, Game_World.TransformManager.GetTransform("KAI2")->Position, vec2f(100.0f, 100.0f)
+			, vec2f(100.0f, 100.0f)
 			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 0, 0.3f, 0.8f, 1 } });
 
 		Game_World.RendererManager.AddComponent("brick"
-			, Game_World.TransformManager.GetTransform("brick")->Position, vec2f(100.0f, 50.0f)
+			, vec2f(100.0f, 50.0f)
 			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 1, .3f, .5f, 1 } });
 
 		Game_World.RendererManager.AddComponent("player"
-			, Game_World.TransformManager.GetTransform("player")->Position, vec2f(100.0f, 200.0f)
+			, vec2f(100.0f, 200.0f)
 			, Material{ GetTexture(&Resources, "neo"), vec4f{ 1, 1, 1, 1 } });
 
 		Game_World.RendererManager.AddComponent("wall"
-			, Game_World.TransformManager.GetTransform("wall")->Position, vec2f(screenWidth, 50.0f)
+			, vec2f(screenWidth, 50.0f)
 			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 1, .3f, .5f, 1 } });
 
 	}
@@ -305,18 +295,12 @@ void InitGameWorld()
 
 		// Addcomponent (actorName , vec3f pos , vec2 size , vec2 velocity ,bool wall ,bool trigger)
 
-		Game_World.CollisionManager.AddComponent("KAI2", &Game_World.TransformManager.GetTransform("KAI2")->Position, 
+		Game_World.CollisionManager.AddComponent("KAI2", &Game_World.ActorManager.GetTransform("KAI2")->Position, 
 			vec2f(100.0f, 100.0f),vec2f(0.0f,0.0f),false,false );
-		Game_World.CollisionManager.AddComponent("brick", &Game_World.TransformManager.GetTransform("brick")->Position,
+		Game_World.CollisionManager.AddComponent("brick", &Game_World.ActorManager.GetTransform("brick")->Position,
 			vec2f(100.0f, 50.0f), vec2f(0.0f, 0.0f), false, false);
-		Game_World.CollisionManager.AddComponent("player", &Game_World.TransformManager.GetTransform("player")->Position, 
+		Game_World.CollisionManager.AddComponent("player", &Game_World.ActorManager.GetTransform("player")->Position,
 			vec2f(100.0f, 200.0f),vec2f(0.0f,0.0f),false,false);
-
-	}
-
-	{
-
-		// create parent / child transform 
 	}
 }
 

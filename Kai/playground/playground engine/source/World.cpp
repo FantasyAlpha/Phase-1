@@ -1,6 +1,6 @@
-#include <World.h>
+#include <Components.h>
 
-void World::RenderWorld(bool debug)
+void SceneManager::RenderScene(bool debug)
 {
 	this->RendererManager.RenderAllActive();
 
@@ -10,25 +10,23 @@ void World::RenderWorld(bool debug)
 	}
 }
 
-void World::InitWorld(StackAllocator *sourceAllocator)
+void SceneManager::InitScene(uint32 count)
 {	
 	this->ActorManager.Owner = this;
 	this->RendererManager.Owner = this;
-	this->TransformManager.Owner = this;
 	this->CollisionManager.Owner = this;
     this->AnimationManager.Owner = this;
 
-	this->ActorManager.InitActorSystem(sourceAllocator);
-	this->RendererManager.InitRendererSystem(sourceAllocator);
-	this->TransformManager.InitTransformSystem(sourceAllocator);
-	this->CollisionManager.InitCollisionSystem(sourceAllocator);
-	this->AnimationManager.InitAnimationSystem(sourceAllocator);
+	this->ActorManager.InitActorSystem(count);
+	this->RendererManager.InitRendererSystem(count);
+	this->CollisionManager.InitCollisionSystem(count);
+	this->AnimationManager.InitAnimationSystem(count);
 }
 
-void World::UpdateWorld(float delta)
+void SceneManager::UpdateScene(float delta)
 {
 	ActivateShader(&RendererManager.MainShader);
 	glUniform2f(GetUniformLocation(&RendererManager.MainShader, UNIFORMS::MOUSE_POS), this->MousePos.X, this->MousePos.Y);
 	this->CollisionManager.UpdateCollisionSystem(delta);
-	this->TransformManager.UpdateTransformSystem();
+	this->ActorManager.UpdateTransforms();
 }

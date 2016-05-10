@@ -1,6 +1,5 @@
 #include<Mesh.h>
 #include <Components.h>
-#include <World.h>
 
 struct CollisionFlags
 {

@@ -2,11 +2,11 @@
 
 mat4f CalcModelMatrix(Transform *transform)
 {
-	mat4f pos = Mat4::Translation(transform->Position);
+	mat4f trans = Mat4::Translation(transform->Position);
 	mat4f rot = Mat4::Rotation(transform->Rotation);
 	mat4f scale = Mat4::Scale(transform->Scale);
 
-	return pos * rot * scale;
+	return trans * rot * scale;
 }
 
 mat4f CalcLookAtViewMatrix(Camera *cam)

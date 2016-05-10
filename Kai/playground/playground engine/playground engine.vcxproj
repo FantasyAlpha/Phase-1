@@ -103,7 +103,7 @@
       </Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>libglew32.lib;opengl32.lib;Cinder Math_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libglew32.lib;opengl32.lib;Cinder Math_Debug.lib;Cinder Memory_Debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Lib>
@@ -147,7 +147,7 @@
   <ItemGroup>
     <ClInclude Include="include\Collision.h" />
     <ClInclude Include="include\Lights.h" />
-    <ClInclude Include="include\World.h" />
+    <ClInclude Include="include\Scene.h" />
     <ClInclude Include="include\Components.h" />
     <ClInclude Include="include\MemoryAllocator.h" />
     <ClInclude Include="include\Mesh.h" />
