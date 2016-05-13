@@ -1,13 +1,3 @@
-/*=======================================================================================================================
-NOTE(kai): This file can:
-
-1) Create a mesh
-2) Create a shader
-3) Draw the mesh
-
-NOTE(kai): This is a test game
-=======================================================================================================================*/
-
 #pragma once
 
 #ifdef GAME_DLL_EXPORTS
@@ -15,13 +5,11 @@ NOTE(kai): This is a test game
 #else
 #define GAME_DLL __declspec(dllimport) 
 #endif
+
 #include<ctime>
-#include <Mesh.h>
-#include <Shader.h>
-#include <Transform.h>
 #include <ResourceManager.h>
-#include <MemoryAllocator.h>
-#include <World.h>
+#include <Components.h>
+
 //
 
 struct Game_Button
@@ -32,7 +20,7 @@ struct Game_Button
 	bool KeyUp;
 };
 
-#define BUTTON_COUNT 13
+#define BUTTON_COUNT 15
 
 struct Game_Input
 {
@@ -46,11 +34,13 @@ struct Game_Input
 			Game_Button DOWN;
 			Game_Button RIGHT;
 			Game_Button LEFT;
+			Game_Button Space;
 
 			Game_Button W;
 			Game_Button S;
 			Game_Button A;
 			Game_Button D;
+			Game_Button Z;
 
 			Game_Button P;
 			Game_Button O;
@@ -61,7 +51,7 @@ struct Game_Input
 		};
 	};
 
-	vec2 MousePos;
+	vec2f MousePos = vec2f();
 };
 
 struct Window_Dimensions
@@ -69,6 +59,7 @@ struct Window_Dimensions
 	float Width;
 	float Height;
 };
+
 
 //Initialize the game
 #define GAME_INIT(name) void name(Window_Dimensions dimensions)
@@ -88,7 +79,6 @@ typedef GAME_SHUTDOWN(game_shutdown);
 //compute time 
 void computetime(clock_t start, clock_t end);
 
-void InitEverything();
 void InitResources();
 void InitGameWorld();
 
@@ -106,7 +96,8 @@ void AutomaticMove(char *ActorName, float velocity, float delta);
 
 float Accelerate(float flGoal, float flCurrent, float delta);
 
-void Move(char *ActorName, vec2 goalVelocity, float delta, Game_Input *input, bool Run);
+void Move(char *ActorName, vec2f goalVelocity, float delta, Game_Input *input, bool Run);
 
+void jumpHandle(char*ActorName, Game_Input *input, float delta);
 
 void InitializeComponents();

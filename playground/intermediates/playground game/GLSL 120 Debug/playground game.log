@@ -1,11 +1,16 @@
-﻿Build started 5/6/2016 10:00:03 AM.
+﻿Build started 5/12/2016 12:26:50 PM.
      1>Project "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground game\playground game.vcxproj" on node 2 (Build target(s)).
      1>Link:
          C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\playground game.dll" /INCREMENTAL /NOLOGO playgroundGUI.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libcmt.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\playground game.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\playground game.lib" /MACHINE:X86 /DLL "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playground game\GLSL 120 Debug\Game.obj"
             Creating library C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\playground game.lib and object C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\playground game.exp
+     1>playgroundGUI.lib(Matrix4.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'playgroundGUI.lib(Matrix4.obj)' or at 'C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\vc120.pdb'; linking object as if no debug info
+     1>playgroundGUI.lib(Vector2.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'playgroundGUI.lib(Vector2.obj)' or at 'C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\vc120.pdb'; linking object as if no debug info
+     1>playgroundGUI.lib(Vector3.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'playgroundGUI.lib(Vector3.obj)' or at 'C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\vc120.pdb'; linking object as if no debug info
+     1>playgroundGUI.lib(Vector4.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'playgroundGUI.lib(Vector4.obj)' or at 'C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\vc120.pdb'; linking object as if no debug info
+     1>playgroundGUI.lib(MemoryPool.obj) : warning LNK4099: PDB 'vc120.pdb' was not found with 'playgroundGUI.lib(MemoryPool.obj)' or at 'C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\vc120.pdb'; linking object as if no debug info
          playground game.vcxproj -> C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\GLSL 120 Debug\playground game.dll
      1>Done Building Project "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playground game\playground game.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.97
+Time Elapsed 00:00:16.05

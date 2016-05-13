@@ -1,6 +1,5 @@
 #include<Mesh.h>
 #include <Components.h>
-#include <World.h>
 
 struct CollisionFlags
 {
@@ -11,4 +10,4 @@ struct CollisionFlags
 
 bool SweptAABBvsAABB(Collider *A, Collider *B, float delta);
 
-bool AABBvsAABB(Mesh *A, Mesh *B);
+bool AABBvsAABB(Collider *A, Collider *B);

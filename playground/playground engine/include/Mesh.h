@@ -3,9 +3,6 @@
 #include <GL\glew.h>
 #include <Vertex.h>
 #include <Types.h>
-#include <Math\vec3f.h>
-#include <Math\vec2.h>
-#include <Math\MathFunctions.h>
 #include <stdint.h>
 #include <Utilities.h>
 
@@ -74,9 +71,9 @@ void UnbindMesh();
 void DrawMesh(Mesh *mesh);
 
 ////
-Mesh CreateSprite(vec3f pos, vec2 size, Color color, bool withNormals = true);
+Mesh CreateSprite(vec3f pos, vec2f size, vec4f color, bool withNormals = true);
 
-Mesh CreateCube(vec3f pos, vec3f size, Color color, bool withNormals = true);
+Mesh CreateCube(vec3f pos, vec3f size, vec4f color, bool withNormals = true);
 
 void CalculateNormals(Vertex *vertices, unsigned int verticesCount, unsigned int *indices, unsigned int indicesCount);
 
@@ -86,7 +83,7 @@ void PauseBatch(MeshBatch *batch);
 
 void ResumeBatch(MeshBatch *batch);
 
-void AddSprite(MeshBatch *batch, vec3f pos, vec2 size, Color color, uint32 textureID, AnimationClip *clip = 0, bool debug = false, bool withNormals = true);
+void AddSprite(MeshBatch *batch, mat4f &modelMat, vec3f pos, vec2f size, vec4f color, uint32 textureID, AnimationClip *clip = 0, bool debug = false, bool withNormals = true);
 
 void EndBatch(MeshBatch *batch, bool debug);
 

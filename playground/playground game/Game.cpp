@@ -1,36 +1,34 @@
 #include "Game.h"
 
-#define ORTHO 1
-
 global_variable Game_Resources Resources;
 
 float screenWidth;
 float screenHeight;
 
-global_variable MainAllocator MainAllocatorSystem;
-global_variable StackAllocator WorldStack;
-global_variable World Game_World;
+global_variable SceneManager Game_Scene;
 
 //Movement
 
 AutomaticDirections dir;
-void AutomaticMove(char *ActorName, float velocity,float delta)
+void AutomaticMove(char *ActorName, float velocity, float delta)
 {
+	// if collide change your direction 
 	if (dir.Rigth)
 	{
 		
-		if (! Game_World.CollisionManager.GetCollider(ActorName)->rigth )
+		if (!Game_Scene.CollisionManager.GetCollider(ActorName)->rigth)
 		{
-			Game_World.TransformManager.GetTransform(ActorName)->Position.x += velocity*0.016f*40.0f;
-			float temp = Game_World.TransformManager.GetTransform(ActorName)->Position.x;
-			Game_World.CollisionManager.GetCollider(ActorName)->pos->x = temp;
+			Game_Scene.ActorManager.GetTransform(ActorName)->Position.X += velocity*delta*40.0f;
+			/*float temp = Game_Scene.ActorManager.GetTransform(ActorName)->Position.X;
+			Game_Scene.CollisionManager.GetCollider(ActorName)->pos->X = temp;*/
 
-			//Movable->collider.pos.x += velocity*0.016f*40.0f;
-			Game_World.CollisionManager.GetCollider(ActorName)->velocity.x = velocity*0.016f*40.0f;
+			//Movable->collider.pos.X += velocity*0.016f*40.0f;
+			Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.X = velocity*delta*40.0f;
 
 			dir.counter++;
 			if (dir.counter > velocity*100.0f)
 			{
+
 				dir.Rigth = false;
 				dir.Left = true;
 				dir.counter = 0;
@@ -48,18 +46,19 @@ void AutomaticMove(char *ActorName, float velocity,float delta)
 
 	if (dir.Left)
 	{
-		if ( !Game_World.CollisionManager.GetCollider(ActorName)->left)
+		if (!Game_Scene.CollisionManager.GetCollider(ActorName)->left)
 		{
-			Game_World.TransformManager.GetTransform(ActorName)->Position.x -= velocity*0.016f*40.0f;
-		//	Movable->collider.pos.x -= velocity*0.016f*40.0f;
-			float temp = Game_World.TransformManager.GetTransform(ActorName)->Position.x;
-		    Game_World.CollisionManager.GetCollider(ActorName)->pos->x = temp;
+			Game_Scene.ActorManager.GetTransform(ActorName)->Position.X -= velocity*delta*40.0f;
+			//	Movable->collider.pos.X -= velocity*0.016f*40.0f;
+			/*float temp = Game_Scene.ActorManager.GetTransform(ActorName)->Position.X;
+			Game_Scene.CollisionManager.GetCollider(ActorName)->pos->X = temp;*/
 
-			Game_World.CollisionManager.GetCollider(ActorName)->velocity.x = -velocity*0.016f*40.0f;
+			Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.X = -velocity*delta*40.0f;
 
 			dir.counter++;
 			if (dir.counter > velocity*100.0f)
 			{
+
 				dir.Rigth = true;
 				dir.Left = false;
 				dir.counter = 0;
@@ -84,71 +83,132 @@ float Accelerate(float flGoal, float flCurrent, float delta){
 		// vdash= v+at
 		// new velocity= current velocity + delta * acceleration constant 
 
-		return abs(flCurrent) + delta * 60.0f;
+		return abs(flCurrent) + delta * Game_Scene.CollisionManager.physics.acceleration;
 
 	if (flDifference < -delta)
-		return abs(flCurrent) - delta*60.0f;
+		return abs(flCurrent) - delta* Game_Scene.CollisionManager.physics.acceleration;
 
 	return flGoal;
 }
 
-vec2 currentvelocity=0.0f;
-void Move(char *ActorName, vec2 goalVelocity, float delta, Game_Input *input, bool Run)
+vec2f currentvelocity=0.0f;
+void Move(char *ActorName, vec2f goalVelocity, float delta, Game_Input *input, bool Run)
 {
 
-	currentvelocity = Game_World.CollisionManager.GetCollider(ActorName)->velocity;
+	currentvelocity.X = Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.X;
 
-	if (!input->LEFT.KeyDown&&!input->RIGHT.KeyDown){
-		Game_World.CollisionManager.GetCollider(ActorName)->velocity.x = 0.0f;
+	if ((input->RIGHT.KeyUp) && (input->LEFT.KeyUp)/*!input->LEFT.KeyDown&&!input->RIGHT.KeyDown*/){
+		Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.X = 0.0f;
 
-		currentvelocity.x = 0.0f;
+		currentvelocity.X = 0.0f;
 
 	}
-	// if (input->RIGHT.KeyUp){
-	//	//Game_World.CollisionManager.GetCollider(ActorName)->velocity.x = 0.0f; 
-	//	currentvelocity.x = 0.0f;
-
-	//}
 
 	else if (input->RIGHT.KeyDown)
 	{
-		if (Game_World.CollisionManager.GetCollider(ActorName)->rigth == false)
+		if (Game_Scene.CollisionManager.GetCollider(ActorName)->rigth == false)
 		{
-			currentvelocity.x = Accelerate(goalVelocity.x, currentvelocity.x, delta);
+			//currentvelocity.X = Accelerate(goalVelocity.X, currentvelocity.X, delta);
+			currentvelocity.X = goalVelocity.X*delta;
 
-			Game_World.TransformManager.GetTransform(ActorName)->Position.x += currentvelocity.x;
-			float temp = Game_World.TransformManager.GetTransform(ActorName)->Position.x;
-			Game_World.CollisionManager.GetCollider(ActorName)->pos->x = temp;
-
-			Game_World.CollisionManager.GetCollider(ActorName)->velocity = currentvelocity;
-
+			Game_Scene.ActorManager.GetTransform(ActorName)->Position.X += currentvelocity.X;
+			Game_Scene.ActorManager.GetTransform(ActorName)->Scale.X = 1;
+			Game_Scene.MainCamera.Eye.X += currentvelocity.X;
+			/*float temp = Game_Scene.TransformManager.GetTransform(ActorName)->Position.X;
+			Game_Scene.CollisionManager.GetCollider(ActorName)->pos->X = temp;*/
+			Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.X = currentvelocity.X;
 		}
-
-
 	}
 	else if (input->LEFT.KeyDown)
 	{
-		if (Game_World.CollisionManager.GetCollider(ActorName)->left == false)
+		if (Game_Scene.CollisionManager.GetCollider(ActorName)->left == false)
 		{
-			currentvelocity.x = -1.0f * Accelerate(goalVelocity.x, currentvelocity.x, delta);
+			//currentvelocity.X = -1.0f * Accelerate(goalVelocity.X, currentvelocity.X, delta);
 
-			Game_World.TransformManager.GetTransform(ActorName)->Position.x += currentvelocity.x;
-			float temp = Game_World.TransformManager.GetTransform(ActorName)->Position.x;
-			Game_World.CollisionManager.GetCollider(ActorName)->pos->x = temp;
+			currentvelocity.X = -1.0f*goalVelocity.X*delta;
 
-			Game_World.CollisionManager.GetCollider(ActorName)->velocity = currentvelocity;
+			Game_Scene.ActorManager.GetTransform(ActorName)->Position.X += currentvelocity.X;
+			Game_Scene.MainCamera.Eye.X += currentvelocity.X;
+			Game_Scene.ActorManager.GetTransform(ActorName)->Scale.X = -1;
+
+			/*float temp = Game_Scene.TransformManager.GetTransform(ActorName)->Position.X;
+			Game_Scene.CollisionManager.GetCollider(ActorName)->pos->X = temp;*/
+
+			Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.X = currentvelocity.X;
+		}
+	}
+
+	//std::cout << "player velocity " << currentvelocity.X << std::endl;
+}
+
+float fallSpeed = 0.0f;
+bool jumpflag = false;
+//float Gravity = 2.0f;
+float jumpSpeed = 13.0f;
+void jumpHandle(char*ActorName, Game_Input *input, float delta)
+{
+
+	bool groundCheck = false;
+	bool Jump;
+
+	Jump = Game_Scene.CollisionManager.GetCollider(ActorName)->jump;
+
+	if (Jump)
+	{
+
+		groundCheck = true;
+
+	}
+
+	if (groundCheck)
+	{
+		//Jump = true;
+		fallSpeed = 0;
+		Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.Y = 0;
+
+	}
+	if (input->Space.KeyDown&&groundCheck)
+	{
+		// reset 
+		jumpSpeed = 13.0f;
+
+		jumpflag = true;
+		Jump = false;
+		groundCheck = false;
+
+	}
+
+	if (Game_Scene.CollisionManager.GetCollider(ActorName)->up)
+	{
+		jumpflag = false;
+	}
+
+	if (jumpflag&&fallSpeed == 0){
+		Game_Scene.ActorManager.GetTransform(ActorName)->Position.Y += jumpSpeed;
+		//	Game_Scene.CollisionManager.GetCollider(ActorName)->pos->Y += jumpSpeed;
+		Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.Y = jumpSpeed;
+
+		jumpSpeed -= Game_Scene.CollisionManager.physics.Gravity*delta * 10.0f;
+		if (jumpSpeed <= 0){
+			jumpflag = false;
+			// Reset jump speed ****************importatnt
+			jumpSpeed = 13.0f;
 
 		}
 	}
-	
+	else if (!groundCheck)
+	{
 
-	std::cout << "player velocity " << currentvelocity.x << std::endl;
+		fallSpeed += (Game_Scene.CollisionManager.physics.Gravity*delta*25.0f);
 
+		Game_Scene.ActorManager.GetTransform(ActorName)->Position.Y -= fallSpeed;
+		//Game_Scene.CollisionManager.GetCollider(ActorName)->pos->Y -= fallSpeed;
+		Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.Y = fallSpeed;
+
+	}
 }
 
 
-
-//Initialize the game
 GAME_DLL GAME_INIT(Game_Init)
 {
 	{
@@ -167,113 +227,95 @@ bool debug = false;
 //Render the game
 GAME_DLL GAME_RENDER(Game_Render)
 {	
-	Game_World.RenderWorld(debug);
+	Game_Scene.RenderScene(debug);
 }
-
-float speed = 0.0f;
 
 //Update the game
 //Game_Input *input
 GAME_DLL GAME_UPDATE(Game_Update)
 {
-	Game_World.MousePos.x = input->MousePos.x - (screenWidth / 2.0f);
-	Game_World.MousePos.y = -input->MousePos.y + (screenHeight / 2.0f);
-
-	if (input->A.KeyDown)
+	Game_Scene.MousePos.X = input->MousePos.X - (screenWidth / 2.0f);
+	Game_Scene.MousePos.Y = -input->MousePos.Y + (screenHeight / 2.0f);
+	if (input->P.KeyDown)
 	{
 		debug = true;
 	}
-	if (input->D.KeyDown)
+	if (input->D .KeyDown)
 	{
 		debug = false;
 	}
 
-	/*if (input->DOWN.KeyDown)
-	{
-		Game_World.TransformManager.GetTransform("player")->Position.x += 100.0f*delta;
-		Game_World.CollisionManager.GetCollider("player")->velocity = 100.0f*delta;
+	
+	Game_Scene.ActorManager.GetTransform("KAI2")->Rotation.Z += 1;
+	
+	AutomaticMove("brick", 2.0f, delta);
 
+	Game_Scene.CollisionManager.CheckGroundCollision("player");
 
-	}*/
+	jumpHandle("player", input, 0.016f);
+	Move("player", 400.0f, delta, input, false);
 
-	AutomaticMove("brick", 2.0f,delta);
+	Game_Scene.UpdateScene(0.016f);
 
-
-	Move("player",5.0f, delta, input, false);
-
-	Game_World.UpdateWorld(delta);
 }
 
 GAME_DLL GAME_SHUTDOWN(Game_Shutdown)
 {
 }
 
-void computetime(clock_t start, clock_t end){
-
-
-	double elapsedtime = ((double)(end - start) / (double)(CLOCKS_PER_SEC)) * 1000.0f;
-
-	std::cout << "game render time is : " << elapsedtime << " ms" << std::endl;
-
-}
-
 void InitResources()
 {
 	// add resources : Textures
-	//AddTexture(&Resources, LoadTexture("resources\\textures\\walk1.png"), "SHEET");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\tile1.png"), "Tile1");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\tile2.png"), "Tile2");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\empty.png"), "Empty");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\player_2.png"), "PLAYER");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\Neo In.png"), "neo");
+	AddTexture(&Resources, LoadTexture("resources\\textures\\back.png"), "Back");
+	AddTexture(&Resources, LoadTexture("resources\\textures\\star.png"), "star");
+	AddTexture(&Resources, LoadTexture("resources\\textures\\grayCube.png"), "cube");
 
 }
 
 void InitGameWorld()
 {
-	{}
-
 	{
-		InitMainMemorySystem(&MainAllocatorSystem, AllocatorTypes::STACK_ALLOCATOR, Megabytes(500), 4);
-		Game_World.MainCamera = Camera(vec2(screenWidth, screenHeight));
-		Game_World.MainCamera.Type = CameraType::ORTHOGRAPHIC;
+		Game_Scene.MainCamera = Camera(vec2f(screenWidth, screenHeight));
+		Game_Scene.MainCamera.Type = CameraType::ORTHOGRAPHIC;
 	}
 
 	{
-		Game_World.InitWorld(MainAllocatorSystem.StackSystem);
-		Game_World.RendererManager.InitMainShader("resources\\shaders\\vertex shader 120.vert", "resources\\shaders\\fragment shader 120.frag");
-		Game_World.RendererManager.InitDebugShader("resources\\shaders\\vertex shader 120_2.vert", "resources\\shaders\\fragment shader 120_2.frag");
+		Game_Scene.InitScene(100);
 	}
 
 	{
 		// Actor creations
 
-      /*  Game_World.ActorManager.CreateActor("KAI");
-		Game_World.ActorManager.CreateActor("KAI1");*/
+		Game_Scene.ActorManager.AddActor("KAI2", Transform{});
+		Game_Scene.ActorManager.AddActor("backGround", Transform{});
+		Game_Scene.ActorManager.AddActor("player", Transform{});
+		Game_Scene.ActorManager.AddActor("platform", Transform{});
+		Game_Scene.ActorManager.AddActor("brick", Transform{});
+		Game_Scene.ActorManager.AddActor("wall", Transform{});
 
-		Game_World.ActorManager.CreateActor("KAI2");
-		Game_World.ActorManager.CreateActor("brick");
-		Game_World.ActorManager.CreateActor("player");
 	}
 
 	{
-		// Transform components
+		// Modify Transforms
 
-      /*   Game_World.TransformManager.AddComponent("KAI", TransformComponent{});
-		Game_World.TransformManager.AddComponent("KAI1", TransformComponent{});*/
+		Game_Scene.ActorManager.GetTransform("backGround")->Position = vec3f(0, 0, 0);
 
-		Game_World.TransformManager.AddComponent("KAI2", TransformComponent{});
-		Game_World.TransformManager.GetTransform("KAI2")->Position = vec3f(-300.0f, 0, 
-			Game_World.TransformManager.GetTransform("KAI2")->Position.z);
+		Game_Scene.ActorManager.GetTransform("platform")->Position = vec3f(0, -330.0f, 0);
 
-		Game_World.TransformManager.AddComponent("brick", TransformComponent{});
-		Game_World.TransformManager.GetTransform("brick")->Position = vec3f(120.0f, -100.0f,
-			Game_World.TransformManager.GetTransform("brick")->Position.z);
+		Game_Scene.ActorManager.GetTransform("KAI2")->Position = vec3f(-200.0f, 200.0f, 0);
+		
+		Game_Scene.ActorManager.GetTransform("brick")->Position = vec3f(0.0f, -290.0f, 0);
 
-		Game_World.TransformManager.AddComponent("player", TransformComponent{});
-		Game_World.TransformManager.GetTransform("player")->Position = vec3f(0.0f, -100.0f,
-		 Game_World.TransformManager.GetTransform("player")->Position.z);
+		Game_Scene.ActorManager.GetTransform("wall")->Position = vec3f(500.0f, 0.0f, 0);
 
+		Game_Scene.ActorManager.GetTransform("player")->Position = vec3f(200.0f, -200.0f, 0);
+
+	
 
 	}
 
@@ -287,68 +329,74 @@ void InitGameWorld()
 		frames[2] = 6;
 		frames[3] = 7;
 
-		Game_World.AnimationManager.AddComponent("a1", 4, 2, frames, 4, 0.001f, true);
-		
-
-		/*uint32 frames[48];
-		for (uint32 i = 0; i < 48; i++)
-		{
-			frames[i] = i;
-		}
-		Game_World.AnimationManager.AddComponent("a1", 3, 16, frames, 48, 0.1f, true);*/
+		Game_Scene.AnimationManager.AddComponent("a1", 4, 2, frames, 4, 0.001f, true);
 		
 	}
 
 	{
 		// Render components
+//Game_Scene.AnimationManager.GetAnimationClip("a1")
+		Game_Scene.RendererManager.InitMainShader("resources\\shaders\\vertex shader 120.vert", "resources\\shaders\\fragment shader 120.frag");
+		Game_Scene.RendererManager.InitDebugShader("resources\\shaders\\vertex shader 120_2.vert", "resources\\shaders\\fragment shader 120_2.frag");
 
+		Game_Scene.RendererManager.AddComponent("backGround"
+			, vec2f(screenWidth * 2.0f, screenHeight)
+			, Material{ GetTexture(&Resources, "Back"), vec4f{ 1, 1, 1, 1 } });
 		
-	/*	Game_World.RendererManager.AddComponent("KAI"
-			, vec3f(-100.0f, -100.0f, 0), vec2(100, 100)
-			, Material{ GetTexture(&Resources, "PLAYER"), Color{ 1, 1, 1, 1 } }, Game_World.AnimationManager.GetAnimationClip("a1"));
+		Game_Scene.RendererManager.AddComponent("brick"
+			, vec2f(100.0f, 50.0f)
+			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 1, .3f, .5f, 1 } });
 
-		Game_World.RendererManager.AddComponent("KAI1"
-			, vec3f(0.0f, 200.0f, 0), vec2(200.0f, 100.0f)
-			, Material{ GetTexture(&Resources, "Tile1"), Color{ 0, 0.3f, 0.8f, 1 } });
-			*/
-		Game_World.RendererManager.AddComponent("KAI2"
-			, Game_World.TransformManager.GetTransform("KAI2")->Position, vec2(100.0f, 100.0f)
-			, Material{ GetTexture(&Resources, "Empty"), Color{ 0, 0.3f, 0.8f, 1 } });
+		Game_Scene.RendererManager.AddComponent("wall"
+			, vec2f(50.0f, screenHeight)
+			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 0, .3f, .5f, 1 } });
 
-		Game_World.RendererManager.AddComponent("brick"
-			, Game_World.TransformManager.GetTransform("brick")->Position, vec2(100.0f, 50.0f)
-			, Material{ GetTexture(&Resources, "Empty"), Color{ 1, .3f, .5f, 1 } });
-
-		Game_World.RendererManager.AddComponent("player"
-			, Game_World.TransformManager.GetTransform("player")->Position, vec2(100.0f, 200.0f)
-			, Material{ GetTexture(&Resources, "neo"), Color{ 1, 1, 1, 1 } });
-
+		Game_Scene.RendererManager.AddComponent("player"
+			, vec2f(100.0f, 200.0f)
+			, Material{ GetTexture(&Resources, "neo"), vec4f{ 1, 1, 1, 1 } });
+		Game_Scene.RendererManager.AddComponent("KAI2"
+			, vec2f(50.0f, 50.0f)
+			, Material{ GetTexture(&Resources, "star"), vec4f{ 1, 1, 1, 1 } });
+	
+		Game_Scene.RendererManager.AddComponent("platform"
+			, vec2f(screenWidth * 2.0f, 50.0f)
+			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 1, 1, 1, 1 } });
 	}
+
 	{
 		//Collision component
 
-		// Addcomponent (actorName , vec3f pos , vec2 size , vec2 velocity ,bool wall ,bool trigger)
+		// Addcomponent (actorName , vec3f *pos , vec2 size ,bool ground ,bool wall ,bool trigger)
 
-		Game_World.CollisionManager.AddComponent("KAI2", &Game_World.TransformManager.GetTransform("KAI2")->Position, 
-			vec2(100.0f, 100.0f),vec2(0.0f,0.0f),false,false );
-		Game_World.CollisionManager.AddComponent("brick", &Game_World.TransformManager.GetTransform("brick")->Position,
-			vec2(100.0f, 50.0f), vec2(0.0f, 0.0f), false, false);
-		Game_World.CollisionManager.AddComponent("player", &Game_World.TransformManager.GetTransform("player")->Position, 
-			vec2(100.0f, 200.0f),vec2(0.0f,0.0f),false,false);
+		Game_Scene.CollisionManager.AddComponent("KAI2", &Game_Scene.ActorManager.GetTransform("KAI2")->Position,
+			Game_Scene.RendererManager.GetRenderable("KAI2")->Size, false, false, false);
 
+		Game_Scene.CollisionManager.AddComponent("brick", &Game_Scene.ActorManager.GetTransform("brick")->Position,
+			Game_Scene.RendererManager.GetRenderable("brick")->Size
+            , true, false, false);
+
+		Game_Scene.CollisionManager.AddComponent("wall", &Game_Scene.ActorManager.GetTransform("wall")->Position,
+			Game_Scene.RendererManager.GetRenderable("wall")->Size
+			, true, true, false);
+
+		Game_Scene.CollisionManager.AddComponent("player", &Game_Scene.ActorManager.GetTransform("player")->Position,
+			vec2f(50.0f, 175.0f), false, false, false);
+
+		Game_Scene.CollisionManager.AddComponent("platform", &Game_Scene.ActorManager.GetTransform("platform")->Position,
+			Game_Scene.RendererManager.GetRenderable("platform")->Size
+			, true, false, false);
 	}
 
-	{
 
-		// create parent / child transform 
-
-		/*Game_World.TransformManager.AttachTransformChild("KAI", "KAI1");
-		Game_World.TransformManager.AttachTransformChild("KAI1", "KAI2");*/
-
-		Game_World.TransformManager.AttachTransformChild("KAI2", "player");
-	}
 }
 
 
+void computetime(clock_t start, clock_t end){
 
+
+	double elapsedtime = ((double)(end - start) / (double)(CLOCKS_PER_SEC)) * 1000.0f;
+
+	std::cout << "game render time is : " << elapsedtime << " ms" << std::endl;
+
+}
 

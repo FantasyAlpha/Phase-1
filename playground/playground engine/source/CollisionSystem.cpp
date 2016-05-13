@@ -1,40 +1,47 @@
 #include <Components.h>
-#include <World.h>
 #include <Collision.h>
 
 
-void CollisionSystem::InitCollisionSystem(StackAllocator *allocator)
+void CollisionSystem::InitCollisionSystem(uint32 count)
 {
-	InitPartialPoolSystem(allocator, &Allocator, TOTAL_COLLIDER_SIZE, COLLIDER_SIZE);
-	Colliders = (Collider*)Allocator.Blocks->Dimensions.BaseAddress;
+	Pool = Cinder::Memory::MemoryPool(sizeof(Collider), count, false);
+	Colliders = (Collider*)Pool.Elements;
+	physics.acceleration = 60.0f;
+	physics.Gravity = 3.0f;
 }
 
-void CollisionSystem::AddComponent(char *name, vec3f *pos, vec2 size, vec2 velocity, bool wall, bool trigger)
+void CollisionSystem::AddComponent(char *name, vec3f *pos, vec2f size,bool ground, bool wall, bool trigger)
 {
-	uint32 transformIndex = Owner->TransformManager.GetTransformIndex(name);
+	uint32 transformIndex = Owner->ActorManager.GetActorIndex(name);
 	//************
-	/*collider.OwnerIndex = actorIndex;
-	collider.pos=Owner->TransformManager.Transforms[collider.OwnerIndex].CurrentTransform.Position;*/
-
-	if (transformIndex < MAX_TRANSFORM_COUNT)
+	
+	if (transformIndex < Pool.ChunkCount)
 	{
-		if (!Allocator.Blocks[transformIndex].IsUsed)
+		uint32 index = GetColliderIndex(name);
+		if (index == Pool.ChunkCount + 1)
 		{
-			PoolBlock block = PoolAlloc(&Allocator);
+			Cinder::Memory::PoolHeader block = Pool.Alloc();
 
 			//Colliders[block.BlockIndex] = collider;
-			Colliders[block.BlockIndex].OwnerIndex = transformIndex;
-			Colliders[block.BlockIndex].OwnerName = name;
+			Colliders[block.Current].OwnerIndex = transformIndex;
+			Colliders[block.Current].OwnerName = name;
 			//******************** like an intialize
-			Colliders[block.BlockIndex].pos = pos;
-			Colliders[block.BlockIndex].size = size;
-			Colliders[block.BlockIndex].velocity = velocity;
+			Colliders[block.Current].pos = pos;
+			Colliders[block.Current].size = size;
+			Colliders[block.Current].ground = ground;
+			Colliders[block.Current].wall = wall;
+			Colliders[block.Current].trigger = trigger;
 
-			Colliders[block.BlockIndex].wall = wall;
-			Colliders[block.BlockIndex].trigger = trigger;
+			Colliders[block.Current].detected = 0;
+			Colliders[block.Current].normal = vec2f();
+			Colliders[block.Current].penetration = 0;
+			Colliders[block.Current].velocity = vec2f();
 
+			Colliders[block.Current].rigth = Colliders[block.Current].left = Colliders[block.Current].down =
+			  Colliders[block.Current].up = false;
+			Colliders[block.Current].jump = false;
 
-			Owner_ComponentMap[name] = block.BlockIndex;
+			Owner_ComponentMap[name] = block.Current;
 		}
 	}
 }
@@ -42,79 +49,84 @@ void CollisionSystem::AddComponent(char *name, vec3f *pos, vec2 size, vec2 veloc
 void CollisionSystem::RemoveComponent(char *name)
 {
 	uint32 index = GetColliderIndex(name);
-	if (index < MAX_ACTOR_COUNT)
+	if (index < Pool.ChunkCount)
 	{
 		Owner_ComponentMap.erase(name);
-		PoolDealloc(&Allocator, index);
+		Pool.Dealloc(index);
 	}
 }
-
-void CollisionSystem::UpdateCollisionSystem(float delta)
+bool CollisionSystem::CheckGroundCollision(char * name)
 {
-	uint32 index1 = Allocator.FirstUsed;
-	uint32 index2 = Allocator.FirstUsed;
 
-	//index1 = Allocator.FirstUsed;
-	while (index1 != Allocator.BlockCount + 1)
+	uint32 index1 = Pool.FirstUsed;
+	
+
+	// Reset down  &  JUMP FLAGS direction for the actor 
+
+	GetCollider(name)->down = false;
+	GetCollider(name)->jump = false;
+
+	while (index1 != Pool.ChunkCount + 1)
 	{
-		float temp1, temp2;
 
-		temp1 = Owner->TransformManager.Transforms[Colliders[index1].OwnerIndex].CurrentTransform.Position.x;
-		temp2 = Owner->TransformManager.Transforms[Colliders[index1].OwnerIndex].CurrentTransform.Position.y;
+		if (Colliders[index1].ground)
+		{
+			if (AABBvsAABB(GetCollider(name), &Colliders[index1]))
+				//check down collision
+			{
 
-		Colliders[index1].pos->x = temp1;
-		Colliders[index1].pos->y = temp2;
+				if (GetCollider(name)->down == true)
+				{
+					GetCollider(name)->jump = true;
+					
+					return true;
+				}
+			}
+		}
+		index1 = Pool.UsedHeaders[index1].Next;
 
-		//  Colliders[index1].pos;
-		index1 = Allocator.Blocks[index1].NextUsedIndex;
 	}
 
-	index1 = Allocator.FirstUsed;
 
-	while (index1 != Allocator.BlockCount + 1)
+	return false;
+}
+void CollisionSystem::UpdateCollisionSystem(float delta)
+{
+	uint32 index1 = Pool.FirstUsed;
+	uint32 index2 = Pool.FirstUsed;
+
+	while (index1 != Pool.ChunkCount + 1)
 	{
 
 		Colliders[index1].rigth = Colliders[index1].left = Colliders[index1].down = Colliders[index1].up = false;
-		index1 = Allocator.Blocks[index1].NextUsedIndex;
-
+		index1 = Pool.UsedHeaders[index1].Next;
 	}
-	index1 = Allocator.FirstUsed;
 
-	while (index1 != Allocator.BlockCount + 1)
+	
+	index1 = Pool.FirstUsed;
+
+	while (index1 != Pool.ChunkCount + 1)
 	{
 
-		while (index2 != Allocator.BlockCount + 1)
+		while (index2 != Pool.ChunkCount + 1)
 		{
+			if (index1 != index2)
+				SweptAABBvsAABB(&Colliders[index1], &Colliders[index2], delta);
 
-			SweptAABBvsAABB(&Colliders[index1], &Colliders[index2], delta);
-
-			index2 = Allocator.Blocks[index2].NextUsedIndex;
+			index2 = Pool.UsedHeaders[index2].Next;
 		}
-		//***************		
 
-		index1 = Allocator.Blocks[index1].NextUsedIndex;
-		index2 = Allocator.FirstUsed;
+		index1 = Pool.UsedHeaders[index1].Next;
+		index2 = Pool.FirstUsed;
 	}
-
-	index1 = Allocator.FirstUsed;
-	while (index1 != Allocator.BlockCount + 1)
-	{
-		float temp1, temp2;
-		temp1 = Colliders[index1].pos->x;
-		temp2 = Colliders[index1].pos->y;
-
-		Owner->TransformManager.Transforms[Colliders[index1].OwnerIndex].CurrentTransform.Position.x= temp1;
-		Owner->TransformManager.Transforms[Colliders[index1].OwnerIndex].CurrentTransform.Position.y = temp2;
-
-		index1 = Allocator.Blocks[index1].NextUsedIndex;
-	}
+	
 }
 
 uint32 CollisionSystem::GetColliderIndex(char *name)
 {
 	uint32 actorIndex = Owner->ActorManager.GetActorIndex(name);
-
-	if (Owner->ActorManager.Allocator.Blocks[actorIndex].IsUsed)
+	
+	if (Owner->ActorManager.Pool.UsedHeaders[actorIndex].Current != Owner->ActorManager.Pool.ChunkCount + 1)
 	{
 		if (Owner_ComponentMap.find(name) != Owner_ComponentMap.end())
 		{
@@ -122,14 +134,14 @@ uint32 CollisionSystem::GetColliderIndex(char *name)
 		}
 	}
 
-	return MAX_ACTOR_COUNT + 1;
+	return Pool.ChunkCount + 1;
 }
 
 Collider* CollisionSystem::GetCollider(char *name)
 {
 	uint32 index = GetColliderIndex(name);
 
-	if (index < MAX_ACTOR_COUNT)
+	if (index < Pool.ChunkCount)
 	{
 		return &Colliders[index];
 	}

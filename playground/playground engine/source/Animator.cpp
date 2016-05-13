@@ -1,42 +1,40 @@
 #include <Components.h>
-#include <World.h>
 
-void AnimationSystem::InitAnimationSystem(StackAllocator *sourceAllocator)
+void AnimationSystem::InitAnimationSystem(uint32 count)
 {
-	MaxSize = TOTAL_CLIPS_SIZE;
-	InitPartialPoolSystem(sourceAllocator, &Allocator, MaxSize, CLIP_SIZE);
-	Clips = (AnimationClip*)Allocator.Blocks->Dimensions.BaseAddress;
+	Pool = Cinder::Memory::MemoryPool(sizeof(AnimationClip), count, false);
+	Clips = (AnimationClip*)Pool.Elements;
 }
 
 void AnimationSystem::AddComponent(char *name, uint32 maxCountHorizontal, uint32 maxCountVertical, uint32 *indices
 	, uint32 frameCount, float runSpeed_FPS, bool loop)
 {
-	if (GetAnimationClipIndex(name) > MAX_CLIP_COUNT)
+	if (GetAnimationClipIndex(name) > Pool.ChunkCount)
 	{
-		PoolBlock block = PoolAlloc(&Allocator);
+		Cinder::Memory::PoolHeader block = Pool.Alloc();
 
-		Clips[block.BlockIndex].MaxCountHorizontal = maxCountHorizontal;
-		Clips[block.BlockIndex].MaxCountVertical = maxCountVertical;
-		Clips[block.BlockIndex].Indices = new uint32[frameCount];
+		Clips[block.Current].MaxCountHorizontal = maxCountHorizontal;
+		Clips[block.Current].MaxCountVertical = maxCountVertical;
+		Clips[block.Current].Indices = new uint32[frameCount];
 
 		for (uint32 i = 0; i < frameCount; i++)
 		{
-			Clips[block.BlockIndex].Indices[i] = indices[i];
+			Clips[block.Current].Indices[i] = indices[i];
 		}
 
-		Clips[block.BlockIndex].FrameCount = frameCount;
-		Clips[block.BlockIndex].RunSpeed_FPS = runSpeed_FPS;
-		Clips[block.BlockIndex].Delta = Owner->Delta;
-		Clips[block.BlockIndex].Loop = loop;
-		Clips[block.BlockIndex].TimeElapsed = 0;
-		Clips[block.BlockIndex].Counter = 0;
+		Clips[block.Current].FrameCount = frameCount;
+		Clips[block.Current].RunSpeed_FPS = runSpeed_FPS;
+		Clips[block.Current].Delta = Owner->Delta;
+		Clips[block.Current].Loop = loop;
+		Clips[block.Current].TimeElapsed = 0;
+		Clips[block.Current].Counter = 0;
 
-		Clips[block.BlockIndex].FrameWidth = 1.0f / (float)Clips[block.BlockIndex].MaxCountHorizontal;
-		Clips[block.BlockIndex].FrameHeight = 1.0f / (float)Clips[block.BlockIndex].MaxCountVertical;
+		Clips[block.Current].FrameWidth = 1.0f / (float)Clips[block.Current].MaxCountHorizontal;
+		Clips[block.Current].FrameHeight = 1.0f / (float)Clips[block.Current].MaxCountVertical;
 
-		Clips[block.BlockIndex].Name = name;
+		Clips[block.Current].Name = name;
 
-		Name_ComponentMap[name] = block.BlockIndex;
+		Name_ComponentMap[name] = block.Current;
 	}
 }
 
@@ -48,14 +46,14 @@ uint32 AnimationSystem::GetAnimationClipIndex(char *name)
 		return Name_ComponentMap[name];
 	}
 
-	return MAX_CLIP_COUNT + 1;
+	return Pool.ChunkCount + 1;
 }
 
 AnimationClip* AnimationSystem::GetAnimationClip(char *name)
 {
 	uint32 index = GetAnimationClipIndex(name);
 
-	if (index < MAX_CLIP_COUNT)
+	if (index < Pool.ChunkCount)
 	{
 		return &Clips[index];
 	}
@@ -66,10 +64,10 @@ AnimationClip* AnimationSystem::GetAnimationClip(char *name)
 void AnimationSystem::RemoveAnimationClip(char *name)
 {
 	uint32 index = GetAnimationClipIndex(name);
-	if (index < MAX_CLIP_COUNT)
+	if (index < Pool.ChunkCount)
 	{
 		Name_ComponentMap.erase(name);
-		PoolDealloc(&Allocator, index);
+		Pool.Dealloc(index);
 	}
 }
 

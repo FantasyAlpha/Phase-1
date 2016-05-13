@@ -12,7 +12,7 @@ Mesh CreateMesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indi
 		bool res = ReloadGlew();
 		Glew_Initialized = true;
 	}
-	
+
 	mesh.IndicesCount = indicesCount;
 
 	if (withNormals)
@@ -26,7 +26,7 @@ Mesh CreateMesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indi
 	{
 		//Generate a handle to a vertex array object
 		glGenVertexArrays(1, &buffers->VAO);
-	}	
+	}
 #endif
 	/***********************************************************************************************************/
 	//Create a Vertex buffer
@@ -50,17 +50,17 @@ Mesh CreateMesh(Vertex *vertices, unsigned int verticesCount, unsigned int *indi
 	glGenBuffers(1, &mesh.VBO);
 	//Generate a handle to a element buffer object
 	glGenBuffers(1, &mesh.EBO);
-	
+
 	BindMesh(&mesh);
-	
+
 
 	if (!batch)
 	{
 		//Store the data in the buffer
 		glBufferData(GL_ARRAY_BUFFER, verticesCount * sizeof(Vertex), vertices, GL_STATIC_DRAW);
-	
+
 		//Store the data in the buffer
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(unsigned int), indices, GL_STATIC_DRAW);	
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesCount * sizeof(unsigned int), indices, GL_STATIC_DRAW);
 	}
 	else
 	{
@@ -109,7 +109,7 @@ void BindMesh(Mesh *mesh)
 		, (void *)offsetof(Vertex, Vertex::Pos));			//The pointer offset
 
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Vertex::TexCoords));
-	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Vertex::Col));
+	glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Vertex::Color));
 	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)(offsetof(Vertex, Vertex::TextureSlot)));
 
 	//Bind the vertex buffer
@@ -130,7 +130,7 @@ void UnbindMesh()
 #endif
 	//Unbind the vertex buffer
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	
+
 	//Unbind the element buffer
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
@@ -143,25 +143,25 @@ void DrawMesh(Mesh *mesh)
 
 	//Draw the mesh
 	glDrawElements(GL_TRIANGLES		//Drawing type
-				 , mesh->IndicesCount	//Number of indices
-				 , GL_UNSIGNED_INT	//Indices type
-				 , 0);				//The location of the indices (NULL means to look for them in the buffer) 
+		, mesh->IndicesCount	//Number of indices
+		, GL_UNSIGNED_INT	//Indices type
+		, 0);				//The location of the indices (NULL means to look for them in the buffer) 
 
 	UnbindMesh();
 }
 
 ////
-Mesh CreateSprite(vec3f pos, vec2 size, Color color, bool withNormals)
+Mesh CreateSprite(vec3f pos, vec2f size, vec4f color, bool withNormals)
 {
 	Mesh sprite = {};
 
 	//Square vertices 
 	Vertex vertices[] =
 	{
-		Vertex(vec3f(pos.x			, pos.y			  , pos.z), vec2(0, 0), color, 0),		//TOP RIGHT
-		Vertex(vec3f(pos.x			, pos.y + (size.y), pos.z), vec2(0, 1), color, 0),		//BOTTOM RIGHT
-		Vertex(vec3f(pos.x + (size.x), pos.y + (size.y), pos.z), vec2(1, 1), color, 0),		//BOTTOM LEFT
-		Vertex(vec3f(pos.x + (size.x), pos.y			  , pos.z), vec2(1, 0), color, 0)		//TOP LEFT
+		Vertex(vec3f(pos.X, pos.Y, pos.Z), vec2f(0, 0), color, 0),		//TOP RIGHT
+		Vertex(vec3f(pos.X, pos.Y + (size.Y), pos.Z), vec2f(0, 1), color, 0),		//BOTTOM RIGHT
+		Vertex(vec3f(pos.X + (size.X), pos.Y + (size.Y), pos.Z), vec2f(1, 1), color, 0),		//BOTTOM LEFT
+		Vertex(vec3f(pos.X + (size.X), pos.Y, pos.Z), vec2f(1, 0), color, 0)		//TOP LEFT
 	};
 
 
@@ -172,44 +172,44 @@ Mesh CreateSprite(vec3f pos, vec2 size, Color color, bool withNormals)
 		1, 2, 3,
 	};
 
-	sprite = CreateMesh(vertices, ArrayCount(vertices), indices, ArrayCount(indices), withNormals);
+	sprite = CreateMesh(vertices, 4, indices, 6, withNormals);
 
 	return sprite;
 }
 
-Mesh CreateCube(vec3f pos, vec3f size, Color color, bool withNormals)
+Mesh CreateCube(vec3f pos, vec3f size, vec4f color, bool withNormals)
 {
 	Vertex vertices[24] =
 	{
-		Vertex{vec3f(pos.x		  , pos.y		  , pos.z), vec2(0, 0), color},
-		Vertex{vec3f(pos.x + size.x, pos.y		  , pos.z), vec2(1, 0), color},
-		Vertex{vec3f(pos.x + size.x, pos.y + size.y, pos.z), vec2(1, 1), color},
-		Vertex{vec3f(pos.x		  , pos.y + size.y, pos.z), vec2(0, 1), color},
-			  
-		Vertex{vec3f(pos.x		  , pos.y + size.y, pos.z		  ), vec2(0, 0), color},
-		Vertex{vec3f(pos.x + size.x, pos.y + size.y, pos.z		  ), vec2(1, 0), color},
-		Vertex{vec3f(pos.x + size.x, pos.y + size.y, pos.z - size.z), vec2(1, 1), color},
-		Vertex{vec3f(pos.x		  , pos.y + size.y, pos.z - size.z), vec2(0, 1), color},
-			  
-		Vertex{vec3f(pos.x		  , pos.y		  , pos.z - size.z), vec2(0, 0), color},
-		Vertex{vec3f(pos.x + size.x, pos.y		  , pos.z - size.z), vec2(1, 0), color},
-		Vertex{vec3f(pos.x + size.x, pos.y + size.y, pos.z - size.z), vec2(1, 1), color},
-		Vertex{vec3f(pos.x		  , pos.y + size.y, pos.z - size.z), vec2(0, 1), color},
-			  
-		Vertex{vec3f(pos.x		  , pos.y, pos.z	     ), vec2(0, 0), color},
-		Vertex{vec3f(pos.x + size.x, pos.y, pos.z		 ), vec2(1, 0), color},
-		Vertex{vec3f(pos.x + size.x, pos.y, pos.z - size.z), vec2(1, 1), color},
-		Vertex{vec3f(pos.x		  , pos.y, pos.z - size.z), vec2(0, 1), color},
-			  														  
-		Vertex{vec3f(pos.x, pos.y		 , pos.z - size.z), vec2(0, 0), color},
-		Vertex{vec3f(pos.x, pos.y		 , pos.z		 ), vec2(1, 0), color},
-		Vertex{vec3f(pos.x, pos.y + size.y, pos.z		 ), vec2(1, 1), color},
-		Vertex{vec3f(pos.x, pos.y + size.y, pos.z - size.z), vec2(0, 1), color},
-			  
-		Vertex{vec3f(pos.x + size.x, pos.y		  , pos.z - size.z), vec2(0, 0), color},
-		Vertex{vec3f(pos.x + size.x, pos.y		  , pos.z		  ), vec2(1, 0), color},
-		Vertex{vec3f(pos.x + size.x, pos.y + size.y, pos.z		  ), vec2(1, 1), color},
-		Vertex{vec3f(pos.x + size.x, pos.y + size.y, pos.z - size.z), vec2(0, 1), color},
+		Vertex{ vec3f(pos.X, pos.Y, pos.Z), vec2f(0, 0), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y, pos.Z), vec2f(1, 0), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y + size.Y, pos.Z), vec2f(1, 1), color },
+		Vertex{ vec3f(pos.X, pos.Y + size.Y, pos.Z), vec2f(0, 1), color },
+
+		Vertex{ vec3f(pos.X, pos.Y + size.Y, pos.Z), vec2f(0, 0), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y + size.Y, pos.Z), vec2f(1, 0), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y + size.Y, pos.Z - size.Z), vec2f(1, 1), color },
+		Vertex{ vec3f(pos.X, pos.Y + size.Y, pos.Z - size.Z), vec2f(0, 1), color },
+
+		Vertex{ vec3f(pos.X, pos.Y, pos.Z - size.Z), vec2f(0, 0), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y, pos.Z - size.Z), vec2f(1, 0), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y + size.Y, pos.Z - size.Z), vec2f(1, 1), color },
+		Vertex{ vec3f(pos.X, pos.Y + size.Y, pos.Z - size.Z), vec2f(0, 1), color },
+
+		Vertex{ vec3f(pos.X, pos.Y, pos.Z), vec2f(0, 0), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y, pos.Z), vec2f(1, 0), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y, pos.Z - size.Z), vec2f(1, 1), color },
+		Vertex{ vec3f(pos.X, pos.Y, pos.Z - size.Z), vec2f(0, 1), color },
+
+		Vertex{ vec3f(pos.X, pos.Y, pos.Z - size.Z), vec2f(0, 0), color },
+		Vertex{ vec3f(pos.X, pos.Y, pos.Z), vec2f(1, 0), color },
+		Vertex{ vec3f(pos.X, pos.Y + size.Y, pos.Z), vec2f(1, 1), color },
+		Vertex{ vec3f(pos.X, pos.Y + size.Y, pos.Z - size.Z), vec2f(0, 1), color },
+
+		Vertex{ vec3f(pos.X + size.X, pos.Y, pos.Z - size.Z), vec2f(0, 0), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y, pos.Z), vec2f(1, 0), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y + size.Y, pos.Z), vec2f(1, 1), color },
+		Vertex{ vec3f(pos.X + size.X, pos.Y + size.Y, pos.Z - size.Z), vec2f(0, 1), color },
 	};
 
 	uint32 indices[36] =
@@ -233,7 +233,7 @@ Mesh CreateCube(vec3f pos, vec3f size, Color color, bool withNormals)
 		2 + 20, 0 + 20, 3 + 20,
 	};
 
-	Mesh result = CreateMesh(vertices, ArrayCount(vertices), indices, ArrayCount(indices), withNormals);
+	Mesh result = CreateMesh(vertices, 24, indices, 36, withNormals);
 
 	return result;
 }
@@ -242,23 +242,23 @@ void CalculateNormals(Vertex *vertices, unsigned int verticesCount, unsigned int
 {
 	/*for (uint32 i = 0; i < indicesCount; i += 3)
 	{
-		uint32 i0 = indices[i];
-		uint32 i1 = indices[i + 1];
-		uint32 i2 = indices[i + 2];
+	uint32 i0 = indices[i];
+	uint32 i1 = indices[i + 1];
+	uint32 i2 = indices[i + 2];
 
-		vec3f v1 = vertices[i1].Pos - vertices[i0].Pos;
-		vec3f v2 = vertices[i2].Pos - vertices[i0].Pos;
+	vec3f v1 = vertices[i1].Pos - vertices[i0].Pos;
+	vec3f v2 = vertices[i2].Pos - vertices[i0].Pos;
 
-		vec3f normal = v1.Cross(v2);
-		normal.Normalize();
+	vec3f normal = v1.Cross(v2);
+	normal.Normalize();
 
-		vertices[i0].Normal += normal;
-		vertices[i1].Normal += normal;
-		vertices[i2].Normal += normal;
+	vertices[i0].Normal += normal;
+	vertices[i1].Normal += normal;
+	vertices[i2].Normal += normal;
 
-		vertices[i0].Normal.Normalize();
-		vertices[i1].Normal.Normalize();
-		vertices[i2].Normal.Normalize();
+	vertices[i0].Normal.Normalize();
+	vertices[i1].Normal.Normalize();
+	vertices[i2].Normal.Normalize();
 	}*/
 }
 
@@ -270,7 +270,7 @@ void BeginBatch(MeshBatch *batch, BATCH_TYPE type, uint32 maxCount, bool debug)
 	{
 		batch->Type = type;
 	}
-	
+
 	if (type = BATCH_TYPE::SPRITE_BATCH)
 	{
 		if (debug)
@@ -309,7 +309,7 @@ void BeginBatch(MeshBatch *batch, BATCH_TYPE type, uint32 maxCount, bool debug)
 		if (!batch->Batch.VBO)
 		{
 			batch->Batch = CreateMesh(NULL, 24 * batch->MaxCount, NULL, 36 * batch->MaxCount, false, true);
-		}		
+		}
 
 		BindMesh(&batch->Batch);
 
@@ -327,8 +327,8 @@ void PauseBatch(MeshBatch *batch)
 }
 
 void ResumeBatch(MeshBatch *batch)
-{	
-	BindMesh(&batch->Batch);	
+{
+	BindMesh(&batch->Batch);
 
 	for (uint32 i = 0; i < batch->UsedSlotsCount; i++)
 	{
@@ -338,7 +338,7 @@ void ResumeBatch(MeshBatch *batch)
 	batch->UsedSlotsCount = 0;
 }
 
-void AddSprite(MeshBatch *batch, vec3f pos, vec2 size, Color color, uint32 textureID, AnimationClip *clip, bool debug, bool withNormals)
+void AddSprite(MeshBatch *batch, mat4f &modelMat, vec3f pos, vec2f size, vec4f color, uint32 textureID, AnimationClip *clip, bool debug, bool withNormals)
 {
 	uint32 vertexOffset = batch->CurrentSize * 4;
 	uint32 indexOffset = batch->CurrentSize * 6;
@@ -396,16 +396,28 @@ void AddSprite(MeshBatch *batch, vec3f pos, vec2 size, Color color, uint32 textu
 					uint32 col = clip->Indices[clip->Counter] % clip->MaxCountHorizontal;
 					uint32 row = (clip->MaxCountVertical - 1) - (clip->Indices[clip->Counter] / clip->MaxCountHorizontal);
 
-					vec2 bottomLeft = vec2(float(col) * clip->FrameWidth, float(row) * clip->FrameHeight);
-					vec2 bottomRight = vec2((float(col) * clip->FrameWidth) + clip->FrameWidth, float(row) * clip->FrameHeight);
-					vec2 topLeft = vec2(float(col) * clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
-					vec2 topRight = vec2((float(col) * clip->FrameWidth) + clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
+					vec2f bottomLeft = vec2f(float(col) * clip->FrameWidth, float(row) * clip->FrameHeight);
+					vec2f bottomRight = vec2f((float(col) * clip->FrameWidth) + clip->FrameWidth, float(row) * clip->FrameHeight);
+					vec2f topLeft = vec2f(float(col) * clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
+					vec2f topRight = vec2f((float(col) * clip->FrameWidth) + clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
+
+					vec3f lowerLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+					lowerLeft = modelMat * lowerLeft;
+					vec3f upperLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+					upperLeft = modelMat * upperLeft;
+
+					vec3f lowerRight = vec3f(pos.X + (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+					lowerRight = modelMat * lowerRight;
+
+					vec3f upperRight = vec3f(pos.X + (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+					upperRight = modelMat * upperRight;
+
 					Vertex vertices[] =
 					{
-						Vertex{ vec3f(pos.x, pos.y, pos.z), bottomLeft, color, slotIndex },
-						Vertex{ vec3f(pos.x, pos.y + (size.y), pos.z), topLeft, color, slotIndex },
-						Vertex{ vec3f(pos.x + (size.x), pos.y + (size.y), pos.z), topRight, color, slotIndex },
-						Vertex{ vec3f(pos.x + (size.x), pos.y, pos.z), bottomRight, color, slotIndex }
+						Vertex{ lowerLeft, bottomLeft, color, slotIndex },
+						Vertex{ upperLeft, topLeft, color, slotIndex },
+						Vertex{ upperRight, topRight, color, slotIndex },
+						Vertex{ lowerRight, bottomRight, color, slotIndex }
 					};
 					glBufferSubData(GL_ARRAY_BUFFER, vertexOffset * sizeof(Vertex), 4 * sizeof(Vertex), vertices);
 					clip->Counter++;
@@ -415,27 +427,49 @@ void AddSprite(MeshBatch *batch, vec3f pos, vec2 size, Color color, uint32 textu
 		}
 		else
 		{
+			vec3f lowerLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+			lowerLeft = modelMat * lowerLeft;
+			vec3f upperLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+			upperLeft = modelMat * upperLeft;
+
+			vec3f lowerRight = vec3f(pos.X + (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+			lowerRight = modelMat * lowerRight;
+
+			vec3f upperRight = vec3f(pos.X + (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+			upperRight = modelMat * upperRight;
+
 			Vertex vertices[] =
 			{
-				Vertex{ vec3f(pos.x, pos.y, pos.z), vec2(0, 0), color, slotIndex },
-				Vertex{ vec3f(pos.x, pos.y + (size.y), pos.z), vec2(0, 1), color, slotIndex },
-				Vertex{ vec3f(pos.x + (size.x), pos.y + (size.y), pos.z), vec2(1, 1), color, slotIndex },
-				Vertex{ vec3f(pos.x + (size.x), pos.y, pos.z), vec2(1, 0), color, slotIndex }
+				Vertex{ lowerLeft, vec2f(0, 0), color, slotIndex },
+				Vertex{ upperLeft, vec2f(0, 1), color, slotIndex },
+				Vertex{ upperRight, vec2f(1, 1), color, slotIndex },
+				Vertex{ lowerRight, vec2f(1, 0), color, slotIndex }
 			};
 			glBufferSubData(GL_ARRAY_BUFFER, vertexOffset * sizeof(Vertex), 4 * sizeof(Vertex), vertices);
 		}
 	}
 	else
 	{
+		vec3f lowerLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+		lowerLeft = modelMat * lowerLeft;
+		vec3f upperLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+		upperLeft = modelMat * upperLeft;
+
+		vec3f lowerRight = vec3f(pos.X + (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+		lowerRight = modelMat * lowerRight;
+
+		vec3f upperRight = vec3f(pos.X + (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+		upperRight = modelMat * upperRight;
+
 		Vertex vertices[] =
 		{
-			Vertex{ vec3f(pos.x, pos.y, pos.z), vec2(0, 0), color },
-			Vertex{ vec3f(pos.x, pos.y + (size.y), pos.z), vec2(0, 1), color },
-			Vertex{ vec3f(pos.x + (size.x), pos.y + (size.y), pos.z), vec2(1, 1), color },
-			Vertex{ vec3f(pos.x + (size.x), pos.y, pos.z), vec2(1, 0), color }
+			Vertex{ lowerLeft, vec2f(0, 0), color },
+			Vertex{ upperLeft, vec2f(0, 1), color },
+			Vertex{ upperRight, vec2f(1, 1), color },
+			Vertex{ lowerRight, vec2f(1, 0), color }
 		};
 		glBufferSubData(GL_ARRAY_BUFFER, vertexOffset * sizeof(Vertex), 4 * sizeof(Vertex), vertices);
-	}	
+	}
 
 	if (debug)
 	{
@@ -487,7 +521,7 @@ void RenderBatch(MeshBatch *batch, bool debug)
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, batch->TextureSlots[i]);
 	}
-	
+
 	if (debug)
 	{
 		glLineWidth(1.0f);

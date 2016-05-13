@@ -15,7 +15,7 @@ struct Texture
 struct Material
 {
 	Texture MeshTexture;
-	Color MeshColor;
+	vec4f MeshColor;
 	//AmbientLight BaseLight;
 };
 

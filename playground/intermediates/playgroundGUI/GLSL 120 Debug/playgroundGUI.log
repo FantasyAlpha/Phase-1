@@ -1,4 +1,4 @@
-﻿Build started 5/6/2016 10:00:02 AM.
+﻿Build started 5/12/2016 12:26:49 PM.
      1>Project "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playgroundGUI\playgroundGUI.vcxproj" on node 2 (Build target(s)).
      1>Lib:
          C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\playgroundGUI\GLSL 120 Debug\playgroundGUI.lib" "playground engine.lib" /NOLOGO /NODEFAULTLIB:libcmt.lib "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playgroundGUI\GLSL 120 Debug\GUITest.obj"
@@ -10,4 +10,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.21
+Time Elapsed 00:00:00.51

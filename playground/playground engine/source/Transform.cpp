@@ -1,47 +1,46 @@
 #include <Transform.h>
 
-mat4 CalcModelMatrix(Transform *transform)
+mat4f CalcModelMatrix(Transform *transform)
 {
-	mat4 pos = mat4::Translation(transform->Position);
-	mat4 rot = mat4::Rotation(transform->Rotation);
-	mat4 scale = mat4::Scale(transform->Scale);
+	mat4f trans = Mat4::Translation(transform->Position);
+	mat4f rot = Mat4::Rotation(transform->Rotation);
+	mat4f scale = Mat4::Scale(transform->Scale);
 
-	return pos * rot * scale;
+	return trans * rot * scale;
 }
 
-mat4 CalcLookAtViewMatrix(Camera *cam)
+mat4f CalcLookAtViewMatrix(Camera *cam)
 {	
-	mat4 camTrans = mat4::Translation(cam->Eye * -1);
-	return (mat4::Scale(cam->Scale) * mat4::LookAtMatrix(cam->Target, cam->Up) * camTrans);
+	return Mat4::LookAt(cam->Eye, cam->Target, cam->Up);
 }
 
-mat4 CalcFPSViewMatrix(Camera *cam, float pitch, float yaw)
+mat4f CalcFPSViewMatrix(Camera *cam, float pitch, float yaw)
 {	
-	return mat4::FPSMatrix(cam->Eye, pitch, yaw) * mat4::Scale(cam->Scale);
+	return mat4f();
 }
 
-mat4 CalcOrthoProjectionMatrix(float width, float height, float near, float far)
+mat4f CalcOrthoProjectionMatrix(float width, float height, float near, float far)
 {
-	return mat4::OrthographicMatrix(width, height, near, far);
+	return Mat4::Orthographic(width, height, near, far);
 }
 
-mat4 CalcPerspectiveProjection(float fov, float width, float height, float near, float far)
+mat4f CalcPerspectiveProjection(float fov, float width, float height, float near, float far)
 {
-	return mat4::PerspectiveMatrix(fov, width, height, near, far);
+	return Mat4::Perspective(fov, width, height, near, far);
 }
 
-mat4 CalcProjection(Camera *cam)
+mat4f CalcProjection(Camera *cam)
 {
-	mat4 result;
-	mat4 proj;
+	mat4f result;
+	mat4f proj;
 
 	if (cam->Type == CameraType::ORTHOGRAPHIC)
 	{
-		proj = CalcOrthoProjectionMatrix(cam->Size.x, cam->Size.y, cam->Eye.z, cam->Far);
+		proj = CalcOrthoProjectionMatrix(cam->Size.X, cam->Size.Y, cam->Eye.Z, cam->Far);
 	}
 	else
 	{
-		proj = CalcPerspectiveProjection(cam->FOV, cam->Size.x, cam->Size.y, cam->Eye.z + 0.1f, cam->Far);
+		proj = CalcPerspectiveProjection(cam->FOV, cam->Size.X, cam->Size.Y, cam->Eye.Z + 0.1f, cam->Far);
 	}
 
 	result = proj * CalcLookAtViewMatrix(cam);
@@ -49,28 +48,28 @@ mat4 CalcProjection(Camera *cam)
 	return result;
 }
 
-mat4 CalcMVP(Transform *transform, Camera *cam)
+mat4f CalcMVP(Transform *transform, Camera *cam)
 {
 	return CalcProjection(cam) * CalcLookAtViewMatrix(cam) * CalcModelMatrix(transform);
 }
 
 void Translate(Transform *transform, vec3f amount)
 {
-	mat4 transMat = mat4::Translation(amount);
+	mat4f transMat = Mat4::Translation(amount);
 
 	transform->Position = transMat * transform->Position;
 }
 
 void Rotate(Transform *transform, vec3f amount)
 {
-	mat4 rotMat = mat4::Rotation(amount);
+	mat4f rotMat = Mat4::Rotation(amount);
 
 	transform->Rotation = rotMat * transform->Rotation;
 }
 
 void Scale(Transform *transform, vec3f amount)
 {
-	mat4 scaleMat = mat4::Scale(amount);
+	mat4f scaleMat = Mat4::Scale(amount);
 
 	transform->Scale = scaleMat * transform->Scale;
 }
