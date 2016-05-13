@@ -1,0 +1,13 @@
+﻿Build started 5/12/2016 12:26:49 PM.
+     1>Project "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playgroundGUI\playgroundGUI.vcxproj" on node 2 (Build target(s)).
+     1>Lib:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\playgroundGUI\GLSL 120 Debug\playgroundGUI.lib" "playground engine.lib" /NOLOGO /NODEFAULTLIB:libcmt.lib "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playgroundGUI\GLSL 120 Debug\GUITest.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playgroundGUI\GLSL 120 Debug\imgui.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playgroundGUI\GLSL 120 Debug\imgui_demo.obj"
+         "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\intermediates\playgroundGUI\GLSL 120 Debug\imgui_draw.obj"
+         playgroundGUI.vcxproj -> C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\bin\playgroundGUI\GLSL 120 Debug\playgroundGUI.lib
+     1>Done Building Project "C:\Users\ayaom\Desktop\Phase-1-kai-s-black-magic\Kai\playground\playgroundGUI\playgroundGUI.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.51
