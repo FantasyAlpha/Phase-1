@@ -136,45 +136,204 @@ void UnbindMesh()
 }
 
 //Draw the mesh
-void DrawMesh(Mesh *mesh)
+void DrawMesh(Mesh *mesh, bool debug)
 {
-	//Bind the buffers
-	BindMesh(mesh);
+	if (debug)
+	{
+		glLineWidth(1.0f);
+		BindMesh(mesh);
+		glDrawElements(GL_LINES, mesh->IndicesCount, GL_UNSIGNED_INT, NULL);
+		UnbindMesh();
+	}
+	else
+	{
+		//Bind the buffers
+		BindMesh(mesh);
 
-	//Draw the mesh
-	glDrawElements(GL_TRIANGLES		//Drawing type
-		, mesh->IndicesCount	//Number of indices
-		, GL_UNSIGNED_INT	//Indices type
-		, 0);				//The location of the indices (NULL means to look for them in the buffer) 
+		//Draw the mesh
+		glDrawElements(GL_TRIANGLES		//Drawing type
+			, mesh->IndicesCount	//Number of indices
+			, GL_UNSIGNED_INT	//Indices type
+			, 0);				//The location of the indices (NULL means to look for them in the buffer) 
 
-	UnbindMesh();
+		UnbindMesh();
+	}
 }
 
 ////
-Mesh CreateSprite(vec3f pos, vec2f size, vec4f color, bool withNormals)
+Mesh CreateSprite(vec3f pos, vec2f size, vec4f color, AnimationClip *clip, bool debug)
 {
 	Mesh sprite = {};
 
-	//Square vertices 
-	Vertex vertices[] =
+	if (clip)
 	{
-		Vertex(vec3f(pos.X, pos.Y, pos.Z), vec2f(0, 0), color, 0),		//TOP RIGHT
-		Vertex(vec3f(pos.X, pos.Y + (size.Y), pos.Z), vec2f(0, 1), color, 0),		//BOTTOM RIGHT
-		Vertex(vec3f(pos.X + (size.X), pos.Y + (size.Y), pos.Z), vec2f(1, 1), color, 0),		//BOTTOM LEFT
-		Vertex(vec3f(pos.X + (size.X), pos.Y, pos.Z), vec2f(1, 0), color, 0)		//TOP LEFT
-	};
+		uint32 col = clip->Indices[clip->Counter] % clip->MaxCountHorizontal;
+		uint32 row = (clip->MaxCountVertical - 1) - (clip->Indices[clip->Counter] / clip->MaxCountHorizontal);
 
+		vec2f bottomLeft = vec2f(float(col) * clip->FrameWidth, float(row) * clip->FrameHeight);
+		vec2f bottomRight = vec2f((float(col) * clip->FrameWidth) + clip->FrameWidth, float(row) * clip->FrameHeight);
+		vec2f topLeft = vec2f(float(col) * clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
+		vec2f topRight = vec2f((float(col) * clip->FrameWidth) + clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
 
-	//Order of vertices that will be drawn
-	unsigned int indices[] =
+		vec3f lowerLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+		vec3f upperLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+		vec3f lowerRight = vec3f(pos.X + (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+		vec3f upperRight = vec3f(pos.X + (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+
+		Vertex vertices[] =
+		{
+			Vertex{ lowerLeft, bottomLeft, color, 0 },
+			Vertex{ upperLeft, topLeft, color, 0 },
+			Vertex{ upperRight, topRight, color, 0 },
+			Vertex{ lowerRight, bottomRight, color, 0 }
+		};
+
+		if (debug)
+		{
+			uint32 indices[] =
+			{
+				0,
+				1,
+
+				1,
+				2,
+
+				2,
+				3,
+
+				3,
+				0,
+			};
+
+			sprite = CreateMesh(vertices, 4, indices, 8, 0);
+		}
+		else
+		{
+			unsigned int indices[] =
+			{
+				0, 1, 3,
+				1, 2, 3,
+			};
+
+			sprite = CreateMesh(vertices, 4, indices, 6, 0);
+		}
+	}
+	else
 	{
-		0, 1, 3,
-		1, 2, 3,
-	};
+		vec3f lowerLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+		vec3f upperLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+		vec3f lowerRight = vec3f(pos.X + (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+		vec3f upperRight = vec3f(pos.X + (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
 
-	sprite = CreateMesh(vertices, 4, indices, 6, withNormals);
+		Vertex vertices[] =
+		{
+			Vertex{ lowerLeft, vec2f(0, 0), color, 0 },
+			Vertex{ upperLeft, vec2f(0, 1), color, 0 },
+			Vertex{ upperRight, vec2f(1, 1), color, 0 },
+			Vertex{ lowerRight, vec2f(1, 0), color, 0 }
+		};
+
+		if (debug)
+		{
+			uint32 indices[] =
+			{
+				0,
+				1,
+
+				1,
+				2,
+
+				2,
+				3,
+
+				3,
+				0,
+			};
+
+			sprite = CreateMesh(vertices, 4, indices, 8, 0);
+		}
+		else
+		{
+			unsigned int indices[] =
+			{
+				0, 1, 3,
+				1, 2, 3,
+			};
+
+			sprite = CreateMesh(vertices, 4, indices, 6, 0);
+		}
+	}	
 
 	return sprite;
+}
+
+void AnimateSprite(Mesh *sprite, AnimationClip *clip)
+{
+	BindMesh(sprite);
+
+	Vertex *vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+
+	if (clip->Loop)
+	{
+		if (clip->Counter >= clip->FrameCount)
+		{
+			clip->Counter = 0;
+		}
+	}
+
+	if (clip->Counter < clip->FrameCount)
+	{
+		if (clip->TimeElapsed > clip->RunSpeed_FPS)
+		{
+			clip->TimeElapsed = 0;
+
+			uint32 col = clip->Indices[clip->Counter] % clip->MaxCountHorizontal;
+			uint32 row = (clip->MaxCountVertical - 1) - (clip->Indices[clip->Counter] / clip->MaxCountHorizontal);
+
+			vec2f bottomLeft = vec2f(float(col) * clip->FrameWidth, float(row) * clip->FrameHeight);
+			vec2f bottomRight = vec2f((float(col) * clip->FrameWidth) + clip->FrameWidth, float(row) * clip->FrameHeight);
+			vec2f topLeft = vec2f(float(col) * clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
+			vec2f topRight = vec2f((float(col) * clip->FrameWidth) + clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
+
+			vertices[0].TexCoords = bottomLeft;
+			vertices[1].TexCoords = topLeft;
+			vertices[2].TexCoords = topRight;
+			vertices[3].TexCoords = bottomRight;
+
+			clip->Counter++;
+		}
+		clip->TimeElapsed += (1.0f / 60.0f);
+	}
+
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+	UnbindMesh();
+}
+
+void EditSprite(Mesh *sprite, vec3f pos, vec2f size, vec4f color)
+{
+	BindMesh(sprite);
+
+	Vertex *vertices = (Vertex *)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+
+	vec3f lowerLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+	vec3f upperLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+	vec3f lowerRight = vec3f(pos.X + (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
+	vec3f upperRight = vec3f(pos.X + (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
+
+	vertices[0].Pos = lowerLeft; 
+	vertices[0].Color = color;
+
+	vertices[1].Pos = upperLeft;
+	vertices[1].Color = color;
+
+	vertices[2].Pos = upperRight;
+	vertices[2].Color = color;
+
+	vertices[3].Pos = lowerRight;
+	vertices[3].Color = color;
+
+	glUnmapBuffer(GL_ARRAY_BUFFER);
+	UnbindMesh();
 }
 
 Mesh CreateCube(vec3f pos, vec3f size, vec4f color, bool withNormals)
@@ -338,7 +497,7 @@ void ResumeBatch(MeshBatch *batch)
 	batch->UsedSlotsCount = 0;
 }
 
-void AddSprite(MeshBatch *batch, mat4f &modelMat, vec3f pos, vec2f size, vec4f color, uint32 textureID, AnimationClip *clip, bool debug, bool withNormals)
+void AddSprite(MeshBatch *batch, vec3f pos, vec2f size, vec4f color, uint32 textureID, AnimationClip *clip, bool debug, mat4f model)
 {
 	uint32 vertexOffset = batch->CurrentSize * 4;
 	uint32 indexOffset = batch->CurrentSize * 6;
@@ -402,15 +561,9 @@ void AddSprite(MeshBatch *batch, mat4f &modelMat, vec3f pos, vec2f size, vec4f c
 					vec2f topRight = vec2f((float(col) * clip->FrameWidth) + clip->FrameWidth, (float(row) * clip->FrameHeight) + clip->FrameHeight);
 
 					vec3f lowerLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
-					lowerLeft = modelMat * lowerLeft;
 					vec3f upperLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
-					upperLeft = modelMat * upperLeft;
-
 					vec3f lowerRight = vec3f(pos.X + (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
-					lowerRight = modelMat * lowerRight;
-
 					vec3f upperRight = vec3f(pos.X + (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
-					upperRight = modelMat * upperRight;
 
 					Vertex vertices[] =
 					{
@@ -428,16 +581,10 @@ void AddSprite(MeshBatch *batch, mat4f &modelMat, vec3f pos, vec2f size, vec4f c
 		else
 		{
 			vec3f lowerLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
-			lowerLeft = modelMat * lowerLeft;
 			vec3f upperLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
-			upperLeft = modelMat * upperLeft;
-
 			vec3f lowerRight = vec3f(pos.X + (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
-			lowerRight = modelMat * lowerRight;
-
 			vec3f upperRight = vec3f(pos.X + (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
-			upperRight = modelMat * upperRight;
-
+			
 			Vertex vertices[] =
 			{
 				Vertex{ lowerLeft, vec2f(0, 0), color, slotIndex },
@@ -451,15 +598,13 @@ void AddSprite(MeshBatch *batch, mat4f &modelMat, vec3f pos, vec2f size, vec4f c
 	else
 	{
 		vec3f lowerLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
-		lowerLeft = modelMat * lowerLeft;
+		lowerLeft = model * lowerLeft;
 		vec3f upperLeft = vec3f(pos.X - (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
-		upperLeft = modelMat * upperLeft;
-
+		upperLeft = model * upperLeft;
 		vec3f lowerRight = vec3f(pos.X + (size.X / 2.0f), pos.Y - (size.Y / 2.0f), pos.Z);
-		lowerRight = modelMat * lowerRight;
-
+		lowerRight = model * lowerRight;
 		vec3f upperRight = vec3f(pos.X + (size.X / 2.0f), pos.Y + (size.Y / 2.0f), pos.Z);
-		upperRight = modelMat * upperRight;
+		upperRight = model * upperRight;
 
 		Vertex vertices[] =
 		{
@@ -531,7 +676,7 @@ void RenderBatch(MeshBatch *batch, bool debug)
 	}
 	else
 	{
-		DrawMesh(&batch->Batch);
+		DrawMesh(&batch->Batch, false);
 	}
 
 	glBindTexture(GL_TEXTURE_2D, 0);

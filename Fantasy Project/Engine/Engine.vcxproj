@@ -150,7 +150,6 @@
   <ItemGroup>
     <ClInclude Include="include\Collision.h" />
     <ClInclude Include="include\Lights.h" />
-    <ClInclude Include="include\Scene.h" />
     <ClInclude Include="include\Components.h" />
     <ClInclude Include="include\MemoryAllocator.h" />
     <ClInclude Include="include\Mesh.h" />

@@ -970,7 +970,7 @@ namespace Cinder
 			mat4f Translation(vec3f &direction);
 			mat4f Scale(vec3f &value);
 			mat4f Rotation(vec3f &angle);
-			mat4f LookAt(vec3f &eye, vec3f &target, vec3f &up);
+			mat4f LookAt(vec3f target, vec3f up);
 			mat4f Orthographic(float right, float left, float top, float bottom, float near, float far);
 			mat4f Orthographic(float width, float height, float near, float far);
 			mat4f Perspective(float fieldOfView, float width, float height, float near, float far);

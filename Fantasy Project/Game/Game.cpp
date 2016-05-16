@@ -43,7 +43,6 @@ void AutomaticMove(char *ActorName, float velocity, float delta)
 		}
 	}
 
-
 	if (dir.Left)
 	{
 		if (!Game_Scene.CollisionManager.GetCollider(ActorName)->left)
@@ -73,9 +72,8 @@ void AutomaticMove(char *ActorName, float velocity, float delta)
 		}
 	}
 }
-float Accelerate(float flGoal, float flCurrent, float delta){
-
-
+float Accelerate(float flGoal, float flCurrent, float delta)
+{
 	float flDifference = flGoal - abs(flCurrent);
 
 	if (flDifference > delta)
@@ -94,16 +92,13 @@ float Accelerate(float flGoal, float flCurrent, float delta){
 vec2f currentvelocity=0.0f;
 void Move(char *ActorName, vec2f goalVelocity, float delta, Game_Input *input, bool Run)
 {
-
 	currentvelocity.X = Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.X;
 
 	if ((input->RIGHT.KeyUp) && (input->LEFT.KeyUp)/*!input->LEFT.KeyDown&&!input->RIGHT.KeyDown*/){
 		Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.X = 0.0f;
 
 		currentvelocity.X = 0.0f;
-
 	}
-
 	else if (input->RIGHT.KeyDown)
 	{
 		if (Game_Scene.CollisionManager.GetCollider(ActorName)->rigth == false)
@@ -113,9 +108,6 @@ void Move(char *ActorName, vec2f goalVelocity, float delta, Game_Input *input, b
 
 			Game_Scene.ActorManager.GetTransform(ActorName)->Position.X += currentvelocity.X;
 			Game_Scene.ActorManager.GetTransform(ActorName)->Scale.X = 1;
-			Game_Scene.MainCamera.Eye.X += currentvelocity.X;
-			/*float temp = Game_Scene.TransformManager.GetTransform(ActorName)->Position.X;
-			Game_Scene.CollisionManager.GetCollider(ActorName)->pos->X = temp;*/
 			Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.X = currentvelocity.X;
 		}
 	}
@@ -128,16 +120,14 @@ void Move(char *ActorName, vec2f goalVelocity, float delta, Game_Input *input, b
 			currentvelocity.X = -1.0f*goalVelocity.X*delta;
 
 			Game_Scene.ActorManager.GetTransform(ActorName)->Position.X += currentvelocity.X;
-			Game_Scene.MainCamera.Eye.X += currentvelocity.X;
 
 			Game_Scene.ActorManager.GetTransform(ActorName)->Scale.X = -1;
 
-			/*float temp = Game_Scene.TransformManager.GetTransform(ActorName)->Position.X;
-			Game_Scene.CollisionManager.GetCollider(ActorName)->pos->X = temp;*/
-
 			Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.X = currentvelocity.X;
 		}
-	}
+	}	
+
+	AutoMoveCameraHorizontal(&Game_Scene.MainCamera, currentvelocity, Game_Scene.ActorManager.GetTransform(ActorName)->Position, Game_Scene.CollisionManager.GetCollider(ActorName)->size);
 
 	//std::cout << "player velocity " << currentvelocity.X << std::endl;
 }
@@ -156,9 +146,7 @@ void jumpHandle(char*ActorName, Game_Input *input, float delta)
 
 	if (Jump)
 	{
-
 		groundCheck = true;
-
 	}
 
 	if (groundCheck)
@@ -166,7 +154,6 @@ void jumpHandle(char*ActorName, Game_Input *input, float delta)
 		//Jump = true;
 		fallSpeed = 0;
 		Game_Scene.CollisionManager.GetCollider(ActorName)->velocity.Y = 0;
-
 	}
 	if (input->Space.KeyDown&&groundCheck)
 	{
@@ -257,6 +244,16 @@ GAME_DLL GAME_UPDATE(Game_Update)
 		Game_Scene.RendererManager.AmbientStrength -= 2;
 	}
 
+	//if (input->RIGHT.KeyDown)
+	//{
+	//	Game_Scene.MainCamera.Eye.X += 1;
+	//}
+
+	//if (input->LEFT.KeyDown)
+	//{
+	//	Game_Scene.MainCamera.Eye.X -= 1;
+	//}
+
 	Game_Scene.ActorManager.GetTransform("KAI2")->Rotation.Z += 1;
 	
 	AutomaticMove("brick", 2.0f, delta);
@@ -322,6 +319,7 @@ void InitGameWorld()
 	{
 		Game_Scene.MainCamera = Camera(vec2f(screenWidth, screenHeight));
 		Game_Scene.MainCamera.Type = CameraType::ORTHOGRAPHIC;
+		Game_Scene.MainCamera.WindowSize = Game_Scene.MainCamera.Size / 2.0f;
 	}
 
 	{
@@ -382,10 +380,12 @@ void InitGameWorld()
 		/*
 			*/
 		Game_Scene.RendererManager.AddComponent("backGround"
+			, RenderableType::Static
 			, vec2f(screenWidth * 2.0f, screenHeight)
 			, Material{ GetTexture(&Resources, "Back"), vec4f{ 0, 0.3f, 1, 1 } });
 		
 		Game_Scene.RendererManager.AddComponent("brick"
+			, RenderableType::Movable
 			, vec2f(100.0f, 50.0f)
 			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 0, .3f, .5f, 1 } });
 
@@ -396,13 +396,17 @@ void InitGameWorld()
 			*/
 
 		Game_Scene.RendererManager.AddComponent("player"
+			, RenderableType::Movable
 			, vec2f(100.0f, 200.0f)
 			, Material{ GetTexture(&Resources, "neo"), vec4f{ 1, 1, 1, 1 } });
+
 		Game_Scene.RendererManager.AddComponent("KAI2"
+			, RenderableType::Movable
 			, vec2f(50.0f, 50.0f)
 			, Material{ GetTexture(&Resources, "star"), vec4f{ 1, 1, 1, 1 } });
 	
 		Game_Scene.RendererManager.AddComponent("platform"
+			, RenderableType::Static
 			, vec2f(screenWidth * 2.0f, 50.0f)
 			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 1, 1, 1, 0 } });
 	}
@@ -413,10 +417,10 @@ void InitGameWorld()
 		// Addcomponent (actorName , vec3f *pos , vec2 size ,bool ground ,bool wall ,bool trigger)
 
 		Game_Scene.CollisionManager.AddComponent("KAI2", &Game_Scene.ActorManager.GetTransform("KAI2")->Position,
-			Game_Scene.RendererManager.GetRenderable("KAI2")->Size, false, false, false);
+			Game_Scene.RendererManager.GetRenderable("KAI2", RenderableType::Movable)->Size, false, false, false);
 
 		Game_Scene.CollisionManager.AddComponent("brick", &Game_Scene.ActorManager.GetTransform("brick")->Position,
-			Game_Scene.RendererManager.GetRenderable("brick")->Size
+			Game_Scene.RendererManager.GetRenderable("brick", RenderableType::Movable)->Size
             , true, false, false);
 
 	/*	
@@ -429,11 +433,11 @@ void InitGameWorld()
 			vec2f(50.0f, 175.0f), false, false, false);
 
 		Game_Scene.CollisionManager.AddComponent("platform", &Game_Scene.ActorManager.GetTransform("platform")->Position,
-			Game_Scene.RendererManager.GetRenderable("platform")->Size
+			Game_Scene.RendererManager.GetRenderable("platform", RenderableType::Static)->Size
 			, true, false, false);
 	}
 
-
+	Game_Scene.MainCamera.Eye = Game_Scene.ActorManager.GetTransform("player")->Position;
 }
 
 

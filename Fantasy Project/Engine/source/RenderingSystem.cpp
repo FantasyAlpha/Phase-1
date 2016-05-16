@@ -2,64 +2,126 @@
 
 void RendererSystem::InitRendererSystem(uint32 count)
 {
-	Pool = Cinder::Memory::MemoryPool(sizeof(Renderable), count, false);
-	Renderables = (Renderable *)Pool.Elements;
+	StaticsPool = Cinder::Memory::MemoryPool(sizeof(Renderable), count, false);
+	MovablesPool = Cinder::Memory::MemoryPool(sizeof(Renderable), count, false);
+	StaticRenderables = (Renderable *)StaticsPool.Elements;
+	MovableRenderables = (Renderable *)MovablesPool.Elements;
 	AmbientStrength = 0;
 }
 
-void RendererSystem::AddComponent(char *name, vec2f size, Material material, AnimationClip *clip)
+void RendererSystem::AddComponent(char *name, RenderableType type, vec2f size, Material material, AnimationClip *clip)
 {
 	uint32 actorIndex = Owner->ActorManager.GetActorIndex(name);
 
-	if (actorIndex < Pool.ChunkCount)
+	if (type == RenderableType::Static)
 	{
-		uint32 index = GetRenderableIndex(name);
-		if (index == Pool.ChunkCount + 1)
+		if (actorIndex < StaticsPool.ChunkCount)
 		{
-			Cinder::Memory::PoolHeader block = Pool.Alloc();
-
-			Renderables[block.Current].Size = size;
-
-			Renderables[block.Current].RenderableMaterial = material;
-			Renderables[block.Current].Clip = clip;
-			if (!clip)
+			uint32 index = GetRenderableIndex(name, type);
+			if (index == StaticsPool.ChunkCount + 1)
 			{
-				Renderables[block.Current].WithClip = false;
-			}
-			else
-			{
-				Renderables[block.Current].WithClip = true;
-			}
+				Cinder::Memory::PoolHeader block = StaticsPool.Alloc();
 
-			Renderables[block.Current].OwnerIndex = actorIndex;
-			Owner_ComponentMap[name] = block.Current;
+				StaticRenderables[block.Current].Size = size;
+
+				StaticRenderables[block.Current].RenderableMaterial = material;
+				StaticRenderables[block.Current].Clip = clip;
+				if (!clip)
+				{
+					StaticRenderables[block.Current].WithClip = false;
+				}
+				else
+				{
+					StaticRenderables[block.Current].WithClip = true;
+				}
+
+				StaticRenderables[block.Current].OwnerIndex = actorIndex;
+				Owner_StaticComponentMap[name] = block.Current;
+			}
+		}
+	}
+	else
+	{
+		if (actorIndex < MovablesPool.ChunkCount)
+		{
+			uint32 index = GetRenderableIndex(name, type);
+			if (index == MovablesPool.ChunkCount + 1)
+			{
+				Cinder::Memory::PoolHeader block = MovablesPool.Alloc();
+
+				MovableRenderables[block.Current].Size = size;
+
+				MovableRenderables[block.Current].RenderableMaterial = material;
+				MovableRenderables[block.Current].Clip = clip;
+				if (!clip)
+				{
+					MovableRenderables[block.Current].WithClip = false;
+				}
+				else
+				{
+					MovableRenderables[block.Current].WithClip = true;
+				}
+
+				MovableRenderables[block.Current].OwnerIndex = actorIndex;
+				MovableRenderables[block.Current].Buffers = CreateSprite(vec3f(), size, material.MeshColor, clip, false);
+				MovableRenderables[block.Current].DebugBuffers = CreateSprite(vec3f(), size, material.MeshColor, clip, true);
+
+				Owner_MovableComponentMap[name] = block.Current;
+			}
 		}
 	}	
 }
 
-uint32 RendererSystem::GetRenderableIndex(char *name)
+uint32 RendererSystem::GetRenderableIndex(char *name, RenderableType type)
 {
 	uint32 actorIndex = Owner->ActorManager.GetActorIndex(name);
 
-	if (Owner->ActorManager.Pool.UsedHeaders[actorIndex].Current != Owner->ActorManager.Pool.ChunkCount + 1)
+	if (type == RenderableType::Static)
 	{
-		if (Owner_ComponentMap.find(name) != Owner_ComponentMap.end())
+		if (Owner->ActorManager.Pool.UsedHeaders[actorIndex].Current != Owner->ActorManager.Pool.ChunkCount + 1)
 		{
-			return Owner_ComponentMap[name];
+			if (Owner_StaticComponentMap.find(name) != Owner_StaticComponentMap.end())
+			{
+				return Owner_StaticComponentMap[name];
+			}
 		}
-	}
 
-	return Pool.ChunkCount + 1;
+		return StaticsPool.ChunkCount + 1;
+	}
+	else
+	{
+		if (Owner->ActorManager.Pool.UsedHeaders[actorIndex].Current != Owner->ActorManager.Pool.ChunkCount + 1)
+		{
+			if (Owner_MovableComponentMap.find(name) != Owner_MovableComponentMap.end())
+			{
+				return Owner_MovableComponentMap[name];
+			}
+		}
+
+		return MovablesPool.ChunkCount + 1;
+	}	
 }
 
-void RendererSystem::RemoveRenderer(char *actorName)
+void RendererSystem::RemoveRenderer(char *actorName, RenderableType type)
 {
-	uint32 index = GetRenderableIndex(actorName);
-	if (index < Pool.ChunkCount)
+	uint32 index = GetRenderableIndex(actorName, type);
+
+	if (type == RenderableType::Static)
 	{
-		Owner_ComponentMap.erase(actorName);
-		Pool.Dealloc(index);
+		if (index < StaticsPool.ChunkCount)
+		{
+			Owner_StaticComponentMap.erase(actorName);
+			StaticsPool.Dealloc(index);
+		}
 	}
+	else
+	{
+		if (index < MovablesPool.ChunkCount)
+		{
+			Owner_MovableComponentMap.erase(actorName);
+			MovablesPool.Dealloc(index);
+		}
+	}	
 }
 
 void RendererSystem::RenderAllActive()
@@ -67,7 +129,7 @@ void RendererSystem::RenderAllActive()
 	ActivateShader(&MainShader);
 
 	glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::PROJECTION_MATRIX), 1, true, CalcProjection(&Owner->MainCamera).Elements_1D);
-	glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::VIEW_MATRIX), 1, true, CalcLookAtViewMatrix(&Owner->MainCamera).Elements_1D);
+	//glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::VIEW_MATRIX), 1, 0, CalcLookAtViewMatrix(&Owner->MainCamera).Elements_1D);
 	glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::MODEL_MATRIX), 1, GL_TRUE, mat4f().Elements_1D);
 
 	glUniform1i(GetUniformLocation(&MainShader, UNIFORMS::TEXTURE0), 0);
@@ -81,26 +143,44 @@ void RendererSystem::RenderAllActive()
 
 	glUniform1f(GetUniformLocation(&MainShader, UNIFORMS::AMBIENT_STRENGTH), AmbientStrength);
 
-	uint32 index = Pool.FirstUsed;
+	uint32 index = StaticsPool.FirstUsed;
 
-	BeginBatch(&Renderer, BATCH_TYPE::SPRITE_BATCH, Owner_ComponentMap.size(), false);
+	BeginBatch(&Renderer, BATCH_TYPE::SPRITE_BATCH, Owner_StaticComponentMap.size(), false);
 
-	while (index != Pool.ChunkCount + 1)
+	while (index != StaticsPool.ChunkCount + 1)
 	{
-		uint32 ownerIndex = Renderables[index].OwnerIndex;
+		uint32 ownerIndex = StaticRenderables[index].OwnerIndex;
 
 		AddSprite(&Renderer
-			, Owner->ActorManager.Actors[ownerIndex].ModelMatrix
 			, vec3f()
-			, Renderables[index].Size
-			, Renderables[index].RenderableMaterial.MeshColor
-			, Renderables[index].RenderableMaterial.MeshTexture.TextureHandle
-			, Renderables[index].Clip);
+			, StaticRenderables[index].Size
+			, StaticRenderables[index].RenderableMaterial.MeshColor
+			, StaticRenderables[index].RenderableMaterial.MeshTexture.TextureHandle
+			, StaticRenderables[index].Clip);
 
-		index = Pool.UsedHeaders[index].Next;
+		index = StaticsPool.UsedHeaders[index].Next;
 	}
 
 	EndBatch(&Renderer, false);
+
+	index = MovablesPool.FirstUsed;
+
+	while (index != MovablesPool.ChunkCount + 1)
+	{
+		uint32 ownerIndex = MovableRenderables[index].OwnerIndex;
+		glUniformMatrix4fv(GetUniformLocation(&MainShader, UNIFORMS::MODEL_MATRIX), 1, GL_TRUE, Owner->ActorManager.Actors[ownerIndex].ModelMatrix.Elements_1D);
+
+		if (MovableRenderables[index].Clip)
+		{
+			AnimateSprite(&MovableRenderables[index].Buffers, MovableRenderables[index].Clip);
+		}
+
+		BindTexture(&MovableRenderables[index].RenderableMaterial.MeshTexture);
+		DrawMesh(&MovableRenderables[index].Buffers, false);
+		UnbindTexture();
+
+		index = MovablesPool.UsedHeaders[index].Next;
+	}
 }
 
 void RendererSystem::RenderDebugShapes()
@@ -108,31 +188,48 @@ void RendererSystem::RenderDebugShapes()
 	ActivateShader(&DebugShader);
 
 	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::PROJECTION_MATRIX), 1, 1, CalcProjection(&Owner->MainCamera).Elements_1D);
-	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::VIEW_MATRIX), 1, 1, CalcLookAtViewMatrix(&Owner->MainCamera).Elements_1D);
+	//glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::VIEW_MATRIX), 1, 1, CalcLookAtViewMatrix(&Owner->MainCamera).Elements_1D);
+
+	uint32 index = 0;
+
+	uint32 batchSize = Owner_StaticComponentMap.size() + Owner->CollisionManager.Owner_ComponentMap.size() + 1;
+
+	index = MovablesPool.FirstUsed;
+
+	while (index != MovablesPool.ChunkCount + 1)
+	{
+		uint32 ownerIndex = MovableRenderables[index].OwnerIndex;
+		glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::MODEL_MATRIX), 1, GL_TRUE, Owner->ActorManager.Actors[ownerIndex].ModelMatrix.Elements_1D);
+		vec4f color = vec4f{ 1, 0, 1, 1 };
+
+		EditSprite(&MovableRenderables[index].DebugBuffers, vec3f(), MovableRenderables[index].Size, color);
+
+		DrawMesh(&MovableRenderables[index].DebugBuffers, true);
+
+		index = MovablesPool.UsedHeaders[index].Next;
+	}
+
 	glUniformMatrix4fv(GetUniformLocation(&DebugShader, UNIFORMS::MODEL_MATRIX), 1, 1, mat4f().Elements_1D);
 
-	uint32 index = Pool.FirstUsed;
-
-	uint32 batchSize = Owner_ComponentMap.size() + Owner->CollisionManager.Owner_ComponentMap.size();
-
 	BeginBatch(&DebugRenderer, BATCH_TYPE::SPRITE_BATCH, batchSize, true);
+	index = StaticsPool.FirstUsed;
 
-	while (index != Pool.ChunkCount + 1)
+	while (index != StaticsPool.ChunkCount + 1)
 	{
-		uint32 ownerIndex = Renderables[index].OwnerIndex;		
+		uint32 ownerIndex = StaticRenderables[index].OwnerIndex;		
 
 		vec4f c = vec4f{ 1, 0, 0, 1 };
 
 		AddSprite(&DebugRenderer
-			, Owner->ActorManager.Actors[ownerIndex].ModelMatrix
 			, vec3f()
-			, Renderables[index].Size
+			, StaticRenderables[index].Size
 			, c
-			, Renderables[index].RenderableMaterial.MeshTexture.TextureHandle
-			, Renderables[index].Clip
-			, true);
+			, StaticRenderables[index].RenderableMaterial.MeshTexture.TextureHandle
+			, StaticRenderables[index].Clip			
+			, true
+			, Owner->ActorManager.Actors[ownerIndex].ModelMatrix);
 
-		index = Pool.UsedHeaders[index].Next;
+		index = StaticsPool.UsedHeaders[index].Next;
 	}
 
 	index = Owner->CollisionManager.Pool.FirstUsed;
@@ -143,18 +240,28 @@ void RendererSystem::RenderDebugShapes()
 		vec4f color = vec4f{ 0, 0, 1, 1 };
 
 		AddSprite(&DebugRenderer
-			, Owner->ActorManager.Actors[ownerIndex].ModelMatrix
 			, vec3f()
 			, Owner->CollisionManager.Colliders[index].size
 			, color
 			, 0
 			, 0
-			, true);
+			, true
+			, Owner->ActorManager.Actors[ownerIndex].ModelMatrix);
 
 		index = Owner->CollisionManager.Pool.UsedHeaders[index].Next;
 	}
 
-	EndBatch(&DebugRenderer, true);
+	vec4f color = vec4f{ 0, 1, 1, 1 };
+
+	AddSprite(&DebugRenderer
+		, Owner->MainCamera.Eye
+		, Owner->MainCamera.WindowSize
+		, color
+		, 0
+		, 0
+		, true);
+
+	EndBatch(&DebugRenderer, true);	
 }
 
 void RendererSystem::InitMainShader(char *vertexShader, char *fragmentShader)
@@ -200,14 +307,23 @@ void RendererSystem::InitDebugShader(char *vertexShader, char *fragmentShader)
 	AddUniform(&DebugShader, UNIFORMS::MOUSE_POS, "mousePos");
 }
 
-Renderable* RendererSystem::GetRenderable(char *name)
+Renderable* RendererSystem::GetRenderable(char *name, RenderableType type)
 {
-	uint32 index = GetRenderableIndex(name);
-
-	if (index < Pool.ChunkCount)
+	uint32 index = GetRenderableIndex(name, type);
+	if (type == RenderableType::Static)
 	{
-		return &Renderables[index];
+		if (index < StaticsPool.ChunkCount)
+		{
+			return &StaticRenderables[index];
+		}
 	}
+	else
+	{
+		if (index < MovablesPool.ChunkCount)
+		{
+			return &MovableRenderables[index];
+		}
+	}	
 
 	return NULL;
 }

@@ -71,7 +71,15 @@ void AnimationSystem::RemoveAnimationClip(char *name)
 	}
 }
 
-void AnimationSystem::SwitchAnimation(char *actor, char *animation)
+void AnimationSystem::SwitchAnimation(char *actor, RenderableType type, char *animation, Texture *texture)
 {
-	Owner->RendererManager.GetRenderable(actor)->Clip = GetAnimationClip(animation);
+	if (texture)
+	{
+		Owner->RendererManager.GetRenderable(actor, type)->Clip = GetAnimationClip(animation);
+		Owner->RendererManager.GetRenderable(actor, type)->RenderableMaterial.MeshTexture = *texture;
+	}
+	else
+	{
+		Owner->RendererManager.GetRenderable(actor, type)->Clip = GetAnimationClip(animation);
+	}
 }

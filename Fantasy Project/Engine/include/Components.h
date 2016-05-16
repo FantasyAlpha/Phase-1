@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unordered_map>
+#include <map>
 #include <vector>
 #include <MemoryAllocator.h>
 #include <Cinder\CinderMemory.h>
@@ -12,11 +12,11 @@
 
 struct SceneManager;
 
-struct Physics{
+struct Physics
+{
 	float acceleration;
 	float Gravity;
 	float mass;
-
 };
 
 struct Collider
@@ -44,7 +44,7 @@ struct CollisionSystem
 	Cinder::Memory::MemoryPool Pool;
 	Collider *Colliders;
 	SceneManager *Owner;
-	std::unordered_map<char*, uint32> Owner_ComponentMap;
+	std::map<char*, uint32> Owner_ComponentMap;
 	Physics physics;
 
 	void InitCollisionSystem(uint32 count);
@@ -57,9 +57,17 @@ struct CollisionSystem
 
 };
 
+enum RenderableType
+{
+	Static,
+	Movable
+};
 
 struct Renderable
 {
+	Mesh Buffers;
+	Mesh DebugBuffers;
+
 	vec2f Size;
 
 	Material RenderableMaterial;
@@ -73,9 +81,11 @@ struct Renderable
 
 struct RendererSystem
 {
-	Cinder::Memory::MemoryPool Pool;
+	Cinder::Memory::MemoryPool StaticsPool;
+	Cinder::Memory::MemoryPool MovablesPool;
 
-	Renderable *Renderables;
+	Renderable *StaticRenderables;
+	Renderable *MovableRenderables;
 
 	MeshBatch Renderer;
 	MeshBatch DebugRenderer;
@@ -87,16 +97,17 @@ struct RendererSystem
 
 	float AmbientStrength;
 
-	std::unordered_map<char*, uint32> Owner_ComponentMap;
+	std::map<char*, uint32> Owner_StaticComponentMap;
+	std::map<char*, uint32> Owner_MovableComponentMap;
 
 	void InitRendererSystem(uint32 count);
 
-	void AddComponent(char *actorName, vec2f size, Material material, AnimationClip *clip = 0);
+	void AddComponent(char *name, RenderableType type, vec2f size, Material material, AnimationClip *clip = 0);
 
-	uint32 GetRenderableIndex(char *name);
-	Renderable* GetRenderable(char *name);
+	uint32 GetRenderableIndex(char *name, RenderableType type);
+	Renderable* GetRenderable(char *name, RenderableType type);
 
-	void RemoveRenderer(char *actorName);
+	void RemoveRenderer(char *actorName, RenderableType type);
 
 	void RenderAllActive();
 	void RenderDebugShapes();
@@ -133,7 +144,7 @@ struct AnimationSystem
 	SceneManager *Owner;
 	uint32 MaxSize;
 
-	std::unordered_map<char*, uint32> Name_ComponentMap;
+	std::map<char*, uint32> Name_ComponentMap;
 
 	void InitAnimationSystem(uint32 count);
 
@@ -145,7 +156,7 @@ struct AnimationSystem
 
 	void RemoveAnimationClip(char *name);
 
-	void SwitchAnimation(char *actor, char *animation);
+	void SwitchAnimation(char *actor, RenderableType type, char *animation, Texture *texture = NULL);
 };
 
 struct Actor
@@ -169,7 +180,7 @@ struct ActorSystem
 	Actor *MainParent;
 	uint32 MainParentIndex;
 	SceneManager *Owner;
-	std::unordered_map<char*, uint32> ActiveActorMap;
+	std::map<char*, uint32> ActiveActorMap;
 
 	void InitActorSystem(uint32 count);
 

@@ -32,7 +32,7 @@ struct Mesh
 
 	uint32 IndicesCount;
 
-	bool WithNormals;
+	//bool WithNormals;
 };
 
 enum BATCH_TYPE
@@ -51,7 +51,7 @@ struct MeshBatch
 
 	BATCH_TYPE Type;
 
-	float TextureSlots[32];
+	float TextureSlots[8];
 	uint32 UsedSlotsCount;
 
 	bool WithNormals;
@@ -68,10 +68,13 @@ void BindMesh(Mesh *mesh);
 void UnbindMesh();
 
 //Draw the mesh
-void DrawMesh(Mesh *mesh);
+void DrawMesh(Mesh *mesh, bool debug);
 
 ////
-Mesh CreateSprite(vec3f pos, vec2f size, vec4f color, bool withNormals = true);
+Mesh CreateSprite(vec3f pos, vec2f size, vec4f color, AnimationClip *clip, bool debug);
+
+void AnimateSprite(Mesh *sprite, AnimationClip *clip);
+void EditSprite(Mesh *sprite, vec3f pos, vec2f size, vec4f color);
 
 Mesh CreateCube(vec3f pos, vec3f size, vec4f color, bool withNormals = true);
 
@@ -83,7 +86,7 @@ void PauseBatch(MeshBatch *batch);
 
 void ResumeBatch(MeshBatch *batch);
 
-void AddSprite(MeshBatch *batch, mat4f &modelMat, vec3f pos, vec2f size, vec4f color, uint32 textureID, AnimationClip *clip = 0, bool debug = false, bool withNormals = true);
+void AddSprite(MeshBatch *batch, vec3f pos, vec2f size, vec4f color, uint32 textureID, AnimationClip *clip = 0, bool debug = false, mat4f model = mat4f());
 
 void EndBatch(MeshBatch *batch, bool debug);
 

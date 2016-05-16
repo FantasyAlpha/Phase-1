@@ -546,7 +546,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, LPSTR cmdLine, i
 {
 	CreateConsole();
 	//Instance of the engine's core 
-	InitSystem(hInstance, "Kai engine", 1280, 720, 25);
+	InitSystem(hInstance, "Kai engine", 1280, 720, 60);
 
 	//Start the engine
 	Run();
