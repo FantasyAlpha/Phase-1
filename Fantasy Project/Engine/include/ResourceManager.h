@@ -4,10 +4,16 @@
 #include <Texture.h>
 #include <SDL2\SDL.h>
 #include <SDL_mixer.h>
+#include <FreeImage.h>
 //ResourceManager
 
 struct Game_Resources
 {
+	Game_Resources()
+	{
+
+	}
+
 	std::unordered_map<char *, Texture> TextureResources;
 	std::unordered_map<char *, Mix_Chunk *> SoundResources;
 	std::unordered_map<char *, Mix_Music *> BGMResources;

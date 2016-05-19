@@ -118,6 +118,8 @@ void RendererSystem::RemoveRenderer(char *actorName, RenderableType type)
 	{
 		if (index < MovablesPool.ChunkCount)
 		{
+			glDeleteBuffers(1, &MovableRenderables[index].Buffers.VBO);
+			glDeleteBuffers(1, &MovableRenderables[index].Buffers.EBO);
 			Owner_MovableComponentMap.erase(actorName);
 			MovablesPool.Dealloc(index);
 		}
@@ -172,12 +174,55 @@ void RendererSystem::RenderAllActive()
 
 		if (MovableRenderables[index].Clip)
 		{
-			AnimateSprite(&MovableRenderables[index].Buffers, MovableRenderables[index].Clip);
+			//AnimateSprite(&MovableRenderables[index].Buffers, MovableRenderables[index].Clip);
 		}
 
 		BindTexture(&MovableRenderables[index].RenderableMaterial.MeshTexture);
 		DrawMesh(&MovableRenderables[index].Buffers, false);
 		UnbindTexture();
+
+		index = MovablesPool.UsedHeaders[index].Next;
+	}
+}
+
+void RendererSystem::UpdateRenderables()
+{
+	uint32 index = StaticsPool.FirstUsed;
+
+	BeginBatch(&Renderer, BATCH_TYPE::SPRITE_BATCH, Owner_StaticComponentMap.size(), false);
+
+	while (index != StaticsPool.ChunkCount + 1)
+	{
+		uint32 ownerIndex = StaticRenderables[index].OwnerIndex;
+
+		if (StaticRenderables[index].Clip)
+		{
+			StaticRenderables[index].Clip->UPS = 1.0f / Owner->Delta;
+		}
+
+		AddSprite(&Renderer
+			, vec3f()
+			, StaticRenderables[index].Size
+			, StaticRenderables[index].RenderableMaterial.MeshColor
+			, StaticRenderables[index].RenderableMaterial.MeshTexture.TextureHandle
+			, StaticRenderables[index].Clip);
+
+		index = StaticsPool.UsedHeaders[index].Next;
+	}
+
+	UnbindMesh();
+
+	index = MovablesPool.FirstUsed;
+
+	while (index != MovablesPool.ChunkCount + 1)
+	{
+		uint32 ownerIndex = MovableRenderables[index].OwnerIndex;
+
+		if (MovableRenderables[index].Clip)
+		{
+			MovableRenderables[index].Clip->UPS = 1.0f / Owner->Delta;
+			AnimateSprite(&MovableRenderables[index].Buffers, MovableRenderables[index].Clip);
+		}
 
 		index = MovablesPool.UsedHeaders[index].Next;
 	}

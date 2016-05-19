@@ -62,7 +62,7 @@ struct Window_Dimensions
 
 
 //Initialize the game
-#define GAME_INIT(name) void name(Window_Dimensions dimensions)
+#define GAME_INIT(name) void name(Window_Dimensions dimensions, float ups)
 typedef GAME_INIT(game_init);
 
 //Update the game
@@ -100,4 +100,3 @@ void Move(char *ActorName, vec2f goalVelocity, float delta, Game_Input *input, b
 
 void jumpHandle(char*ActorName, Game_Input *input, float delta);
 
-void InitializeComponents();

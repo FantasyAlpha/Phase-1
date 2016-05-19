@@ -62,11 +62,25 @@ void ActorSystem::DestroyActor(char *name)
 		
 		RemoveChildren(name, index);
 
+		Owner->CollisionManager.RemoveComponent(name);
+		Owner->RendererManager.RemoveRenderer(name, RenderableType::Static);
+		Owner->RendererManager.RemoveRenderer(name, RenderableType::Movable);
+
 		Pool.Dealloc(index);
 		if (parentIndex != Pool.ChunkCount + 1)
 		{
-			(*Actors[parentIndex].Children).erase((*Actors[parentIndex].Children).begin() + index);
+			for (uint32 i = 0; i < (*Actors[parentIndex].Children).size(); i++)
+			{
+				if ((*Actors[parentIndex].Children)[i] == index)
+				{
+					(*Actors[parentIndex].Children).erase((*Actors[parentIndex].Children).begin() + i);
+					break;
+				}
+			}
+			//(*Actors[parentIndex].Children).erase((*Actors[parentIndex].Children).begin() + index);
 		}
+
+		ActiveActorMap.erase(name);
 	}
 }
 
@@ -81,6 +95,11 @@ void ActorSystem::RemoveChildren(char *name, uint32 index)
 	{
 		uint32 childIndex = (*Actors[index].Children)[i];
 		RemoveChildren(Actors[childIndex].Name, (*Actors[index].Children)[i]);
+		Owner->CollisionManager.RemoveComponent(Actors[childIndex].Name);
+		Owner->RendererManager.RemoveRenderer(Actors[childIndex].Name, RenderableType::Static);
+		Owner->RendererManager.RemoveRenderer(Actors[childIndex].Name, RenderableType::Movable);
+
+
 		Pool.Dealloc((*Actors[index].Children)[i]);
 		Actors[index].Children->erase(Actors[index].Children->begin() + i);
 		i--;
@@ -110,7 +129,14 @@ void ActorSystem::AttachChild(char *parentName, char *childName)
 				}
 			}
 
-			(*Actors[oldParentIndex].Children).erase((*Actors[oldParentIndex].Children).begin() + index);
+			for (uint32 i = 0; i < (*Actors[oldParentIndex].Children).size(); i++)
+			{
+				if ((*Actors[oldParentIndex].Children)[i] == index)
+				{
+					(*Actors[oldParentIndex].Children).erase((*Actors[oldParentIndex].Children).begin() + i);
+					break;
+				}
+			}
 		}
 
 		if (Actors[newParentIndex].ParentName != childName)

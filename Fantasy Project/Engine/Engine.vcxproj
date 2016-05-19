@@ -95,7 +95,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;ANCIENT_VERSION=120;MODERN_VERSION=330;GLSL_VERSION=ANCIENT_VERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;ANCIENT_VERSION=120;MODERN_VERSION=330;GLSL_VERSION=ANCIENT_VERSION;FREEIMAGE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -106,7 +106,7 @@
       </Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>libglew32.lib;opengl32.lib;Cinder Math_Debug.lib;Cinder Memory_Debug.lib;SDL2.lib;SDL2_mixer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libglew32.lib;opengl32.lib;Cinder Math_Debug.lib;Cinder Memory_Debug.lib;SDL2.lib;SDL2_mixer.lib;FreeImageLibd.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib</IgnoreSpecificDefaultLibraries>
     </Lib>

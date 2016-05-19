@@ -21,7 +21,7 @@ uniform vec2 mousePos;
 void main()
 {
 	float intensity = (1.0f / length(outpos.xy - vec2(mousePos.x, mousePos.y))) * ambientStrength;
-	vec4 totalLight = intensity * vec4(0.8f, 0.8f, 0.9f, 1.0f);
+	vec4 totalLight = intensity * vec4(1, 1, 1, 1.0f);
 	int tid = int(slot + 0.5f);
 
 	vec4 tex = vec4(1, 1, 1, 1);
@@ -35,5 +35,5 @@ void main()
 	if(tid == 6){	tex = texture2D(myTexture6, outputTexCoords);	}
 	if(tid == 7){	tex = texture2D(myTexture7, outputTexCoords);	}
 
-	gl_FragColor = tex * myColor * totalLight;
+	gl_FragColor = tex * myColor;
 }

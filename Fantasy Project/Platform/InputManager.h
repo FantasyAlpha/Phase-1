@@ -1,17 +1,7 @@
-/*=======================================================================================================================
-NOTE(kai): This file can:
-1) process events (using either SDL or GLFW)
-2) get key state (pressed or released
-=======================================================================================================================*/
-
 #pragma once
 
 #include <Windows.h>
 #include <Windowsx.h>
-//NOTE(kai): Callback is basically: once an event is fired store it in an event queue 
-//			,then use a callback function to process these events.
-//			Polling is basically going through the event queue at certain intervals 
-//			,and process these events (if there is any)
 
 struct Input_Keys
 {

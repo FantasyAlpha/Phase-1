@@ -61,7 +61,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='GLSL 120 Debug|Win32'">
     <IncludePath>$(SolutionDir)GUI;$(SolutionDir)Engine\include;$(SolutionDir)Game;$(SolutionDir)3rd party libraries\include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)bin\Engine\$(Configuration);$(SolutionDir)bin\GUI\$(Configuration);$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)bin\GUI\$(Configuration);$(SolutionDir)3rd party libraries\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)bin\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)intermediates\Platform\$(Configuration)\</IntDir>
     <SourcePath>$(SolutionDir)3rd party libraries\source;$(VC_SourcePath)</SourcePath>
@@ -99,13 +99,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;ANCIENT_VERSION=120;MODERN_VERSION=330;GLSL_VERSION=ANCIENT_VERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>GLEW_STATIC;_CRT_SECURE_NO_WARNINGS;ANCIENT_VERSION=120;MODERN_VERSION=330;GLSL_VERSION=ANCIENT_VERSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>FantasyGUI.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winmm.lib;FantasyGUI.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SubSystem>Windows</SubSystem>
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>libcmt.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>

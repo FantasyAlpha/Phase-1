@@ -111,6 +111,7 @@ struct RendererSystem
 
 	void RenderAllActive();
 	void RenderDebugShapes();
+	void UpdateRenderables();
 
 	void InitMainShader(char *vertexShader, char *fragmentShader);
 	void InitDebugShader(char *vertexShader, char *fragmentShader);
@@ -129,7 +130,7 @@ struct AnimationClip
 
 	float RunSpeed_FPS;
 	float TimeElapsed;
-	float Delta;
+	float UPS;
 
 	uint32 Counter;
 
@@ -149,7 +150,7 @@ struct AnimationSystem
 	void InitAnimationSystem(uint32 count);
 
 	void AddComponent(char *name, uint32 maxCountHorizontal, uint32 maxCountVertical, uint32 *indices
-		, uint32 frameCount, float runSpeed_FPS, bool loop);
+		, uint32 frameCount, float runSpeed, bool loop);
 
 	uint32 GetAnimationClipIndex(char *name);
 	AnimationClip* GetAnimationClip(char *name);

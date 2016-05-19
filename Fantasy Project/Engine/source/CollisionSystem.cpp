@@ -126,7 +126,7 @@ uint32 CollisionSystem::GetColliderIndex(char *name)
 {
 	uint32 actorIndex = Owner->ActorManager.GetActorIndex(name);
 	
-	if (Owner->ActorManager.Pool.UsedHeaders[actorIndex].Current != Owner->ActorManager.Pool.ChunkCount + 1)
+	if (actorIndex != Owner->ActorManager.Pool.ChunkCount + 1)
 	{
 		if (Owner_ComponentMap.find(name) != Owner_ComponentMap.end())
 		{

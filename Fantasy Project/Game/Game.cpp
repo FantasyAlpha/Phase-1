@@ -4,6 +4,7 @@ global_variable Game_Resources Resources;
 
 float screenWidth;
 float screenHeight;
+float UPS;
 
 global_variable SceneManager Game_Scene;
 
@@ -128,6 +129,7 @@ void Move(char *ActorName, vec2f goalVelocity, float delta, Game_Input *input, b
 	}	
 
 	AutoMoveCameraHorizontal(&Game_Scene.MainCamera, currentvelocity, Game_Scene.ActorManager.GetTransform(ActorName)->Position, Game_Scene.CollisionManager.GetCollider(ActorName)->size);
+	AutoMoveCameraVertical(&Game_Scene.MainCamera, currentvelocity, Game_Scene.ActorManager.GetTransform(ActorName)->Position, Game_Scene.CollisionManager.GetCollider(ActorName)->size);
 
 	//std::cout << "player velocity " << currentvelocity.X << std::endl;
 }
@@ -135,7 +137,7 @@ void Move(char *ActorName, vec2f goalVelocity, float delta, Game_Input *input, b
 float fallSpeed = 0.0f;
 bool jumpflag = false;
 //float Gravity = 2.0f;
-float jumpSpeed = 13.0f;
+float jumpSpeed = 20;
 void jumpHandle(char*ActorName, Game_Input *input, float delta)
 {
 
@@ -158,7 +160,7 @@ void jumpHandle(char*ActorName, Game_Input *input, float delta)
 	if (input->Space.KeyDown&&groundCheck)
 	{
 		// reset 
-		jumpSpeed = 13.0f;
+		jumpSpeed = 20;
 
 		jumpflag = true;
 		Jump = false;
@@ -180,7 +182,7 @@ void jumpHandle(char*ActorName, Game_Input *input, float delta)
 		if (jumpSpeed <= 0){
 			jumpflag = false;
 			// Reset jump speed ****************importatnt
-			jumpSpeed = 13.0f;
+			jumpSpeed = 20;
 
 		}
 	}
@@ -202,6 +204,7 @@ GAME_DLL GAME_INIT(Game_Init)
 	{
 		screenWidth = dimensions.Width;
 		screenHeight = dimensions.Height;
+		UPS = ups;
 	}
 
 	{
@@ -244,17 +247,26 @@ GAME_DLL GAME_UPDATE(Game_Update)
 		Game_Scene.RendererManager.AmbientStrength -= 2;
 	}
 
-	//if (input->RIGHT.KeyDown)
-	//{
-	//	Game_Scene.MainCamera.Eye.X += 1;
-	//}
+	if (input->D.KeyDown)
+	{
+		Game_Scene.ActorManager.DestroyActor("KAI2");
+		
+	}
 
-	//if (input->LEFT.KeyDown)
-	//{
-	//	Game_Scene.MainCamera.Eye.X -= 1;
-	//}
+	if (input->A.KeyDown)
+	{
+		Game_Scene.ActorManager.AddActor("KAI2", Transform{});
+		Game_Scene.ActorManager.GetTransform("KAI2")->Position = vec3f(-200.0f, 200.0f, 0);
+	Game_Scene.RendererManager.AddComponent("KAI2"
+			, RenderableType::Movable
+			, vec2f(50.0f, 50.0f)
+			, Material{ GetTexture(&Resources, "star"), vec4f{ 1, 1, 1, 1 } });
+		Game_Scene.CollisionManager.AddComponent("KAI2", &Game_Scene.ActorManager.GetTransform("KAI2")->Position,
+			Game_Scene.RendererManager.GetRenderable("KAI2", RenderableType::Movable)->Size, false, false, false);
+	}
+	
 
-	Game_Scene.ActorManager.GetTransform("KAI2")->Rotation.Z += 1;
+	//Game_Scene.ActorManager.GetTransform("KAI2")->Rotation.Z += 1;
 	
 	AutomaticMove("brick", 2.0f, delta);
 
@@ -273,45 +285,31 @@ GAME_DLL GAME_SHUTDOWN(Game_Shutdown)
 
 void InitResources()
 {
-
+	/*
 	//Initialize SDL AUDIO
 	if (SDL_Init(SDL_INIT_AUDIO) < 0)
 	{
 		std::cout << "SDL could not initialize! SDL Error: %s\n", SDL_GetError();
 	}
-
-
-	//Initialize SDL_mixer
-	/* The first argument sets the sound frequency, and 44100 is a standard frequency that works on most systems.
-	or you might use MIX_DEFAULT_FREQUENCY(22050) since that is a good value for most games.
-	Most games use 22050, because 44100 requires too much CPU power on older computers.
-
-	The second argument determines the sample format, which again here we're using the default.
-	MIX_DEFAULT_FORMAT is the same as AUDIO_S16SYS which means (Signed 16-bit samples, in system byte order).
-
-	The third argument is the number of hardware channels, and here we're using 2 channels for stereo.
-	and 1 channel for mono.
-
-	The last argument is the sample size, which determines the size of the chunks we use when playing sound.*/
+	
 	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
-		// this means that open 44.1KHz, signed 16bit, system byte order,
-		//      stereo audio, using 2048 byte chunks
 	{
 		std::cout << "SDL_mixer could not initialize! SDL_mixer Error: \n";
-		//printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n", Mix_GetError());
 	}
+	*/
+
 	// add resources : Textures
-	AddTexture(&Resources, LoadTexture("resources\\textures\\tile1.png"), "Tile1");
-	AddTexture(&Resources, LoadTexture("resources\\textures\\tile2.png"), "Tile2");
+	//AddTexture(&Resources, LoadTexture("resources\\textures\\noe walk.png"), "noe walk");
+	AddTexture(&Resources, LoadTexture("resources\\textures\\noe walk.png"), "noe idle");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\empty.png"), "Empty");
-	AddTexture(&Resources, LoadTexture("resources\\textures\\player_2.png"), "PLAYER");
+	//AddTexture(&Resources, LoadTexture("resources\\textures\\player_2.png"), "PLAYER");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\Neo In.png"), "neo");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\back.png"), "Back");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\star.png"), "star");
 	AddTexture(&Resources, LoadTexture("resources\\textures\\grayCube.png"), "cube");
 
 
-	AddBGM(&Resources, "resources\\audio\\testClip.wav", "benny");
+	//AddBGM(&Resources, "resources\\audio\\testClip.wav", "benny");
 }
 
 void InitGameWorld()
@@ -324,6 +322,7 @@ void InitGameWorld()
 
 	{
 		Game_Scene.InitScene(100);
+		Game_Scene.Delta = 1.0f / UPS;
 	}
 
 	{
@@ -349,7 +348,7 @@ void InitGameWorld()
 		
 		Game_Scene.ActorManager.GetTransform("brick")->Position = vec3f(0.0f, -290.0f, 0);
 
-		Game_Scene.ActorManager.GetTransform("wall")->Position = vec3f(500.0f, 0.0f, 0);
+		//Game_Scene.ActorManager.GetTransform("wall")->Position = vec3f(500.0f, 0.0f, 0);
 
 		Game_Scene.ActorManager.GetTransform("player")->Position = vec3f(200.0f, -200.0f, 0);
 
@@ -360,14 +359,21 @@ void InitGameWorld()
 	{
 		// Animation components
 
-		uint32 frames[4];
+		uint32 Walkframes[10];
 		
-		frames[0] = 4;
-		frames[1] = 5;
-		frames[2] = 6;
-		frames[3] = 7;
+		Walkframes[0] = 0;
+		Walkframes[1] = 1;
+		Walkframes[2] = 2;
+		Walkframes[3] = 3;
+		Walkframes[4] = 4;
+		Walkframes[5] = 5;
+		Walkframes[6] = 6;
+		Walkframes[7] = 7;
+		Walkframes[8] = 8;
+		Walkframes[9] = 
+			9;
 
-		Game_Scene.AnimationManager.AddComponent("a1", 4, 2, frames, 4, 0.001f, true);
+		Game_Scene.AnimationManager.AddComponent("noe idle clip", 1, 10, Walkframes, 10, 10, true);
 		
 	}
 
@@ -382,22 +388,23 @@ void InitGameWorld()
 		Game_Scene.RendererManager.AddComponent("backGround"
 			, RenderableType::Static
 			, vec2f(screenWidth * 2.0f, screenHeight)
-			, Material{ GetTexture(&Resources, "Back"), vec4f{ 0, 0.3f, 1, 1 } });
+			, Material{ GetTexture(&Resources, "Back"), vec4f{ 1, 1, 1, 1 } });
 		
 		Game_Scene.RendererManager.AddComponent("brick"
 			, RenderableType::Movable
 			, vec2f(100.0f, 50.0f)
-			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 0, .3f, .5f, 1 } });
+			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 1, .3f, .5f, 1 } });
 
 		/*
-			Game_Scene.RendererManager.AddComponent("wall"
-			, vec2f(50.0f, screenHeight)
-			, Material{ GetTexture(&Resources, "Empty"), vec4f{ 1, .3f, .5f, 1 } });
-			*/
-
+		Game_Scene.RendererManager.AddComponent("wall"
+			, RenderableType::Static
+			, vec2f(100, 50)
+			, Material{ GetTexture(&Resources, "Tile2"), vec4f{ 1, 1, 1, 1 } });
+		*/
+		
 		Game_Scene.RendererManager.AddComponent("player"
 			, RenderableType::Movable
-			, vec2f(100.0f, 200.0f)
+			, vec2f(200, 266)
 			, Material{ GetTexture(&Resources, "neo"), vec4f{ 1, 1, 1, 1 } });
 
 		Game_Scene.RendererManager.AddComponent("KAI2"
@@ -437,7 +444,7 @@ void InitGameWorld()
 			, true, false, false);
 	}
 
-	Game_Scene.MainCamera.Eye = Game_Scene.ActorManager.GetTransform("player")->Position;
+//	Game_Scene.MainCamera.Eye = Game_Scene.ActorManager.GetTransform("player")->Position;
 }
 
 

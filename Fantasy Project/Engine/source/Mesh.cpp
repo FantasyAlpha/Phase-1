@@ -302,7 +302,7 @@ void AnimateSprite(Mesh *sprite, AnimationClip *clip)
 
 			clip->Counter++;
 		}
-		clip->TimeElapsed += (1.0f / 60.0f);
+		clip->TimeElapsed += 1.0f / clip->UPS;
 	}
 
 	glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -575,7 +575,7 @@ void AddSprite(MeshBatch *batch, vec3f pos, vec2f size, vec4f color, uint32 text
 					glBufferSubData(GL_ARRAY_BUFFER, vertexOffset * sizeof(Vertex), 4 * sizeof(Vertex), vertices);
 					clip->Counter++;
 				}
-				clip->TimeElapsed += (1.0f / 60.0f);
+				clip->TimeElapsed += 1.0f / clip->UPS;
 			}
 		}
 		else

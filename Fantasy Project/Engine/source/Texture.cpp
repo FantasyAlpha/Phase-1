@@ -1,3 +1,4 @@
+#include <FreeImage.h>
 #include <Texture.h>
 
 static bool Glew_Initialized = false;
@@ -5,44 +6,63 @@ static bool Glew_Initialized = false;
 ////
 Texture LoadTexture(char *imagePath)
 {
-	if (!Glew_Initialized){
+	if (!Glew_Initialized)
+	{
 		bool res = ReloadGlew();
 		Glew_Initialized = true;
 	}
+
+	FreeImage_Initialise();
+
 	Texture texture;
 
-	std::vector<unsigned char> image;
-	DataFile file;
-	LoadFile(imagePath, &file);
-	unsigned char *data = (unsigned char*)file.Data;
-	decodePNG(image, texture.Width, texture.Height, (unsigned char*)file.Data, file.Length);
+	FREE_IMAGE_FORMAT imageFormat = FIF_UNKNOWN;
 
-	std::vector<unsigned char> newImage;
-	
-	for (int h = texture.Height - 1; h >= 0; h--)
+	FIBITMAP *dib(0);
+
+	unsigned char *bits(0);
+
+	imageFormat = FreeImage_GetFileType(imagePath);
+
+	if (imageFormat == FIF_UNKNOWN)
 	{
-		for (int w = 0; w < texture.Width * 4; w ++)
-		{
-			newImage.push_back(image[w + 0 + (h * texture.Width * 4)]);
-		}
+		imageFormat = FreeImage_GetFIFFromFilename(imagePath);
 	}
 
+	if (imageFormat == FIF_UNKNOWN)
+	{
+		return Texture{};
+	}
+
+	if (FreeImage_FIFSupportsReading(imageFormat))
+	{
+		dib = FreeImage_Load(imageFormat, imagePath);
+	}
+
+	bits = FreeImage_GetBits(dib);
+
+	texture.Width = FreeImage_GetWidth(dib);
+	texture.Height = FreeImage_GetHeight(dib);
+	
 	glGenTextures(1, &texture.TextureHandle);
 
 	glBindTexture(GL_TEXTURE_2D, texture.TextureHandle);
 
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.Width, texture.Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, &(newImage[0]));
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.Width, texture.Height, 0, GL_BGRA, GL_UNSIGNED_BYTE, bits);
 
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
-	GLenum error = glGetError();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+
+	FreeImage_Unload(dib);
+
+	FreeImage_DeInitialise();
 
 	return texture;
 }

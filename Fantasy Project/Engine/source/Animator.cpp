@@ -7,7 +7,7 @@ void AnimationSystem::InitAnimationSystem(uint32 count)
 }
 
 void AnimationSystem::AddComponent(char *name, uint32 maxCountHorizontal, uint32 maxCountVertical, uint32 *indices
-	, uint32 frameCount, float runSpeed_FPS, bool loop)
+	, uint32 frameCount, float runSpeed, bool loop)
 {
 	if (GetAnimationClipIndex(name) > Pool.ChunkCount)
 	{
@@ -23,8 +23,8 @@ void AnimationSystem::AddComponent(char *name, uint32 maxCountHorizontal, uint32
 		}
 
 		Clips[block.Current].FrameCount = frameCount;
-		Clips[block.Current].RunSpeed_FPS = runSpeed_FPS;
-		Clips[block.Current].Delta = Owner->Delta;
+		Clips[block.Current].UPS = 1.0f / Owner->Delta;
+		Clips[block.Current].RunSpeed_FPS = (float(frameCount) / 60.0f) / runSpeed;
 		Clips[block.Current].Loop = loop;
 		Clips[block.Current].TimeElapsed = 0;
 		Clips[block.Current].Counter = 0;
