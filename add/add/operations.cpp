@@ -5,10 +5,9 @@ using namespace std;
 
 int main(){
 
-	int sum, x=5, y=7;
-	sum = x + y;
+	int sum, x=6, y=3 , sub;
 
-
+	sub = x - y;
 
 	return 0; 
 }
