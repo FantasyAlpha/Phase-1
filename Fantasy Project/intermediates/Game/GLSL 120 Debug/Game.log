@@ -1,0 +1,15 @@
+﻿Build started 5/24/2016 3:45:08 PM.
+     1>Project "E:\Fantasy Project\Game\Game.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D GAME_DLL_EXPORTS /D GLEW_STATIC /D _CRT_SECURE_NO_WARNINGS /D ANCIENT_VERSION=120 /D MODERN_VERSION=330 /D GLSL_VERSION=ANCIENT_VERSION /D _WINDLL /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"E:\Fantasy Project\intermediates\Game\GLSL 120 Debug\\" /Fd"E:\Fantasy Project\intermediates\Game\GLSL 120 Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt Game.cpp
+         Game.cpp
+     1>e:\fantasy project\game\game.cpp(193): warning C4018: '<' : signed/unsigned mismatch
+       Link:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Fantasy Project\bin\GLSL 120 Debug\Game Layer.dll" /INCREMENTAL /NOLOGO FantasyGUI.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libcmt.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\Fantasy Project\bin\GLSL 120 Debug\Game Layer.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Fantasy Project\bin\GLSL 120 Debug\Game Layer.lib" /MACHINE:X86 /DLL "E:\Fantasy Project\intermediates\Game\GLSL 120 Debug\Game.obj"
+         "E:\Fantasy Project\intermediates\Game\GLSL 120 Debug\player.obj"
+         Game.vcxproj -> E:\Fantasy Project\bin\GLSL 120 Debug\Game Layer.dll
+     1>Done Building Project "E:\Fantasy Project\Game\Game.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.10

@@ -1,0 +1,70 @@
+﻿Build started 5/24/2016 4:42:11 AM.
+     1>Project "E:\Fantasy Project\Platform\Platform.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D GLEW_STATIC /D _CRT_SECURE_NO_WARNINGS /D ANCIENT_VERSION=120 /D MODERN_VERSION=330 /D GLSL_VERSION=ANCIENT_VERSION /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"E:\Fantasy Project\intermediates\Platform\GLSL 120 Debug\\" /Fd"E:\Fantasy Project\intermediates\Platform\GLSL 120 Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
+       Link:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Fantasy Project\bin\GLSL 120 Debug\MainGame.exe" /INCREMENTAL /NOLOGO winmm.lib FantasyGUI.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libcmt.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\Fantasy Project\bin\GLSL 120 Debug\MainGame.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Fantasy Project\bin\GLSL 120 Debug\MainGame.lib" /MACHINE:X86 "E:\Fantasy Project\intermediates\Platform\GLSL 120 Debug\imgui.obj"
+         "E:\Fantasy Project\intermediates\Platform\GLSL 120 Debug\imgui_demo.obj"
+         "E:\Fantasy Project\intermediates\Platform\GLSL 120 Debug\imgui_draw.obj"
+         "E:\Fantasy Project\intermediates\Platform\GLSL 120 Debug\InputManager.obj"
+         "E:\Fantasy Project\intermediates\Platform\GLSL 120 Debug\main.obj"
+         "E:\Fantasy Project\intermediates\Platform\GLSL 120 Debug\OGLInitializerWrapper.obj"
+         "E:\Fantasy Project\intermediates\Platform\GLSL 120 Debug\WindowManager.obj"
+         Platform.vcxproj -> E:\Fantasy Project\bin\GLSL 120 Debug\MainGame.exe
+       PostBuildEvent:
+         xcopy /Y /E "E:\Fantasy Project\Platform\Resources" "E:\Fantasy Project\bin\GLSL 120 Debug\Resources\"
+         :VCEnd
+         E:\Fantasy Project\Platform\Resources\audio\beat.wav
+         E:\Fantasy Project\Platform\Resources\audio\high.wav
+         E:\Fantasy Project\Platform\Resources\audio\low.wav
+         E:\Fantasy Project\Platform\Resources\audio\medium.wav
+         E:\Fantasy Project\Platform\Resources\audio\musafer_m3_elquran.mp3
+         E:\Fantasy Project\Platform\Resources\audio\scratch.wav
+         E:\Fantasy Project\Platform\Resources\audio\testClip.wav
+         E:\Fantasy Project\Platform\Resources\Shaders\fragment shader 120.frag
+         E:\Fantasy Project\Platform\Resources\Shaders\fragment shader 120_2.frag
+         E:\Fantasy Project\Platform\Resources\Shaders\fragment shader.frag
+         E:\Fantasy Project\Platform\Resources\Shaders\GUI fragment shader 120.frag
+         E:\Fantasy Project\Platform\Resources\Shaders\GUI vertex shader 120.vert
+         E:\Fantasy Project\Platform\Resources\Shaders\vertex shader 120.vert
+         E:\Fantasy Project\Platform\Resources\Shaders\vertex shader 120_2.vert
+         E:\Fantasy Project\Platform\Resources\Shaders\vertex shader.vert
+         E:\Fantasy Project\Platform\Resources\Textures\back.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG0.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG1.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG10.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG11.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG12.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG13.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG14.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG2.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG3.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG4.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG5.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG6.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG7.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG8.png
+         E:\Fantasy Project\Platform\Resources\Textures\BG9.png
+         E:\Fantasy Project\Platform\Resources\Textures\block.png
+         E:\Fantasy Project\Platform\Resources\Textures\empty.png
+         E:\Fantasy Project\Platform\Resources\Textures\Genta.png
+         E:\Fantasy Project\Platform\Resources\Textures\grass3.png
+         E:\Fantasy Project\Platform\Resources\Textures\grayCube.png
+         E:\Fantasy Project\Platform\Resources\Textures\Neo In.png
+         E:\Fantasy Project\Platform\Resources\Textures\noe idle.png
+         E:\Fantasy Project\Platform\Resources\Textures\noe walk.png
+         E:\Fantasy Project\Platform\Resources\Textures\PlatForm2.png
+         E:\Fantasy Project\Platform\Resources\Textures\player_2.png
+         E:\Fantasy Project\Platform\Resources\Textures\star.png
+         E:\Fantasy Project\Platform\Resources\Textures\Warrior.png
+         E:\Fantasy Project\Platform\Resources\Textures\Wizard.png
+         E:\Fantasy Project\Platform\Resources\Textures\yellow.png
+         E:\Fantasy Project\Platform\Resources\TileMaps\map1.txt
+         E:\Fantasy Project\Platform\Resources\TileMaps\map2.txt
+         47 File(s) copied
+     1>Done Building Project "E:\Fantasy Project\Platform\Platform.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:08.40

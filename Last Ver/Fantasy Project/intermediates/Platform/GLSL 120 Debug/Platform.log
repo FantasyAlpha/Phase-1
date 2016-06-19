@@ -1,0 +1,77 @@
+﻿Build started 6/19/2016 5:43:06 AM.
+     1>Project "E:\Last Ver\Fantasy Project\Platform\Platform.vcxproj" on node 2 (Build target(s)).
+     1>Link:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Last Ver\Fantasy Project\bin\GLSL 120 Debug\MainGame.exe" /INCREMENTAL /NOLOGO winmm.lib FantasyGUI.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /NODEFAULTLIB:libcmt.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\Last Ver\Fantasy Project\bin\GLSL 120 Debug\MainGame.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Last Ver\Fantasy Project\bin\GLSL 120 Debug\MainGame.lib" /MACHINE:X86 "E:\Last Ver\Fantasy Project\intermediates\Platform\GLSL 120 Debug\imgui.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Platform\GLSL 120 Debug\imgui_demo.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Platform\GLSL 120 Debug\imgui_draw.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Platform\GLSL 120 Debug\InputManager.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Platform\GLSL 120 Debug\main.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Platform\GLSL 120 Debug\OGLInitializerWrapper.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Platform\GLSL 120 Debug\WindowManager.obj"
+         Platform.vcxproj -> E:\Last Ver\Fantasy Project\bin\GLSL 120 Debug\MainGame.exe
+       PostBuildEvent:
+         xcopy /Y /E "E:\Last Ver\Fantasy Project\Platform\Resources" "E:\Last Ver\Fantasy Project\bin\GLSL 120 Debug\Resources\"
+         :VCEnd
+         E:\Last Ver\Fantasy Project\Platform\Resources\audio\beat.wav
+         E:\Last Ver\Fantasy Project\Platform\Resources\audio\high.wav
+         E:\Last Ver\Fantasy Project\Platform\Resources\audio\low.wav
+         E:\Last Ver\Fantasy Project\Platform\Resources\audio\medium.wav
+         E:\Last Ver\Fantasy Project\Platform\Resources\audio\musafer_m3_elquran.mp3
+         E:\Last Ver\Fantasy Project\Platform\Resources\audio\scratch.wav
+         E:\Last Ver\Fantasy Project\Platform\Resources\audio\testClip.wav
+         E:\Last Ver\Fantasy Project\Platform\Resources\Shaders\fragment shader 120.frag
+         E:\Last Ver\Fantasy Project\Platform\Resources\Shaders\fragment shader 120_2.frag
+         E:\Last Ver\Fantasy Project\Platform\Resources\Shaders\fragment shader.frag
+         E:\Last Ver\Fantasy Project\Platform\Resources\Shaders\GUI fragment shader 120.frag
+         E:\Last Ver\Fantasy Project\Platform\Resources\Shaders\GUI vertex shader 120.vert
+         E:\Last Ver\Fantasy Project\Platform\Resources\Shaders\vertex shader 120.vert
+         E:\Last Ver\Fantasy Project\Platform\Resources\Shaders\vertex shader 120_2.vert
+         E:\Last Ver\Fantasy Project\Platform\Resources\Shaders\vertex shader.vert
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\back.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG0.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG1.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG10.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG11.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG12.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG13.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG14.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG2.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG3.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG4.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG5.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG6.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG7.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG8.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\BG9.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\block.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\empty.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\Genta.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\grass3.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\grayCube.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\main Canvas.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\Neo In.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\noe basicattack.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\noe idle.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\noe summon.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\noe walk.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\PlatForm2.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\player_2.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\star.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\warrior attack.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\warrior attack.rar
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\warrior attack1.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\warrior attack3.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\warrior idle.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\warrior walk.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\Warrior.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\weboo.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\Wizard.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\Textures\yellow.png
+         E:\Last Ver\Fantasy Project\Platform\Resources\TileMaps\map1.txt
+         E:\Last Ver\Fantasy Project\Platform\Resources\TileMaps\map2.txt
+         57 File(s) copied
+     1>Done Building Project "E:\Last Ver\Fantasy Project\Platform\Platform.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:04.42

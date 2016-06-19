@@ -1,0 +1,33 @@
+﻿Build started 6/19/2016 5:42:41 AM.
+     1>Project "E:\Last Ver\Fantasy Project\Engine\Engine.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D GLEW_STATIC /D _CRT_SECURE_NO_WARNINGS /D ANCIENT_VERSION=120 /D MODERN_VERSION=330 /D GLSL_VERSION=ANCIENT_VERSION /D FREEIMAGE_LIB /D _MBCS /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\\" /Fd"E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt source\Collision.cpp
+         Collision.cpp
+       Lib:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"E:\Last Ver\Fantasy Project\bin\Engine\GLSL 120 Debug\fantasy engine.lib" libglew32.lib opengl32.lib "Cinder Math_Debug.lib" "Cinder Memory_Debug.lib" SDL2.lib SDL2_mixer.lib FreeImageLibd.lib /NOLOGO /NODEFAULTLIB:libcmt.lib "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\ActorSystem.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\Animator.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\Collision.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\CollisionSystem.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\FileLoader.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\ImageLoader.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\MemoryAllocator.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\Mesh.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\ResourceManager.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\Shader.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\RenderingSystem.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\Texture.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\Transform.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\TransformSystem.obj"
+         "E:\Last Ver\Fantasy Project\intermediates\Engine\GLSL 120 Debug\SceneManager.obj"
+     1>SDL2.lib(SDL2.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
+     1>SDL2.lib(SDL2.dll) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+     1>SDL2_mixer.lib(SDL2_mixer.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in opengl32.lib(OPENGL32.dll); second definition ignored
+     1>SDL2_mixer.lib(SDL2_mixer.dll) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+     1>FreeImageLibd.lib(ImathShear.obj) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+     1>FreeImageLibd.lib(ImathBox.obj) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+         Engine.vcxproj -> E:\Last Ver\Fantasy Project\bin\Engine\GLSL 120 Debug\fantasy engine.lib
+     1>Done Building Project "E:\Last Ver\Fantasy Project\Engine\Engine.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:11.53

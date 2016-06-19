@@ -1,0 +1,16 @@
+﻿Build started 5/24/2016 4:41:51 AM.
+     1>Project "E:\Fantasy Project\GUI\GUI.vcxproj" on node 2 (Build target(s)).
+     1>Lib:
+         C:\Program Files\Microsoft Visual Studio 12.0\VC\bin\Lib.exe /OUT:"E:\Fantasy Project\bin\GUI\GLSL 120 Debug\FantasyGUI.lib" "fantasy engine.lib" /NOLOGO /NODEFAULTLIB:libcmt.lib "E:\Fantasy Project\intermediates\GUI\GLSL 120 Debug\GUITest.obj"
+     1>fantasy engine.lib(ImathBox.obj) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+     1>fantasy engine.lib(ImathShear.obj) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+     1>fantasy engine.lib(SDL2.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in fantasy engine.lib(SDL2_mixer.dll); second definition ignored
+     1>fantasy engine.lib(SDL2.dll) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+     1>fantasy engine.lib(OPENGL32.dll) : warning LNK4006: __NULL_IMPORT_DESCRIPTOR already defined in fantasy engine.lib(SDL2_mixer.dll); second definition ignored
+     1>fantasy engine.lib(OPENGL32.dll) : warning LNK4221: This object file does not define any previously undefined public symbols, so it will not be used by any link operation that consumes this library
+         GUI.vcxproj -> E:\Fantasy Project\bin\GUI\GLSL 120 Debug\FantasyGUI.lib
+     1>Done Building Project "E:\Fantasy Project\GUI\GUI.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.40
