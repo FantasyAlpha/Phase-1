@@ -1,0 +1,27 @@
+Project Dependencies:
+1- FreeImage (can't upload because it's too big)
+2- SDL2 Mixer
+3- GLEW
+4- Cinder Math, Cinder Memory (part of Cinder Project, one of my repos)
+
+Project Goal:
+To create a game from scratch, the game we decided to create is a 2D platformer game so we decided to 
+create a 2D game engine to help us in creating the game.
+
+Current Engine's Main Features:
+1- Entity/Component architecture
+2- Separate modules for engine specific, platform specific, game logic code
+3- Sprite sheet animation
+4- Basic 2D collision detection
+5- Support for game states using the entity/component system
+6- Sprite batch rendering
+7- Debug shapes for sprites and colliders
+8- Custom memory allocators (part of cinder project)
+9- Custom math library (part of cinder project)
+10- Perspective, Orthographic camera
+11- Camera windowing movement
+12- Transform heirarchy
+13- Shader loading
+
+Project Status:
+On-Hold
